@@ -3126,10 +3126,8 @@
   resolved "https://registry.yarnpkg.com/@uniswap/lib/-/lib-1.1.1.tgz#0afd29601846c16e5d082866cbb24a9e0758e6bc"
   integrity sha512-2yK7sLpKIT91TiS5sewHtOa7YuM8IuBXVl4GZv2jZFys4D2sY7K5vZh6MqD25TPA95Od+0YzCVq6cTF2IKrOmg==
 
-"@uniswap/sdk@^2.0.5":
+"@uniswap/sdk@file:.yalc/@uniswap/sdk":
   version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@uniswap/sdk/-/sdk-2.0.5.tgz#ca88c1ac36d75c669950747ffce00677e722832a"
-  integrity sha512-5DSd303KQPi/j7gMp5phHHuC0TNspXOXYAF8OzJ3QFnAfIcNSVRuHiBsEXGL2+XeUDyqBQMJ5ItUJC7rW8Rxnw==
   dependencies:
     "@ethersproject/address" "^5.0.0-beta.134"
     "@ethersproject/contracts" "^5.0.0-beta.143"
@@ -3156,6 +3154,59 @@
   dependencies:
     "@uniswap/lib" "1.1.1"
     "@uniswap/v2-core" "1.0.0"
+
+"@vechain/connex-driver@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@vechain/connex-driver/-/connex-driver-2.0.0.tgz#de569913882a4d0ae9096e1e97d9bbb5d5b97004"
+  integrity sha512-lRPBca7/v8fFs4THm9UIPvDkzPrUg0s0vL1XT4u/PBznrChVfDIQlCNZWJlK49S6dvAvZDsP4Rq3soyvzdSaJw==
+  dependencies:
+    "@vechain/connex-types" "^2.0.0"
+    axios "^0.21.1"
+    bignumber.js "^7.2.1"
+    isomorphic-ws "^4.0.1"
+    lru-cache "^5.1.1"
+    thor-devkit "^2.0.1"
+    ws "^7.1.0"
+
+"@vechain/connex-framework@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@vechain/connex-framework/-/connex-framework-2.0.0.tgz#68507e3d4b71b18768a58e8a2b8f36c14ab6db17"
+  integrity sha512-wQLVjAEqL+R0vLOKXpfdnpYL/HlaBDpHRdJg1oFNyHsis1jpSAyhIUB58yj6lVK4rJurZn4ICgIUYFIopZwMHg==
+  dependencies:
+    "@vechain/connex-types" "^2.0.0"
+    thor-devkit "^2.0.1"
+    validator-ts "^0.9.1"
+
+"@vechain/connex-types@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@vechain/connex-types/-/connex-types-2.0.0.tgz#2e0e8e735051733b99557613037d202a6ac1c24d"
+  integrity sha512-LcO8y4cPWJeOT7NSehOG5PHCgonKUf4FQ9cDfXadd5Y6Iunueg5tFsps7Ncv92cBDL3ftgA8PYf2JLwIbFIlTA==
+
+"@vechain/connex@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@vechain/connex/-/connex-2.0.0.tgz#703f76f12477af8c95f485e53e97e0e2ca8b4fe8"
+  integrity sha512-MVK+cUmN0dM5NICmod/z2K8JzBL1iOnOyfVmLEJYSEPN2uZN568BA4Klcpx9X6BzdB2RGy6CHjJK/fj31PG4nA==
+  dependencies:
+    "@vechain/connex-driver" "^2.0.0"
+    "@vechain/connex-framework" "^2.0.0"
+    randombytes "^2.1.0"
+    thor-devkit "^2.0.1"
+
+"@vechain/ethers@^4.0.27-3":
+  version "4.0.27-3"
+  resolved "https://registry.yarnpkg.com/@vechain/ethers/-/ethers-4.0.27-3.tgz#ec3225064808a59f8802474eb78355dd4ebb5e49"
+  integrity sha512-R32g5Z9pWTnuxI6MeXoJDYvbHTZAZ0XpIyKVaBxJHKiFhG2QlCI3XPc/ZwwkiSYtweXssh21ihuMk+Q5RHN+6w==
+  dependencies:
+    "@types/node" "^10.3.2"
+    aes-js "3.0.0"
+    bn.js "^4.4.0"
+    elliptic "6.5.3"
+    hash.js "1.1.3"
+    js-sha3 "0.5.7"
+    scrypt-js "2.0.4"
+    setimmediate "1.0.4"
+    uuid "2.0.1"
+    xmlhttprequest "1.8.0"
 
 "@walletconnect/browser@^1.0.0-beta.47":
   version "1.0.0-beta.47"
@@ -4064,6 +4115,13 @@ axios@^0.18.0:
     follow-redirects "1.5.10"
     is-buffer "^2.0.2"
 
+axios@^0.21.1:
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
+  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
+  dependencies:
+    follow-redirects "^1.10.0"
+
 axobject-query@^2.0.2:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/axobject-query/-/axobject-query-2.1.2.tgz#2bdffc0371e643e5f03ba99065d5179b9ca79799"
@@ -4831,7 +4889,7 @@ bignumber.js@*, bignumber.js@9.0.0:
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.0.tgz#805880f84a329b5eac6e7cb6f8274b6d82bdf075"
   integrity sha512-t/OYhhJ2SD+YGBQcjY8GzzDHEk9f3nerxjtfa6tlMXfe7frs/WozhvCNoGvpM0P3bNf3Gq5ZRMlGr5f3r4/N8A==
 
-bignumber.js@7.2.1:
+bignumber.js@7.2.1, bignumber.js@^7.2.1:
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-7.2.1.tgz#80c048759d826800807c4bfd521e50edbba57a5f"
   integrity sha512-S4XzBk5sMB+Rcb/LNcpzXr57VRTxgAvaAEDAl1AwRx27j00hT84O6OkteE7u8UB3NuaaygCRrEpqox4uDOrbdQ==
@@ -7089,6 +7147,19 @@ elliptic@6.5.2, elliptic@^6.0.0, elliptic@^6.4.0, elliptic@^6.5.2:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
 
+elliptic@6.5.3:
+  version "6.5.3"
+  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.3.tgz#cb59eb2efdaf73a0bd78ccd7015a62ad6e0f93d6"
+  integrity sha512-IMqzv5wNQf+E6aHeIqATs0tOLeOTwj1QKbRcS3jBbYkl5oLAserA8yJTT7/VyHUYG91PRmPyeQDObKLPpeS4dw==
+  dependencies:
+    bn.js "^4.4.0"
+    brorand "^1.0.1"
+    hash.js "^1.0.0"
+    hmac-drbg "^1.0.0"
+    inherits "^2.0.1"
+    minimalistic-assert "^1.0.0"
+    minimalistic-crypto-utils "^1.0.0"
+
 emoji-regex@^7.0.1, emoji-regex@^7.0.2:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-7.0.3.tgz#933a04052860c85e83c122479c4748a8e4c72156"
@@ -8662,6 +8733,11 @@ follow-redirects@^1.0.0:
   integrity sha512-KZm0V+ll8PfBrKwMzdo5D13b1bur9Iq9Zd/RMmAoQQcl2PxxFml8cxXPaaPYVbV0RjNjq1CU7zIzAOqtUPudmA==
   dependencies:
     debug "^3.0.0"
+
+follow-redirects@^1.10.0:
+  version "1.13.2"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.2.tgz#dd73c8effc12728ba5cf4259d760ea5fb83e3147"
+  integrity sha512-6mPTgLxYm3r6Bkkg0vNM0HTjfGrOEtsfbhagQvbxDEsEkpNhw582upBaoRZylzen6krEmxXJgt9Ju6HiI4O7BA==
 
 for-each@~0.3.3:
   version "0.3.3"
@@ -10363,6 +10439,11 @@ isomorphic-unfetch@^3.0.0:
   dependencies:
     node-fetch "^2.2.0"
     unfetch "^4.0.0"
+
+isomorphic-ws@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
+  integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
 
 isstream@~0.1.2:
   version "0.1.2"
@@ -16684,6 +16765,19 @@ text-table@0.2.0, text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
+thor-devkit@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/thor-devkit/-/thor-devkit-2.0.1.tgz#9dd006a7595844ab8ba8f447ef3e139a3afc6816"
+  integrity sha512-3JF3UkrPZ+HW+PU8B6zO47Uo4ZyOIudW05UoFPhw+v+MLYgWw2J9010xan/eEydQw/oPZ7nw4pgu5SL8iTtCnw==
+  dependencies:
+    "@vechain/ethers" "^4.0.27-3"
+    bignumber.js "^7.2.1"
+    blakejs "^1.1.0"
+    elliptic "6.5.3"
+    fast-json-stable-stringify "^2.0.0"
+    js-sha3 "0.5.7"
+    rlp "^2.0.0"
+
 throat@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/throat/-/throat-4.1.0.tgz#89037cbc92c56ab18926e6ba4cbb200e15672a6a"
@@ -17336,6 +17430,11 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+validator-ts@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/validator-ts/-/validator-ts-0.9.1.tgz#1ab8748e6ddddc63e9e5edbf7fea91a82b7a466f"
+  integrity sha512-3PCL0AzKWvG/4Y12zUgk6OVup9zQ3vXGzqUIZ69GnSapIV9lgr9VCLFReUgTe04vY6Fm4WzAL7a1HdIVyWRw8Q==
 
 value-equal@^1.0.1:
   version "1.0.1"
@@ -18258,6 +18357,11 @@ ws@^6.1.2, ws@^6.2.1:
   integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   dependencies:
     async-limiter "~1.0.0"
+
+ws@^7.1.0:
+  version "7.4.3"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.3.tgz#1f9643de34a543b8edb124bdcbc457ae55a6e5cd"
+  integrity sha512-hr6vCR76GsossIRsr8OLR9acVVm1jyfEWvhbNjtgPOrfvAlKzvyeg/P6r8RuDjRyrcQoPQT7K0DGEPc7Ae6jzA==
 
 xhr-request-promise@^0.1.2:
   version "0.1.3"

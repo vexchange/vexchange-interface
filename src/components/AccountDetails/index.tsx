@@ -11,12 +11,8 @@ import Transaction from './Transaction'
 
 import { SUPPORTED_WALLETS } from '../../constants'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
-import { getEtherscanLink } from '../../utils'
-import { injected, walletconnect, walletlink, fortmatic, portis } from '../../connectors'
-import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
-import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
-import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
-import PortisIcon from '../../assets/images/portisIcon.png'
+import { getExploreLink } from '../../utils'
+import { injected } from '../../connectors'
 import Identicon from '../Identicon'
 
 import { ButtonEmpty } from '../Button'
@@ -132,13 +128,13 @@ const LowerSection = styled.div`
   }
 `
 
-const AccountControl = styled.div<{ hasENS: boolean; isENS: boolean }>`
+const AccountControl = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   align-items: center;
   min-width: 0;
 
-  font-weight: ${({ hasENS, isENS }) => (hasENS ? (isENS ? 500 : 400) : 500)};
-  font-size: ${({ hasENS, isENS }) => (hasENS ? (isENS ? '1rem' : '0.8rem') : '1rem')};
+  font-weight:  500;
+  font-size: 1rem;
 
   a:hover {
     text-decoration: underline;
@@ -160,8 +156,8 @@ const ConnectButtonRow = styled.div`
   margin: 10px 0;
 `
 
-const StyledLink = styled(Link)<{ hasENS: boolean; isENS: boolean }>`
-  color: ${({ hasENS, isENS, theme }) => (hasENS ? (isENS ? theme.primary1 : theme.text3) : theme.primary1)};
+const StyledLink = styled(Link)`
+  color: ${({ theme }) => theme.primary1};
 `
 
 const CloseIcon = styled.div`
@@ -213,10 +209,6 @@ const WalletAction = styled.div`
   }
 `
 
-const MainWalletAction = styled(WalletAction)`
-  color: ${({ theme }) => theme.primary1};
-`
-
 function renderTransactions(transactions) {
   return (
     <TransactionListWrapper>
@@ -231,7 +223,6 @@ interface AccountDetailsProps {
   toggleWalletModal: () => void
   pendingTransactions: any[]
   confirmedTransactions: any[]
-  ENSName?: string
   openOptions: () => void
 }
 
@@ -239,7 +230,6 @@ export default function AccountDetails({
   toggleWalletModal,
   pendingTransactions,
   confirmedTransactions,
-  ENSName,
   openOptions
 }: AccountDetailsProps) {
   const { chainId, account, connector } = useWeb3React()
@@ -265,39 +255,6 @@ export default function AccountDetails({
           <Identicon /> {formatConnectorName()}
         </IconWrapper>
       )
-    } else if (connector === walletconnect) {
-      return (
-        <IconWrapper size={16}>
-          <img src={WalletConnectIcon} alt={''} /> {formatConnectorName()}
-        </IconWrapper>
-      )
-    } else if (connector === walletlink) {
-      return (
-        <IconWrapper size={16}>
-          <img src={CoinbaseWalletIcon} alt={''} /> {formatConnectorName()}
-        </IconWrapper>
-      )
-    } else if (connector === fortmatic) {
-      return (
-        <IconWrapper size={16}>
-          <img src={FortmaticIcon} alt={''} /> {formatConnectorName()}
-        </IconWrapper>
-      )
-    } else if (connector === portis) {
-      return (
-        <>
-          <IconWrapper size={16}>
-            <img src={PortisIcon} alt={''} /> {formatConnectorName()}
-            <MainWalletAction
-              onClick={() => {
-                portis.portis.showPortis()
-              }}
-            >
-              Show Portis
-            </MainWalletAction>
-          </IconWrapper>
-        </>
-      )
     }
   }
 
@@ -322,7 +279,7 @@ export default function AccountDetails({
               <AccountGroupingRow>
                 {getStatusIcon()}
                 <div>
-                  {connector !== injected && connector !== walletlink && (
+                  {connector !== injected && (
                     <WalletAction
                       onClick={() => {
                         ;(connector as any).close()
@@ -339,38 +296,16 @@ export default function AccountDetails({
                 </div>
               </AccountGroupingRow>
               <AccountGroupingRow id="web3-account-identifier-row">
-                {ENSName ? (
-                  <>
-                    <AccountControl hasENS={!!ENSName} isENS={true}>
-                      <p>{ENSName}</p> <Copy toCopy={account} />
-                    </AccountControl>
-                  </>
-                ) : (
-                  <>
-                    <AccountControl hasENS={!!ENSName} isENS={false}>
-                      <p>{account}</p> <Copy toCopy={account} />
-                    </AccountControl>
-                  </>
-                )}
+                <AccountControl>
+                  <p>{account}</p> <Copy toCopy={account} />
+                </AccountControl>
               </AccountGroupingRow>
               <AccountGroupingRow>
-                {ENSName ? (
-                  <>
-                    <AccountControl hasENS={!!ENSName} isENS={false}>
-                      <StyledLink hasENS={!!ENSName} isENS={true} href={getEtherscanLink(chainId, ENSName, 'address')}>
-                        View on Etherscan ↗
-                      </StyledLink>
-                    </AccountControl>
-                  </>
-                ) : (
-                  <>
-                    <AccountControl hasENS={!!ENSName} isENS={false}>
-                      <StyledLink hasENS={!!ENSName} isENS={false} href={getEtherscanLink(chainId, account, 'address')}>
-                        View on Etherscan ↗
-                      </StyledLink>
-                    </AccountControl>
-                  </>
-                )}
+                <AccountControl>
+                  <StyledLink href={getExploreLink(chainId, account, 'address')}>
+                    View on Explore ↗
+                  </StyledLink>
+                </AccountControl>
               </AccountGroupingRow>
             </InfoCard>
           </YourAccount>

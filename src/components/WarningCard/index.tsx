@@ -4,7 +4,7 @@ import styled, { keyframes } from 'styled-components'
 
 import { useWeb3React } from '../../hooks'
 import { useToken } from '../../hooks/Tokens'
-import { getEtherscanLink } from '../../utils'
+import { getExploreLink } from '../../utils'
 
 import { Link } from '../../theme'
 import TokenLogo from '../TokenLogo'
@@ -161,8 +161,8 @@ export default function WarningCard({ onDismiss, urlAddedTokens, currency }: War
         {showPopup ? (
           <Popup>
             <Text>
-              The Uniswap V2 smart contracts are designed to support any ERC20 token on Ethereum. Any token can be
-              loaded into the interface by entering its Ethereum address into the search field or passing it as a URL
+              The Vexchange V2 smart contracts are designed to support any VIP180 token on VeChain. Any token can be
+              loaded into the interface by entering its VeChain address into the search field or passing it as a URL
               parameter. Be careful when interacting with imported tokens as they have not been verified.
             </Text>
           </Popup>
@@ -173,8 +173,8 @@ export default function WarningCard({ onDismiss, urlAddedTokens, currency }: War
       <Row>
         <TokenLogo address={currency} />
         <div style={{ fontWeight: 500 }}>{inputName && inputSymbol ? inputName + ' (' + inputSymbol + ')' : ''}</div>
-        <Link style={{ fontWeight: 400 }} href={getEtherscanLink(chainId, currency, 'address')}>
-          (View on Etherscan)
+        <Link style={{ fontWeight: 400 }} href={getExploreLink(chainId, currency, 'address')}>
+          (View on Explore)
         </Link>
       </Row>
       <Row style={{ fontSize: '12px', fontStyle: 'italic' }}>

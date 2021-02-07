@@ -1,7 +1,7 @@
 import { splitSignature } from '@ethersproject/bytes'
 import { Contract } from '@ethersproject/contracts'
 import { parseUnits } from '@ethersproject/units'
-import { JSBI, Percent, Route, Token, TokenAmount, WETH } from '@uniswap/sdk'
+import { JSBI, Percent, Route, Token, TokenAmount, VVET } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { ArrowDown, Plus } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -409,11 +409,11 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
     let method, args, estimate
 
     // removal with ETH
-    if (tokens[Field.TOKEN0].equals(WETH[chainId]) || tokens[Field.TOKEN1].equals(WETH[chainId])) {
+    if (tokens[Field.TOKEN0].equals(VVET[chainId]) || tokens[Field.TOKEN1].equals(VVET[chainId])) {
       method = router.removeLiquidityETHWithPermit
       estimate = router.estimateGas.removeLiquidityETHWithPermit
 
-      const token0IsETH = tokens[Field.TOKEN0].equals(WETH[chainId])
+      const token0IsETH = tokens[Field.TOKEN0].equals(VVET[chainId])
 
       args = [
         tokens[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].address,

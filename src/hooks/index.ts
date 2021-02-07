@@ -1,7 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
 import { Web3Provider } from '@ethersproject/providers'
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
+import { useWeb3React as useWeb3ReactCore } from '../context/'
 import { isMobile } from 'react-device-detect'
 import copy from 'copy-to-clipboard'
 
@@ -140,41 +140,6 @@ export function useBodyKeyDown(targetKey, onKeyDown, suppressOnKeyDown = false) 
       window.removeEventListener('keydown', downHandler)
     }
   }, [downHandler])
-}
-
-export function useENSName(address) {
-  const { library } = useWeb3React()
-
-  const [ENSName, setENSName] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (isAddress(address)) {
-      let stale = false
-      library
-        .lookupAddress(address)
-        .then(name => {
-          if (!stale) {
-            if (name) {
-              setENSName(name)
-            } else {
-              setENSName(null)
-            }
-          }
-        })
-        .catch(() => {
-          if (!stale) {
-            setENSName(null)
-          }
-        })
-
-      return () => {
-        stale = true
-        setENSName(null)
-      }
-    }
-  }, [library, address])
-
-  return ENSName
 }
 
 // returns null on errors

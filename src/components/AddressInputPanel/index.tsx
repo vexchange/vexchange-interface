@@ -6,7 +6,7 @@ import { useWeb3React, useDebounce } from '../../hooks'
 import { Link, TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
-import { getEtherscanLink } from '../../utils'
+import { getExploreLink } from '../../utils'
 
 const InputPanel = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -94,46 +94,8 @@ export default function AddressInputPanel({
     let stale = false
     // if the input is an address, try to look up its name
     if (isAddress(debouncedInput)) {
-      library
-        .lookupAddress(debouncedInput)
-        .then(name => {
-          if (stale) return
-          // if an ENS name exists, set it as the destination
-          if (name) {
-            setInput(name)
-          } else {
-            setData({ address: debouncedInput, name: '' })
-            setError(null)
-          }
-        })
-        .catch(() => {
-          if (stale) return
-          setData({ address: debouncedInput, name: '' })
-          setError(null)
-        })
-    }
-    // otherwise try to look up the address of the input, treated as an ENS name
-    else {
-      if (debouncedInput !== '') {
-        library
-          .resolveName(debouncedInput)
-          .then(address => {
-            if (stale) return
-            // if the debounced input name resolves to an address
-            if (address) {
-              setData({ address: address, name: debouncedInput })
-              setError(null)
-            } else {
-              setError(true)
-            }
-          })
-          .catch(() => {
-            if (stale) return
-            setError(true)
-          })
-      } else if (debouncedInput === '') {
-        setError(true)
-      }
+      setData({ address: debouncedInput, name: '' })
+      setError(null)
     }
 
     return () => {
@@ -160,10 +122,10 @@ export default function AddressInputPanel({
               </TYPE.black>
               {data.address && (
                 <Link
-                  href={getEtherscanLink(chainId, data.name || data.address, 'address')}
+                  href={getExploreLink(chainId, data.name || data.address, 'address')}
                   style={{ fontSize: '14px' }}
                 >
-                  (View on Etherscan)
+                  (View on Explore)
                 </Link>
               )}
             </RowBetween>
@@ -173,7 +135,7 @@ export default function AddressInputPanel({
               autoCorrect="off"
               autoCapitalize="off"
               spellCheck="false"
-              placeholder="Wallet Address or ENS name"
+              placeholder="Wallet Address"
               error={input !== '' && error}
               onChange={onInput}
               value={input}

@@ -1,6 +1,7 @@
 import { Contract } from '@ethersproject/contracts'
 import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
+import { find } from 'lodash'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { parseBytes32String } from '@ethersproject/strings'
 import { BigNumber } from '@ethersproject/bignumber'
@@ -27,24 +28,24 @@ export enum ERROR_CODES {
   TOKEN_DECIMALS = 2
 }
 
-const ETHERSCAN_PREFIXES: { [chainId in ChainId]: string } = {
-  1: '',
-  3: 'ropsten.',
+const EXPLORE_PREFIXES: { [chainId in ChainId]: string } = {
+  1: 'explore.',
+  3: 'explore-testnet.',
   4: 'rinkeby.',
   5: 'goerli.',
   42: 'kovan.'
 }
 
-export function getEtherscanLink(chainId: ChainId, data: string, type: 'transaction' | 'address'): string {
-  const prefix = `https://${ETHERSCAN_PREFIXES[chainId] || ETHERSCAN_PREFIXES[1]}etherscan.io`
+export function getExploreLink(chainId: ChainId, data: string, type: 'transaction' | 'address'): string {
+  const prefix = `https://${EXPLORE_PREFIXES[chainId] || EXPLORE_PREFIXES[1]}vechain.org`
 
   switch (type) {
     case 'transaction': {
-      return `${prefix}/tx/${data}`
+      return `${prefix}/transactions/${data}`
     }
     case 'address':
     default: {
-      return `${prefix}/address/${data}`
+      return `${prefix}/accounts/${data}`
     }
   }
 }
@@ -104,6 +105,7 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 
 // account is optional
 export function getRouterContract(chainId, library, account) {
+  console.log(library)
   return getContract(ROUTER_ADDRESS, IUniswapV2Router01ABI, library, account)
 }
 
@@ -118,13 +120,20 @@ export async function getTokenName(tokenAddress, library) {
     throw Error(`Invalid 'tokenAddress' parameter '${tokenAddress}'.`)
   }
 
-  return getContract(tokenAddress, ERC20_ABI, library)
-    .name()
-    .catch(() =>
-      getContract(tokenAddress, ERC20_BYTES32_ABI, library)
-        .name()
-        .then(parseBytes32String)
-    )
+  const abi = find(ERC20_ABI, { name: "name" })
+  const method = library.thor.account(tokenAddress).method(abi)
+
+  return method
+    .call()
+    .then(data => {
+      console.log(data)
+    })
+    // .name()
+    // .catch(() =>
+    //   getContract(tokenAddress, ERC20_BYTES32_ABI, library)
+    //     .name()
+    //     .then(parseBytes32String)
+    // )
     .catch(error => {
       error.code = ERROR_CODES.TOKEN_SYMBOL
       throw error
@@ -133,6 +142,7 @@ export async function getTokenName(tokenAddress, library) {
 
 // get token symbol
 export async function getTokenSymbol(tokenAddress, library) {
+  console.log(library)
   if (!isAddress(tokenAddress)) {
     throw Error(`Invalid 'tokenAddress' parameter '${tokenAddress}'.`)
   }

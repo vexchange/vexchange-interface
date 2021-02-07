@@ -1,5 +1,6 @@
 import { MaxUint256 } from '@ethersproject/constants'
-import { Trade, WETH } from '@uniswap/sdk'
+import { Trade, VVET } from '@uniswap/sdk'
+import { find } from 'lodash'
 import { useCallback, useMemo } from 'react'
 import { ROUTER_ADDRESS } from '../constants'
 import { useTokenAllowance } from '../data/Allowances'
@@ -8,10 +9,11 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { calculateGasMargin } from '../utils'
 import { useTokenContract, useWeb3React } from './index'
+import ERC20_ABI from '../constants/abis/erc20.json'
 
 // returns a function to approve the amount required to execute a trade if necessary, otherwise null
 export function useApproveCallback(trade?: Trade, allowedSlippage = 0): [undefined | boolean, () => Promise<void>] {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId, library } = useWeb3React()
   const currentAllowance = useTokenAllowance(trade?.inputAmount?.token, account, ROUTER_ADDRESS)
 
   const slippageAdjustedAmountIn = useMemo(() => computeSlippageAdjustedAmounts(trade, allowedSlippage)[Field.INPUT], [
@@ -20,31 +22,36 @@ export function useApproveCallback(trade?: Trade, allowedSlippage = 0): [undefin
   ])
 
   const mustApprove = useMemo(() => {
-    // we treat WETH as ETH which requires no approvals
-    if (trade?.inputAmount?.token?.equals(WETH[chainId])) return false
+    // we treat VVET as VET which requires no approvals
+    if (trade?.inputAmount?.token?.equals(VVET[chainId])) return false
     // return undefined if we don't have enough data to know whether or not we need to approve
     if (!currentAllowance) return undefined
     // slippageAdjustedAmountIn will be defined if currentAllowance is
     return currentAllowance.lessThan(slippageAdjustedAmountIn)
   }, [trade, chainId, currentAllowance, slippageAdjustedAmountIn])
 
-  const tokenContract = useTokenContract(trade?.inputAmount?.token?.address)
   const addTransaction = useTransactionAdder()
   const approve = useCallback(async (): Promise<void> => {
     if (!mustApprove) return
 
     let useUserBalance = false
 
-    const estimatedGas = await tokenContract.estimateGas.approve(ROUTER_ADDRESS, MaxUint256).catch(() => {
-      // general fallback for tokens who restrict approval amounts
-      useUserBalance = true
-      return tokenContract.estimateGas.approve(ROUTER_ADDRESS, slippageAdjustedAmountIn.raw.toString())
-    })
+    const abi = find(ERC20_ABI, { name: 'approve' })
+    const method = library.thor.account(trade?.inputAmount?.token?.address).method(abi)
 
-    return tokenContract
-      .approve(ROUTER_ADDRESS, useUserBalance ? slippageAdjustedAmountIn.raw.toString() : MaxUint256, {
-        gasLimit: calculateGasMargin(estimatedGas)
-      })
+    const clause = method.asClause(
+      ROUTER_ADDRESS,
+      useUserBalance
+        ? slippageAdjustedAmountIn.raw.toString() 
+        : MaxUint256
+    )
+    return library.vendor.sign('tx', [ 
+      {
+        ...clause,
+      }
+    ])
+      .comment('approve')
+      .request()
       .then(response => {
         addTransaction(response, {
           summary: 'Approve ' + trade?.inputAmount?.token?.symbol,
@@ -55,7 +62,7 @@ export function useApproveCallback(trade?: Trade, allowedSlippage = 0): [undefin
         console.debug('Failed to approve token', error)
         throw error
       })
-  }, [mustApprove, tokenContract, slippageAdjustedAmountIn, trade, addTransaction])
+  }, [mustApprove, slippageAdjustedAmountIn, trade, addTransaction])
 
   return [mustApprove, approve]
 }

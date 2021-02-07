@@ -1,29 +1,24 @@
 import React, { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { useWeb3React, UnsupportedChainIdError } from '@web3-react/core'
+import { useWeb3React, UnsupportedChainIdError } from '../../context/'
 import { darken, lighten } from 'polished'
 import { Activity } from 'react-feather'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { TransactionDetails } from '../../state/transactions/reducer'
 
 import Identicon from '../Identicon'
-import PortisIcon from '../../assets/images/portisIcon.png'
 import WalletModal from '../WalletModal'
 import { ButtonSecondary } from '../Button'
-import FortmaticIcon from '../../assets/images/fortmaticIcon.png'
-import WalletConnectIcon from '../../assets/images/walletConnectIcon.svg'
-import CoinbaseWalletIcon from '../../assets/images/coinbaseWalletIcon.svg'
 
 import { Spinner } from '../../theme'
 import LightCircle from '../../assets/svg/lightcircle.svg'
 
 import { RowBetween } from '../Row'
-import { useENSName } from '../../hooks'
 import { shortenAddress } from '../../utils'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { NetworkContextName } from '../../constants'
-import { injected, walletconnect, walletlink, fortmatic, portis } from '../../connectors'
+import { injected } from '../../connectors'
 
 const SpinnerWrapper = styled(Spinner)`
   margin: 0 0.25rem 0 0.25rem;
@@ -137,8 +132,6 @@ export default function Web3Status() {
   const { active, account, connector, error } = useWeb3React()
   const contextNetwork = useWeb3React(NetworkContextName)
 
-  const ENSName = useENSName(account)
-
   const allTransactions = useAllTransactions()
 
   const sortedRecentTransactions = useMemo(() => {
@@ -157,30 +150,6 @@ export default function Web3Status() {
   function getStatusIcon() {
     if (connector === injected) {
       return <Identicon />
-    } else if (connector === walletconnect) {
-      return (
-        <IconWrapper size={16}>
-          <img src={WalletConnectIcon} alt={''} />
-        </IconWrapper>
-      )
-    } else if (connector === walletlink) {
-      return (
-        <IconWrapper size={16}>
-          <img src={CoinbaseWalletIcon} alt={''} />
-        </IconWrapper>
-      )
-    } else if (connector === fortmatic) {
-      return (
-        <IconWrapper size={16}>
-          <img src={FortmaticIcon} alt={''} />
-        </IconWrapper>
-      )
-    } else if (connector === portis) {
-      return (
-        <IconWrapper size={16}>
-          <img src={PortisIcon} alt={''} />
-        </IconWrapper>
-      )
     }
   }
 
@@ -193,7 +162,7 @@ export default function Web3Status() {
               <Text>{pending?.length} Pending</Text> <SpinnerWrapper src={LightCircle} alt="loader" />
             </RowBetween>
           ) : (
-            <Text>{ENSName || shortenAddress(account)}</Text>
+            <Text>{shortenAddress(account)}</Text>
           )}
           {!hasPendingTransactions && getStatusIcon()}
         </Web3StatusConnected>
@@ -221,7 +190,7 @@ export default function Web3Status() {
   return (
     <>
       {getWeb3Status()}
-      <WalletModal ENSName={ENSName} pendingTransactions={pending} confirmedTransactions={confirmed} />
+      <WalletModal pendingTransactions={pending} confirmedTransactions={confirmed} />
     </>
   )
 }

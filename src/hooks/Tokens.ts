@@ -1,4 +1,4 @@
-import { Token, WETH } from '@uniswap/sdk'
+import { Token, VVET } from '@uniswap/sdk'
 import { useEffect, useMemo } from 'react'
 import { useAddUserToken, useFetchTokenByAddress, useUserAddedTokens } from '../state/user/hooks'
 
@@ -9,19 +9,16 @@ import KOVAN_TOKENS from '../constants/tokens/kovan'
 import ROPSTEN_TOKENS from '../constants/tokens/ropsten'
 
 export const ALL_TOKENS = [
-  // WETH on all chains
-  ...Object.values(WETH),
+  // VVET on all chains
+  ...Object.values(VVET),
   // chain-specific tokens
   ...MAINNET_TOKENS,
-  ...RINKEBY_TOKENS,
-  ...KOVAN_TOKENS,
-  ...ROPSTEN_TOKENS
 ]
-  // remap WETH to ETH
+  // remap VVET to VET
   .map(token => {
-    if (token.equals(WETH[token.chainId])) {
-      ;(token as any).symbol = 'ETH'
-      ;(token as any).name = 'Ether'
+    if (token.equals(VVET[token.chainId])) {
+      ;(token as any).symbol = 'VET'
+      ;(token as any).name = 'VeChain'
     }
     return token
   })

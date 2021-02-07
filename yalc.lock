@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@uniswap/sdk": {
+      "signature": "0143eda4bc934809bf3f7ac9d18367c0",
+      "file": true,
+      "replaced": "^2.0.5"
+    }
+  }
+}

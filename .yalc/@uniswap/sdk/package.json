@@ -1,0 +1,47 @@
+{
+  "name": "@uniswap/sdk",
+  "license": "GPL-3.0-or-later",
+  "version": "2.0.5+0143eda4",
+  "description": "🛠 An SDK for building applications on top of Uniswap.",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": "https://github.com/Uniswap/uniswap-sdk.git",
+  "keywords": [
+    "uniswap",
+    "ethereum"
+  ],
+  "module": "dist/sdk.esm.js",
+  "scripts": {
+    "lint": "tsdx lint src test",
+    "build": "tsdx build",
+    "start": "tsdx watch",
+    "test": "tsdx test",
+    "prepublishOnly": "tsdx build"
+  },
+  "dependencies": {
+    "@ethersproject/address": "^5.0.0-beta.134",
+    "@ethersproject/contracts": "^5.0.0-beta.143",
+    "@ethersproject/networks": "^5.0.0-beta.135",
+    "@ethersproject/providers": "^5.0.0-beta.153",
+    "@ethersproject/solidity": "^5.0.0-beta.131",
+    "@uniswap/v2-core": "^1.0.0",
+    "big.js": "^5.2.2",
+    "decimal.js-light": "^2.5.0",
+    "jsbi": "^3.1.1",
+    "tiny-invariant": "^1.1.0",
+    "tiny-warning": "^1.0.3",
+    "toformat": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": true
+  },
+  "yalcSig": "0143eda4bc934809bf3f7ac9d18367c0"
+}

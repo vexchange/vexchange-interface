@@ -1,4 +1,5 @@
 import { BalanceMap, getEtherBalances, getTokensBalance } from '@mycrypto/eth-scan'
+import { BigNumber } from '@ethersproject/bignumber'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useWeb3React } from '../../hooks'
@@ -6,10 +7,13 @@ import { useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
 import { updateEtherBalances, updateTokenBalances } from './actions'
 import { balanceKey } from './reducer'
+import { find } from 'lodash';
+import ERC20_ABI from '../../constants/abis/erc20.json'
 
 function convertBalanceMapValuesToString(balanceMap: BalanceMap): { [key: string]: string } {
   return Object.keys(balanceMap).reduce<{ [key: string]: string }>((map, key) => {
-    map[key] = balanceMap[key].toString()
+    // map[key] = balanceMap[key].toString()
+    map[key] = BigNumber.from(balanceMap[key]).toString()
     return map
   }, {})
 }
@@ -61,35 +65,69 @@ export default function Updater() {
     }, {})
   }, [activeTokenBalanceListeners, allBalances, chainId, lastBlockNumber])
 
+  const getVETBalance = (accounts, library) => {
+    return new Promise((resolve, reject) => {
+      const detail = accounts.reduce(async(_, cur) => {
+        const { balance } = await library.thor.account(cur).get()
+
+        return {
+          [cur]: balance
+        }
+      }, {})
+
+      resolve(detail)
+    })
+  }
+
   useEffect(() => {
     if (!library) return
     if (ethBalancesNeedUpdate.length === 0) return
-    getEtherBalances(library, ethBalancesNeedUpdate)
-      .then(balanceMap => {
-        dispatch(
-          updateEtherBalances({
-            blockNumber: lastBlockNumber,
-            chainId,
-            etherBalances: convertBalanceMapValuesToString(balanceMap)
-          })
-        )
-      })
-      .catch(error => {
-        console.error('balance fetch failed', ethBalancesNeedUpdate, error)
-      })
+
+    getVETBalance(ethBalancesNeedUpdate, library).then(balanceMap => {
+      dispatch(
+        updateEtherBalances({
+          blockNumber: lastBlockNumber,
+          chainId,
+          //@ts-ignore
+          etherBalances: convertBalanceMapValuesToString(balanceMap)
+        })
+      )
+    })
   }, [library, ethBalancesNeedUpdate, dispatch, lastBlockNumber, chainId])
 
+  const getTokenBalance = (tokenAddress, address, library) => {
+    const abi = find(ERC20_ABI, { name: 'balanceOf'})
+    return new Promise(async(resolve, reject) => {
+      const detail = tokenAddress.reduce(async(acc, cur) => {
+        const method = library.thor.account(cur).method(abi)
+        try {
+          let { decoded: { balance } } = await method.call(address)
+
+          return {
+            [cur]: balance
+          }
+        } catch(error) {
+          console.log(error);
+          reject(error)
+        }
+
+      }, {})
+
+      resolve(detail)
+    });
+  }
   useEffect(() => {
     if (!library) return
     Object.keys(tokenBalancesNeedUpdate).forEach(address => {
       if (tokenBalancesNeedUpdate[address].length === 0) return
-      getTokensBalance(library, address, tokenBalancesNeedUpdate[address])
+      getTokenBalance(tokenBalancesNeedUpdate[address], address, library)
         .then(tokenBalanceMap => {
           dispatch(
             updateTokenBalances({
               address,
               chainId,
               blockNumber: lastBlockNumber,
+              //@ts-ignore
               tokenBalances: convertBalanceMapValuesToString(tokenBalanceMap)
             })
           )

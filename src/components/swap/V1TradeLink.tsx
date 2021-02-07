@@ -14,7 +14,7 @@ export default function V1TradeLink({ v1TradeLinkIfBetter }: { v1TradeLinkIfBett
         <Text lineHeight="145.23%;" fontSize={14} fontWeight={400} color={theme.text1}>
           There is a better price for this trade on
           <Link href={v1TradeLinkIfBetter}>
-            <b> Uniswap V1 ↗</b>
+            <b> Vexchange V1 ↗</b>
           </Link>
         </Text>
       </AutoColumn>

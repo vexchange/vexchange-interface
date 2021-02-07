@@ -13,7 +13,7 @@ import { ButtonPrimary } from '../Button'
 import { AutoColumn, ColumnCenter } from '../Column'
 
 import { useWeb3React } from '../../hooks'
-import { getEtherscanLink } from '../../utils'
+import { getExploreLink } from '../../utils'
 
 const Wrapper = styled.div`
   width: 100%;
@@ -106,9 +106,9 @@ function ConfirmationModal({
               </AutoColumn>
               {!pendingConfirmation && (
                 <>
-                  <Link href={getEtherscanLink(chainId, hash, 'transaction')}>
+                  <Link href={getExploreLink(chainId, hash, 'transaction')}>
                     <Text fontWeight={500} fontSize={14} color={theme.primary1}>
-                      View on Etherscan
+                      View on Explore
                     </Text>
                   </Link>
                   <ButtonPrimary onClick={dismissAndReturn} style={{ margin: '20px 0 0 0' }}>

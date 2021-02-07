@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactGA from 'react-ga'
-import { Web3ReactProvider, createWeb3ReactRoot } from '@web3-react/core'
-import { Web3Provider } from '@ethersproject/providers'
+import { Web3ReactProvider, createWeb3ReactRoot } from './context'
+import Connex from '@vechain/connex'
 import { Provider } from 'react-redux'
 
 import { NetworkContextName } from './constants'
@@ -18,10 +18,13 @@ import './i18n'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 
-function getLibrary(provider): Web3Provider {
-  const library = new Web3Provider(provider)
-  library.pollingInterval = 10000
-  return library
+function getLibrary() {
+  const connex = new Connex({
+    node: 'https://testnet.veblocks.net/',
+    network: 'test'
+  })
+
+  return connex
 }
 
 if (process.env.NODE_ENV === 'production') {

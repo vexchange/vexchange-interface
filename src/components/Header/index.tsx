@@ -10,7 +10,7 @@ import Web3Status from '../Web3Status'
 
 import { Link } from '../../theme'
 import { Text } from 'rebass'
-import { WETH, ChainId } from '@uniswap/sdk'
+import { VVET, ChainId } from '@uniswap/sdk'
 import { isMobile } from 'react-device-detect'
 import { YellowCard } from '../Card'
 import { useWeb3React } from '../../hooks'
@@ -152,13 +152,13 @@ const VersionToggle = styled.a`
 export default function Header() {
   const { account, chainId } = useWeb3React()
 
-  const userEthBalance = useTokenBalanceTreatingWETHasETH(account, WETH[chainId])
+  const userEthBalance = useTokenBalanceTreatingWETHasETH(account, VVET[chainId])
   const [isDark] = useDarkModeManager()
 
   return (
     <HeaderFrame>
       <MigrateBanner>
-        Uniswap V2 is live! Read the&nbsp;
+        Vexchange V2 is live! Read the&nbsp;
         <Link href="https://uniswap.org/blog/launch-uniswap-v2/">
           <b>blog post ↗</b>
         </Link>
@@ -205,7 +205,7 @@ export default function Header() {
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <Text style={{ flexShrink: 0 }} px="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(4)} ETH
+                {userEthBalance?.toSignificant(4)} VET
               </Text>
             ) : null}
             <Web3Status />

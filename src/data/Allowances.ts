@@ -1,26 +1,28 @@
-import { Contract } from '@ethersproject/contracts'
+import { useEffect, useState } from 'react'
 import { Token, TokenAmount } from '@uniswap/sdk'
-import useSWR from 'swr'
+import { find } from 'lodash'
 
-import { SWRKeys, useKeepSWRDataLiveAsBlocksArrive } from '.'
-import { useTokenContract } from '../hooks'
-
-function getTokenAllowance(contract: Contract, token: Token): (owner: string, spender: string) => Promise<TokenAmount> {
-  return async (owner: string, spender: string): Promise<TokenAmount> =>
-    contract
-      .allowance(owner, spender)
-      .then((balance: { toString: () => string }) => new TokenAmount(token, balance.toString()))
-}
+import ERC20_ABI from '../constants/abis/erc20.json'
+import { useWeb3React } from '../hooks'
 
 export function useTokenAllowance(token?: Token, owner?: string, spender?: string): TokenAmount {
-  const contract = useTokenContract(token?.address, false)
+  const [amount, setAmount] = useState<TokenAmount>()
+  const { library } = useWeb3React()
+  const abi = find(ERC20_ABI, { name: "allowance"})
 
-  const shouldFetch = !!contract && typeof owner === 'string' && typeof spender === 'string'
-  const { data, mutate } = useSWR(
-    shouldFetch ? [owner, spender, token.address, token.chainId, SWRKeys.Allowances] : null,
-    getTokenAllowance(contract, token)
-  )
-  useKeepSWRDataLiveAsBlocksArrive(mutate)
+  useEffect(() => {
+    const getTokenAllowance = async () => {
+      const method = library.thor.account(token.address).method(abi)
+      const { decoded: { 0: balance } } = await method.call(owner, spender)
 
-  return data
+      const tokenAmount = new TokenAmount(token, balance.toString())
+      setAmount(tokenAmount)
+    }
+
+    if (token?.address) {
+      getTokenAllowance()
+    }
+  }, [token])
+
+  return amount
 }

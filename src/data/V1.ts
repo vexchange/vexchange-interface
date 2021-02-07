@@ -1,5 +1,5 @@
 import { Contract } from '@ethersproject/contracts'
-import { Token, TokenAmount, Pair, Trade, ChainId, WETH, Route, TradeType, Percent } from '@uniswap/sdk'
+import { Token, TokenAmount, Pair, Trade, ChainId, VVET, Route, TradeType, Percent } from '@uniswap/sdk'
 import useSWR from 'swr'
 import { useWeb3React } from '../hooks'
 
@@ -29,15 +29,15 @@ function useV1PairAddress(tokenAddress: string) {
 }
 
 function useMockV1Pair(token?: Token) {
-  const isWETH = token?.equals(WETH[token?.chainId])
+  const isWETH = token?.equals(VVET[token?.chainId])
 
-  // will only return an address on mainnet, and not for WETH
+  // will only return an address on mainnet, and not for VVET
   const v1PairAddress = useV1PairAddress(isWETH ? undefined : token?.address)
   const tokenBalance = useTokenBalances(v1PairAddress, [token])[token?.address]
   const ETHBalance = useETHBalances([v1PairAddress])[v1PairAddress]
 
   return tokenBalance && ETHBalance
-    ? new Pair(tokenBalance, new TokenAmount(WETH[token?.chainId], ETHBalance.toString()))
+    ? new Pair(tokenBalance, new TokenAmount(VVET[token?.chainId], ETHBalance.toString()))
     : undefined
 }
 
@@ -59,8 +59,8 @@ export function useV1TradeLinkIfBetter(
   const inputPair = useMockV1Pair(input)
   const outputPair = useMockV1Pair(output)
 
-  const inputIsWETH = mainnet && input?.equals(WETH[ChainId.MAINNET])
-  const outputIsWETH = mainnet && output?.equals(WETH[ChainId.MAINNET])
+  const inputIsWETH = mainnet && input?.equals(VVET[ChainId.MAINNET])
+  const outputIsWETH = mainnet && output?.equals(VVET[ChainId.MAINNET])
 
   // construct a direct or through ETH v1 route
   let pairs: Pair[]
@@ -69,7 +69,7 @@ export function useV1TradeLinkIfBetter(
   } else if (outputIsWETH && inputPair) {
     pairs = [inputPair]
   }
-  // if neither are WETH, it's token-to-token (if they both exist)
+  // if neither are VVET, it's token-to-token (if they both exist)
   else if (inputPair && outputPair) {
     pairs = [inputPair, outputPair]
   }
@@ -96,8 +96,8 @@ export function useV1TradeLinkIfBetter(
   }
 
   return v1HasBetterTrade
-    ? `https://v1.uniswap.exchange/swap?inputCurrency=${inputIsWETH ? 'ETH' : input.address}&outputCurrency=${
-        outputIsWETH ? 'ETH' : output.address
+    ? `https://vexchange.io/swap?inputCurrency=${inputIsWETH ? 'VET' : input.address}&outputCurrency=${
+        outputIsWETH ? 'VET' : output.address
       }`
     : undefined
 }

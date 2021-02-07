@@ -1,27 +1,29 @@
-import { Contract } from '@ethersproject/contracts'
+import { useEffect, useState } from 'react'
 import { Token, TokenAmount } from '@uniswap/sdk'
-import useSWR from 'swr'
+import { find } from 'lodash'
 import { abi as IERC20ABI } from '@uniswap/v2-core/build/IERC20.json'
 
-import { SWRKeys, useKeepSWRDataLiveAsBlocksArrive } from '.'
-import { useContract } from '../hooks'
-
-function getTotalSupply(contract: Contract, token: Token): () => Promise<TokenAmount> {
-  return async (): Promise<TokenAmount> =>
-    contract
-      .totalSupply()
-      .then((totalSupply: { toString: () => string }) => new TokenAmount(token, totalSupply.toString()))
-}
+import { useWeb3React } from '../hooks'
 
 export function useTotalSupply(token?: Token): TokenAmount {
-  const contract = useContract(token?.address, IERC20ABI, false)
+  const [amount, setAmount] = useState<TokenAmount>()
+  const { library } = useWeb3React()
+  const abi = find(IERC20ABI, { name: 'totalSupply' })
 
-  const shouldFetch = !!contract
-  const { data, mutate } = useSWR(
-    shouldFetch ? [token.address, token.chainId, SWRKeys.TotalSupply] : null,
-    getTotalSupply(contract, token)
-  )
-  useKeepSWRDataLiveAsBlocksArrive(mutate)
+  useEffect(() => {
+    const getTotalSupply = async () => {
+      const method = library.thor.account(token.address).method(abi)
+      const { decoded: { 0: totalSupply } } = await method.call()
 
-  return data
+      const tokenAmount = new TokenAmount(token, totalSupply.toString())
+
+      setAmount(tokenAmount)
+    }
+
+    if (token?.address) {
+      getTotalSupply()
+    }
+  }, [token])
+
+  return amount
 }

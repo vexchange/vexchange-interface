@@ -28,7 +28,9 @@ export default function Updater() {
         )
         .forEach(hash => {
           library
-            .getTransactionReceipt(hash)
+            .thor
+            .transaction(hash)
+            .get()
             .then(receipt => {
               if (!receipt) {
                 dispatch(checkTransaction({ chainId, hash, blockNumber: lastBlockNumber }))
@@ -38,14 +40,14 @@ export default function Updater() {
                     chainId,
                     hash,
                     receipt: {
-                      blockHash: receipt.blockHash,
-                      blockNumber: receipt.blockNumber,
+                      blockHash: receipt.meta.blockID,
+                      blockNumber: receipt.meta.blockNumber,
                       contractAddress: receipt.contractAddress,
-                      from: receipt.from,
+                      from: receipt.origin,
                       status: receipt.status,
-                      to: receipt.to,
-                      transactionHash: receipt.transactionHash,
-                      transactionIndex: receipt.transactionIndex
+                      // to: receipt.to,
+                      transactionHash: receipt.id,
+                      // transactionIndex: receipt.transactionIndex
                     }
                   })
                 )

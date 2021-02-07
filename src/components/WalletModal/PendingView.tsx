@@ -1,10 +1,9 @@
-import { AbstractConnector } from '@web3-react/abstract-connector'
+import { AbstractConnector } from '../../connectors/AbstractConnector'
 import React from 'react'
 import styled from 'styled-components'
 import Option from './Option'
 import { SUPPORTED_WALLETS } from '../../constants'
-import WalletConnectData from './WalletConnectData'
-import { walletconnect, injected } from '../../connectors'
+import { injected } from '../../connectors'
 import { Spinner } from '../../theme'
 import Circle from '../../assets/images/circle.svg'
 import { darken } from 'polished'
@@ -90,7 +89,6 @@ export default function PendingView({
 
   return (
     <PendingSection>
-      {!error && connector === walletconnect && <WalletConnectData size={size} uri={uri} />}
       <LoadingMessage error={error}>
         <LoadingWrapper>
           {!error && <SpinnerWrapper src={Circle} />}
@@ -106,8 +104,6 @@ export default function PendingView({
                 Try Again
               </ErrorButton>
             </ErrorGroup>
-          ) : connector === walletconnect ? (
-            'Scan QR code with a compatible wallet...'
           ) : (
             'Initializing...'
           )}

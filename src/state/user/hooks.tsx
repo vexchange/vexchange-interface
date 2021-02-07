@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Pair, Token, TokenAmount, WETH } from '@uniswap/sdk'
+import { ChainId, JSBI, Pair, Token, TokenAmount, VVET } from '@uniswap/sdk'
 import { useWeb3React } from '../../hooks'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
@@ -141,9 +141,8 @@ export function usePairAdder(): (pair: Pair) => void {
 }
 
 const bases = [
-  ...Object.values(WETH),
-  new Token(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18, 'DAI', 'Dai Stablecoin'),
-  new Token(ChainId.MAINNET, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'USDC', 'USD//C')
+  ...Object.values(VVET),
+  new Token(ChainId.MAINNET, '0x0000000000000000000000000000456E65726779', 18, 'VTHO', 'VeThor'),
 ]
 
 export function useAllDummyPairs(): Pair[] {

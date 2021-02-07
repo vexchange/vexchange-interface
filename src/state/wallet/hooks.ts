@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address'
-import { JSBI, Token, TokenAmount, WETH } from '@uniswap/sdk'
+import { JSBI, Token, TokenAmount, VVET } from '@uniswap/sdk'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAllTokens } from '../../hooks/Tokens'
@@ -110,7 +110,7 @@ export function useTokenBalancesTreatWETHAsETH(
     }
     let includesWETH = false
     const tokensWithoutWETH = tokens.filter(t => {
-      const isWETH = t?.equals(WETH[chainId]) ?? false
+      const isWETH = t?.equals(VVET[chainId]) ?? false
       if (isWETH) includesWETH = true
       return !isWETH
     })
@@ -122,7 +122,7 @@ export function useTokenBalancesTreatWETHAsETH(
 
   return useMemo(() => {
     if (includesWETH) {
-      const weth = WETH[chainId]
+      const weth = VVET[chainId]
       const ethBalance = ETHBalance[address]
       return {
         ...balancesWithoutWETH,

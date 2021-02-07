@@ -126,9 +126,9 @@ export default function App() {
                       component={({ match }) => {
                         const tokens = match.params.tokens.split('-')
                         const t0 =
-                          tokens?.[0] === 'ETH' ? 'ETH' : isAddress(tokens?.[0]) ? isAddress(tokens[0]) : undefined
+                          tokens?.[0] === 'VET' ? 'VET' : isAddress(tokens?.[0]) ? isAddress(tokens[0]) : undefined
                         const t1 =
-                          tokens?.[1] === 'ETH' ? 'ETH' : isAddress(tokens?.[1]) ? isAddress(tokens[1]) : undefined
+                          tokens?.[1] === 'VET' ? 'VET' : isAddress(tokens?.[1]) ? isAddress(tokens[1]) : undefined
                         if (t0 && t1) {
                           return <Add token0={t0} token1={t1} />
                         } else {
@@ -143,9 +143,9 @@ export default function App() {
                       component={({ match }) => {
                         const tokens = match.params.tokens.split('-')
                         const t0 =
-                          tokens?.[0] === 'ETH' ? 'ETH' : isAddress(tokens?.[0]) ? isAddress(tokens[0]) : undefined
+                          tokens?.[0] === 'VET' ? 'VET' : isAddress(tokens?.[0]) ? isAddress(tokens[0]) : undefined
                         const t1 =
-                          tokens?.[1] === 'ETH' ? 'ETH' : isAddress(tokens?.[1]) ? isAddress(tokens[1]) : undefined
+                          tokens?.[1] === 'VET' ? 'VET' : isAddress(tokens?.[1]) ? isAddress(tokens[1]) : undefined
                         if (t0 && t1) {
                           return <Remove token0={t0} token1={t1} />
                         } else {

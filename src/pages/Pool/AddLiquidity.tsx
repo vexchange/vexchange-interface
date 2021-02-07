@@ -2,7 +2,7 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
 import { Contract } from '@ethersproject/contracts'
 import { parseEther, parseUnits } from '@ethersproject/units'
-import { JSBI, Percent, Price, Route, Token, TokenAmount, WETH } from '@uniswap/sdk'
+import { JSBI, Percent, Price, Route, Token, TokenAmount, VVET } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -244,12 +244,12 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
   const inputApproval: TokenAmount = useTokenAllowance(tokens[Field.INPUT], account, ROUTER_ADDRESS)
   const outputApproval: TokenAmount = useTokenAllowance(tokens[Field.OUTPUT], account, ROUTER_ADDRESS)
   const inputApproved =
-    tokens[Field.INPUT]?.equals(WETH[chainId]) ||
+    tokens[Field.INPUT]?.equals(VVET[chainId]) ||
     (!!inputApproval &&
       !!parsedAmounts[Field.INPUT] &&
       JSBI.greaterThanOrEqual(inputApproval.raw, parsedAmounts[Field.INPUT].raw))
   const outputApproved =
-    tokens[Field.OUTPUT]?.equals(WETH[chainId]) ||
+    tokens[Field.OUTPUT]?.equals(VVET[chainId]) ||
     (!!outputApproval &&
       !!parsedAmounts[Field.OUTPUT] &&
       JSBI.greaterThanOrEqual(outputApproval.raw, parsedAmounts[Field.OUTPUT].raw))
@@ -309,7 +309,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     })
   }, [])
 
-  const MIN_ETHER: TokenAmount = new TokenAmount(WETH[chainId], JSBI.BigInt(parseEther('.01')))
+  const MIN_ETHER: TokenAmount = new TokenAmount(VVET[chainId], JSBI.BigInt(parseEther('.01')))
 
   // get the max amounts user can add
   const [maxAmountInput, maxAmountOutput]: TokenAmount[] = [Field.INPUT, Field.OUTPUT].map(index => {
@@ -317,9 +317,9 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     return !!userBalances[Field[field]] &&
       JSBI.greaterThan(
         userBalances[Field[field]].raw,
-        tokens[Field[field]]?.equals(WETH[chainId]) ? MIN_ETHER.raw : JSBI.BigInt(0)
+        tokens[Field[field]]?.equals(VVET[chainId]) ? MIN_ETHER.raw : JSBI.BigInt(0)
       )
-      ? tokens[Field[field]]?.equals(WETH[chainId])
+      ? tokens[Field[field]]?.equals(VVET[chainId])
         ? userBalances[Field[field]].subtract(MIN_ETHER)
         : userBalances[Field[field]]
       : undefined
@@ -403,11 +403,11 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     let method, estimate, args, value
 
     // one of the tokens is ETH
-    if (tokens[Field.INPUT].equals(WETH[chainId]) || tokens[Field.OUTPUT].equals(WETH[chainId])) {
+    if (tokens[Field.INPUT].equals(VVET[chainId]) || tokens[Field.OUTPUT].equals(VVET[chainId])) {
       method = router.addLiquidityETH
       estimate = router.estimateGas.addLiquidityETH
 
-      const outputIsETH = tokens[Field.OUTPUT].equals(WETH[chainId])
+      const outputIsETH = tokens[Field.OUTPUT].equals(VVET[chainId])
 
       args = [
         tokens[outputIsETH ? Field.INPUT : Field.OUTPUT].address, // token

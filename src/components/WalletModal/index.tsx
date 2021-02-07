@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import styled from 'styled-components'
 import { isMobile } from 'react-device-detect'
-import { UnsupportedChainIdError } from '@web3-react/core'
+import { UnsupportedChainIdError } from '../../context'
 import { useWeb3React } from '../../hooks'
 import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
 import { useWalletModalOpen, useWalletModalToggle } from '../../state/application/hooks'
@@ -16,8 +16,7 @@ import { usePrevious } from '../../hooks'
 import { Link } from '../../theme'
 import MetamaskIcon from '../../assets/images/metamask.png'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
-import { injected, walletconnect, fortmatic, portis } from '../../connectors'
-import { OVERLAY_READY } from '../../connectors/Fortmatic'
+import { injected } from '../../connectors'
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -118,11 +117,9 @@ const WALLET_VIEWS = {
 export default function WalletModal({
   pendingTransactions,
   confirmedTransactions,
-  ENSName
 }: {
   pendingTransactions: string[] // hashes of pending
   confirmedTransactions: string[] // hashes of confirmed
-  ENSName?: string
 }) {
   const { active, account, connector, activate, error } = useWeb3React()
 
@@ -151,19 +148,6 @@ export default function WalletModal({
       setWalletView(WALLET_VIEWS.ACCOUNT)
     }
   }, [walletModalOpen])
-
-  // set up uri listener for walletconnect
-  const [uri, setUri] = useState()
-  useEffect(() => {
-    const activateWC = uri => {
-      setUri(uri)
-      // setWalletView(WALLET_VIEWS.PENDING)
-    }
-    walletconnect.on(URI_AVAILABLE, activateWC)
-    return () => {
-      walletconnect.off(URI_AVAILABLE, activateWC)
-    }
-  }, [])
 
   // close modal when a connection is successful
   const activePrevious = usePrevious(active)
@@ -199,13 +183,6 @@ export default function WalletModal({
     })
   }
 
-  // close wallet modal if fortmatic modal is active
-  useEffect(() => {
-    fortmatic.on(OVERLAY_READY, () => {
-      toggleWalletModal()
-    })
-  }, [toggleWalletModal])
-
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
     const isMetamask = window.ethereum && window.ethereum.isMetaMask
@@ -213,11 +190,6 @@ export default function WalletModal({
       const option = SUPPORTED_WALLETS[key]
       // check for mobile options
       if (isMobile) {
-        //disable portis on mobile for now
-        if (option.connector === portis) {
-          return null
-        }
-
         if (!window.web3 && !window.ethereum && option.mobile) {
           return (
             <Option
@@ -316,7 +288,6 @@ export default function WalletModal({
           toggleWalletModal={toggleWalletModal}
           pendingTransactions={pendingTransactions}
           confirmedTransactions={confirmedTransactions}
-          ENSName={ENSName}
           openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
         />
       )
@@ -345,7 +316,7 @@ export default function WalletModal({
         <ContentWrapper>
           {walletView === WALLET_VIEWS.PENDING ? (
             <PendingView
-              uri={uri}
+              // uri={uri}
               size={220}
               connector={pendingWallet}
               error={pendingError}

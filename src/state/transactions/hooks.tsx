@@ -9,7 +9,7 @@ import { TransactionDetails } from './reducer'
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
 export function useTransactionAdder(): (
-  response: TransactionResponse,
+  response,
   customData?: { summary?: string; approvalOfToken?: string }
 ) => void {
   const { chainId, account } = useWeb3React()
@@ -17,14 +17,14 @@ export function useTransactionAdder(): (
 
   return useCallback(
     (
-      response: TransactionResponse,
+      response,
       { summary, approvalOfToken }: { summary?: string; approvalOfToken?: string } = {}
     ) => {
-      const { hash } = response
-      if (!hash) {
+      const { txid } = response
+      if (!txid) {
         throw Error('No transaction hash found.')
       }
-      dispatch(addTransaction({ hash, from: account, chainId, approvalOfToken, summary }))
+      dispatch(addTransaction({ hash: txid, from: account, chainId, approvalOfToken, summary }))
     },
     [dispatch, chainId, account]
   )

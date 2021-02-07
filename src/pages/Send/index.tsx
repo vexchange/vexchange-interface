@@ -1,4 +1,4 @@
-import { JSBI, TokenAmount, WETH } from '@uniswap/sdk'
+import { JSBI, TokenAmount, VVET } from '@uniswap/sdk'
 import React, { useContext, useEffect, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -55,7 +55,6 @@ export default function Send({ location: { search } }: RouteComponentProps) {
   // sending state
   const [sendingWithSwap, setSendingWithSwap] = useState<boolean>(false)
   const [recipient, setRecipient] = useState<string>('')
-  const [ENS, setENS] = useState<string>('')
   const [recipientError, setRecipientError] = useState<string | null>('Enter a Recipient')
 
   // trade details, check query params for initial state
@@ -116,12 +115,12 @@ export default function Send({ location: { search } }: RouteComponentProps) {
   const maxAmountInput: TokenAmount =
     !!tokenBalances[Field.INPUT] &&
     !!tokens[Field.INPUT] &&
-    !!WETH[chainId] &&
+    !!VVET[chainId] &&
     tokenBalances[Field.INPUT].greaterThan(
-      new TokenAmount(tokens[Field.INPUT], tokens[Field.INPUT].equals(WETH[chainId]) ? MIN_ETH : '0')
+      new TokenAmount(tokens[Field.INPUT], tokens[Field.INPUT].equals(VVET[chainId]) ? MIN_ETH : '0')
     )
-      ? tokens[Field.INPUT].equals(WETH[chainId])
-        ? tokenBalances[Field.INPUT].subtract(new TokenAmount(WETH[chainId], MIN_ETH))
+      ? tokens[Field.INPUT].equals(VVET[chainId])
+        ? tokenBalances[Field.INPUT].subtract(new TokenAmount(VVET[chainId], MIN_ETH))
         : tokenBalances[Field.INPUT]
       : undefined
   const atMaxAmountInput: boolean =
@@ -179,7 +178,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
 
   function modalHeader() {
     if (!sendingWithSwap) {
-      return <TransferModalHeader amount={parsedAmounts?.[Field.INPUT]} ENSName={ENS} recipient={recipient} />
+      return <TransferModalHeader amount={parsedAmounts?.[Field.INPUT]} recipient={recipient} />
     }
 
     if (sendingWithSwap) {
@@ -265,9 +264,6 @@ export default function Send({ location: { search } }: RouteComponentProps) {
       setRecipient(result.address)
     } else {
       setRecipient('')
-    }
-    if (result.name) {
-      setENS(result.name)
     }
   }
 

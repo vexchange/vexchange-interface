@@ -40,7 +40,7 @@ export function balanceKey({
   address: string
   tokenAddress?: string // undefined for ETH
 }): string {
-  return `${chainId}-${address}-${tokenAddress ?? 'ETH'}`
+  return `${chainId}-${address}-${tokenAddress ?? 'VET'}`
 }
 
 const initialState: WalletState = {

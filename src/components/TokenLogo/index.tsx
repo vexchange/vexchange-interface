@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { isAddress } from '../../utils'
 import { useWeb3React } from '../../hooks'
-import { WETH } from '@uniswap/sdk'
+import { VVET } from '@uniswap/sdk'
 
-import { ReactComponent as EthereumLogo } from '../../assets/images/ethereum-logo.svg'
+import { ReactComponent as VeChainLogo } from '../../assets/images/vet-logo.svg'
 
 const TOKEN_ICON_API = address =>
-  `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`
+  `https://raw.githubusercontent.com/vechain/token-registry/master/tokens/main/${address}/token.png`
 const BAD_IMAGES = {}
 
 const Image = styled.img<{ size: string }>`
@@ -28,7 +28,7 @@ const Emoji = styled.span<{ size?: string }>`
   margin-bottom: -4px;
 `
 
-const StyledEthereumLogo = styled(EthereumLogo)<{ size: string }>`
+const StyledEthereumLogo = styled(VeChainLogo)<{ size: string }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
@@ -53,11 +53,11 @@ export default function TokenLogo({
   }
 
   let path = ''
-  // hard code to show ETH instead of WETH in UI
-  if (address === WETH[chainId].address) {
+  // hard code to show VET instead of VVET in UI
+  if (address === VVET[chainId].address) {
     return <StyledEthereumLogo size={size} {...rest} />
   } else if (!error && !BAD_IMAGES[address] && isAddress(address)) {
-    path = TOKEN_ICON_API(address)
+    path = TOKEN_ICON_API(address.toLowerCase())
   } else {
     return (
       <Emoji {...rest} size={size}>

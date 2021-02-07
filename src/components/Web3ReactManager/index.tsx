@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useWeb3React } from '@web3-react/core'
+import { useWeb3React } from '../../context/'
 import styled from 'styled-components'
 import { useTranslation } from 'react-i18next'
 
@@ -41,6 +41,7 @@ export default function Web3ReactManager({ children }) {
   // after eagerly trying injected, if the network connect ever isn't active or in an error state, activate itd
   useEffect(() => {
     if (triedEager && !networkActive && !networkError && !active) {
+      //@ts-ignore
       activateNetwork(network)
     }
   }, [triedEager, networkActive, networkError, activateNetwork, active])

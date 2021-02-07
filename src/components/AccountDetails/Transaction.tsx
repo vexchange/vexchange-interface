@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Check, Triangle } from 'react-feather'
 
 import { useWeb3React } from '../../hooks'
-import { getEtherscanLink } from '../../utils'
+import { getExploreLink } from '../../utils'
 import { Link, Spinner } from '../../theme'
 import Circle from '../../assets/images/circle.svg'
 
@@ -64,7 +64,7 @@ export default function Transaction({ hash }: { hash: string }) {
 
   return (
     <TransactionWrapper>
-      <TransactionState href={getEtherscanLink(chainId, hash, 'transaction')} pending={pending} success={success}>
+      <TransactionState href={getExploreLink(chainId, hash, 'transaction')} pending={pending} success={success}>
         <TransactionStatusText>{summary ? summary : hash}</TransactionStatusText>
         <IconWrapper>
           {pending ? <Spinner src={Circle} /> : success ? <Check size="16" /> : <Triangle size="16" />}

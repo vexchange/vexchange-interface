@@ -94,7 +94,7 @@ function PopupItem({ content, popKey }: { content: PopupContent; popKey: string 
             UNI {token0?.symbol} / {token1?.symbol}
           </Text>
         </Row>
-        <Link>View on Uniswap Info.</Link>
+        <Link>View on Vexchange Info.</Link>
       </AutoColumn>
     )
   }

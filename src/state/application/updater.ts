@@ -14,8 +14,10 @@ export default function Updater() {
 
       const update = () => {
         library
-          .getBlockNumber()
-          .then(blockNumber => {
+          .thor
+          .ticker()
+          .next()
+          .then(({ number: blockNumber }) => {
             if (!stale) {
               dispatch(updateBlockNumber({ networkId: chainId, blockNumber }))
             }
@@ -28,12 +30,6 @@ export default function Updater() {
       }
 
       update()
-      library.on('block', update)
-
-      return () => {
-        stale = true
-        library.removeListener('block', update)
-      }
     }
   }, [dispatch, chainId, library])
 

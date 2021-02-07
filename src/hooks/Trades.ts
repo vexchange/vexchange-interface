@@ -1,44 +1,37 @@
 import { useMemo } from 'react'
-import { WETH, Token, TokenAmount, Trade, ChainId, Pair } from '@uniswap/sdk'
+import { VVET, Token, TokenAmount, Trade, ChainId, Pair } from '@uniswap/sdk'
 import { useWeb3React } from './index'
 import { usePair } from '../data/Reserves'
 
-const DAI = new Token(ChainId.MAINNET, '0x6B175474E89094C44Da98b954EedeAC495271d0F', 18, 'DAI', 'Dai Stablecoin')
-const USDC = new Token(ChainId.MAINNET, '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'USDC', 'USD//C')
+const VTHO = new Token(ChainId.MAINNET, '0x0000000000000000000000000000456E65726779', 18, 'VTHO', 'VeThor');
 function useAllCommonPairs(tokenA?: Token, tokenB?: Token): Pair[] {
   const { chainId } = useWeb3React()
 
   // check for direct pair between tokens
   const pairBetween = usePair(tokenA, tokenB)
 
-  // get token<->WETH pairs
-  const aToETH = usePair(tokenA, WETH[chainId])
-  const bToETH = usePair(tokenB, WETH[chainId])
+  // get token<->VVET pairs
+  const aToETH = usePair(tokenA, VVET[chainId])
+  const bToETH = usePair(tokenB, VVET[chainId])
 
-  // get token<->DAI pairs
-  const aToDAI = usePair(tokenA, chainId === ChainId.MAINNET ? DAI : null)
-  const bToDAI = usePair(tokenB, chainId === ChainId.MAINNET ? DAI : null)
-
-  // get token<->USDC pairs
-  const aToUSDC = usePair(tokenA, chainId === ChainId.MAINNET ? USDC : null)
-  const bToUSDC = usePair(tokenB, chainId === ChainId.MAINNET ? USDC : null)
+  // get token<->VTHO pairs
+  const aToVTHO = usePair(tokenA, chainId === ChainId.MAINNET ? VTHO : null)
+  const bToVTHO = usePair(tokenB, chainId === ChainId.MAINNET ? VTHO : null)
 
   // get connecting pairs
-  const DAIToETH = usePair(chainId === ChainId.MAINNET ? DAI : null, WETH[chainId])
-  const USDCToETH = usePair(chainId === ChainId.MAINNET ? USDC : null, WETH[chainId])
-  const DAIToUSDC = usePair(chainId === ChainId.MAINNET ? DAI : null, chainId === ChainId.MAINNET ? USDC : null)
+  const VTHOToETH = usePair(chainId === ChainId.MAINNET ? VTHO : null, VVET[chainId])
 
   // only pass along valid pairs, non-duplicated pairs
   return useMemo(
     () =>
-      [pairBetween, aToETH, bToETH, aToDAI, bToDAI, aToUSDC, bToUSDC, DAIToETH, USDCToETH, DAIToUSDC]
+      [pairBetween, aToETH, bToETH, aToVTHO, bToVTHO, VTHOToETH]
         // filter out invalid pairs
         .filter(p => !!p)
         // filter out duplicated pairs
         .filter(
           (p, i, pairs) => i === pairs.findIndex(pair => pair?.liquidityToken.address === p.liquidityToken.address)
         ),
-    [pairBetween, aToETH, bToETH, aToDAI, bToDAI, aToUSDC, bToUSDC, DAIToETH, USDCToETH, DAIToUSDC]
+    [pairBetween, aToETH, bToETH, aToVTHO, bToVTHO, VTHOToETH]
   )
 }
 
