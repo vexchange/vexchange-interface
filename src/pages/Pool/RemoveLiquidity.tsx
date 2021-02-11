@@ -1,13 +1,12 @@
-import { splitSignature } from '@ethersproject/bytes'
-import { Contract } from '@ethersproject/contracts'
 import { parseUnits } from '@ethersproject/units'
 import { JSBI, Percent, Route, Token, TokenAmount, VVET } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { ArrowDown, Plus } from 'react-feather'
 import ReactGA from 'react-ga'
 import { Text } from 'rebass'
-import styled, { ThemeContext } from 'styled-components'
-import { ButtonConfirmed, ButtonPrimary } from '../../components/Button'
+import { find } from 'lodash'
+import { ThemeContext } from 'styled-components'
+import { ButtonPrimary } from '../../components/Button'
 import { LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import ConfirmationModal from '../../components/ConfirmationModal'
@@ -21,13 +20,15 @@ import TokenLogo from '../../components/TokenLogo'
 import { ROUTER_ADDRESS } from '../../constants'
 import { usePair } from '../../data/Reserves'
 import { useTotalSupply } from '../../data/TotalSupply'
-import { usePairContract, useWeb3React } from '../../hooks'
+import { useWeb3React } from '../../hooks'
+// import { abi as IUniswapV2PairABI } from '../../constants/abis/IUniswapV2Pair.json'
+import { abi as IUniswapV2Router02ABI } from '../../constants/abis/IUniswapV2Router02.json'
 
 import { useToken } from '../../hooks/Tokens'
 import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { TYPE } from '../../theme'
-import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '../../utils'
+import { calculateSlippageAmount } from '../../utils'
 import { ClickableText, FixedBottom, MaxButton, Wrapper } from './styleds'
 
 // denominated in bips
@@ -105,10 +106,6 @@ function reducer(
   }
 }
 
-const ConfirmedText = styled(Text)<{ confirmed?: boolean }>`
-  color: ${({ theme, confirmed }) => (confirmed ? theme.green1 : theme.white)};
-`
-
 export default function RemoveLiquidity({ token0, token1 }: { token0: string; token1: string }) {
   const { account, chainId, library } = useWeb3React()
   const theme = useContext(ThemeContext)
@@ -126,11 +123,12 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
   }
 
   const pair = usePair(inputToken, outputToken)
-  const pairContract: Contract = usePairContract(pair?.liquidityToken.address)
 
   // pool token data
   const userLiquidity = useTokenBalance(account, pair?.liquidityToken)
   const totalPoolTokens = useTotalSupply(pair?.liquidityToken)
+  console.log('userLiquidity: ', userLiquidity?.toExact())
+  console.log('totalPoolTokens: ', totalPoolTokens?.toExact())
 
   // input state
   const [state, dispatch] = useReducer(reducer, initializeRemoveState(userLiquidity?.toExact(), token0, token1))
@@ -263,6 +261,24 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
     )
   }
 
+  // adjust amounts for slippage
+  const slippageAdjustedAmounts = {
+    [Field.TOKEN0]:
+      tokens[Field.TOKEN0] && parsedAmounts[Field.TOKEN0]
+        ? new TokenAmount(
+            tokens[Field.TOKEN0],
+            calculateSlippageAmount(parsedAmounts[Field.TOKEN0], ALLOWED_SLIPPAGE)[0]
+          )
+        : undefined,
+    [Field.TOKEN1]:
+      tokens[Field.TOKEN1] && parsedAmounts[Field.TOKEN1]
+        ? new TokenAmount(
+            tokens[Field.TOKEN1],
+            calculateSlippageAmount(parsedAmounts[Field.TOKEN1], ALLOWED_SLIPPAGE)[0]
+          )
+        : undefined
+  }
+
   // get formatted amounts
   const formattedAmounts = {
     [Field.LIQUIDITY]:
@@ -338,146 +354,86 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
   // state for txn
   const addTransaction = useTransactionAdder()
   const [txHash, setTxHash] = useState()
-  const [sigInputs, setSigInputs] = useState([])
-  const [deadline, setDeadline] = useState(null)
-  const [signed, setSigned] = useState(false) // waiting for signature sign
   const [attemptedRemoval, setAttemptedRemoval] = useState(false) // clicke confirm
   const [pendingConfirmation, setPendingConfirmation] = useState(true) // waiting for
 
-  async function onSign() {
-    const nonce = await pairContract.nonces(account)
-
-    const newDeadline: number = Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW
-    setDeadline(newDeadline)
-
-    const EIP712Domain = [
-      { name: 'name', type: 'string' },
-      { name: 'version', type: 'string' },
-      { name: 'chainId', type: 'uint256' },
-      { name: 'verifyingContract', type: 'address' }
-    ]
-
-    const domain = {
-      name: 'Uniswap V2',
-      version: '1',
-      chainId: chainId,
-      verifyingContract: pair.liquidityToken.address
-    }
-
-    const Permit = [
-      { name: 'owner', type: 'address' },
-      { name: 'spender', type: 'address' },
-      { name: 'value', type: 'uint256' },
-      { name: 'nonce', type: 'uint256' },
-      { name: 'deadline', type: 'uint256' }
-    ]
-
-    const message = {
-      owner: account,
-      spender: ROUTER_ADDRESS,
-      value: parsedAmounts[Field.LIQUIDITY].raw.toString(),
-      nonce: nonce.toHexString(),
-      deadline: newDeadline
-    }
-    const data = JSON.stringify({
-      types: {
-        EIP712Domain,
-        Permit
-      },
-      domain,
-      primaryType: 'Permit',
-      message
-    })
-
-    library.send('eth_signTypedData_v4', [account, data]).then(_signature => {
-      const signature = splitSignature(_signature)
-      setSigInputs([signature.v, signature.r, signature.s])
-      setSigned(true)
-    })
-  }
-
   function resetModalState() {
-    setSigned(false)
-    setSigInputs(null)
     setAttemptedRemoval(false)
     setPendingConfirmation(true)
   }
 
   async function onRemove() {
     setAttemptedRemoval(true)
-    const router = getRouterContract(chainId, library, account)
-    let method, args, estimate
+
+    const token0IsETH = tokens[Field.TOKEN0].equals(VVET[chainId])
+    const oneTokenIsETH = token0IsETH || tokens[Field.TOKEN1].equals(VVET[chainId])
+
+    let args, abi
 
     // removal with ETH
-    if (tokens[Field.TOKEN0].equals(VVET[chainId]) || tokens[Field.TOKEN1].equals(VVET[chainId])) {
-      method = router.removeLiquidityETHWithPermit
-      estimate = router.estimateGas.removeLiquidityETHWithPermit
-
-      const token0IsETH = tokens[Field.TOKEN0].equals(VVET[chainId])
+    if (oneTokenIsETH) {
+      abi = find(IUniswapV2Router02ABI, { name: 'removeLiquidityETH' })
 
       args = [
         tokens[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].address,
         parsedAmounts[Field.LIQUIDITY].raw.toString(),
-        calculateSlippageAmount(
-          parsedAmounts[token0IsETH ? Field.TOKEN1 : Field.TOKEN0],
-          ALLOWED_SLIPPAGE
-        )[0].toString(),
-        calculateSlippageAmount(
-          parsedAmounts[token0IsETH ? Field.TOKEN0 : Field.TOKEN1],
-          ALLOWED_SLIPPAGE
-        )[0].toString(),
+        slippageAdjustedAmounts[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].raw.toString(),
+        slippageAdjustedAmounts[token0IsETH ? Field.TOKEN0 : Field.TOKEN1].raw.toString(),
         account,
-        deadline,
-        false,
-        sigInputs[0],
-        sigInputs[1],
-        sigInputs[2]
+        Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW
       ]
+
+      console.log('token: ', tokens[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].address)
+      console.log('liquidity: ', parsedAmounts[Field.LIQUIDITY].raw.toString())
+      console.log('amountTokenMin: ', slippageAdjustedAmounts[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].raw.toString())
+      console.log('amountETHMin: ', slippageAdjustedAmounts[token0IsETH ? Field.TOKEN0 : Field.TOKEN1].raw.toString())
+      console.log('to: ', account)
+      console.log('deadline: ', Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW)
     }
     //removal without ETH
     else {
-      method = router.removeLiquidityWithPermit
-      estimate = router.estimateGas.removeLiquidityWithPermit
+      console.log('removeLiquidity')
+      abi = find(IUniswapV2Router02ABI, { name: 'removeLiquidity' })
+
       args = [
         tokens[Field.TOKEN0].address,
         tokens[Field.TOKEN1].address,
         parsedAmounts[Field.LIQUIDITY].raw.toString(),
-        calculateSlippageAmount(parsedAmounts[Field.TOKEN0], ALLOWED_SLIPPAGE)[0].toString(),
-        calculateSlippageAmount(parsedAmounts[Field.TOKEN1], ALLOWED_SLIPPAGE)[0].toString(),
+        slippageAdjustedAmounts[Field.TOKEN0].raw.toString(),
+        slippageAdjustedAmounts[Field.TOKEN1].raw.toString(),
         account,
-        deadline,
-        false,
-        sigInputs[0],
-        sigInputs[1],
-        sigInputs[2]
+        Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW
       ]
     }
 
-    await estimate(...args)
-      .then(estimatedGasLimit =>
-        method(...args, {
-          gasLimit: calculateGasMargin(estimatedGasLimit)
-        }).then(response => {
-          ReactGA.event({
-            category: 'Liquidity',
-            action: 'Remove',
-            label: [tokens[Field.TOKEN0]?.symbol, tokens[Field.TOKEN1]?.symbol].join('/')
-          })
-          setPendingConfirmation(false)
-          setTxHash(response.hash)
-          addTransaction(response, {
-            summary:
-              'Remove ' +
-              parsedAmounts[Field.TOKEN0]?.toSignificant(3) +
-              ' ' +
-              tokens[Field.TOKEN0]?.symbol +
-              ' and ' +
-              parsedAmounts[Field.TOKEN1]?.toSignificant(3) +
-              ' ' +
-              tokens[Field.TOKEN1]?.symbol
-          })
+    console.log(args)
+    const method = library.thor.account(ROUTER_ADDRESS).method(abi)
+    const clause = method.asClause(...args)
+
+    library.vendor
+      .sign('tx', [{ ...clause }])
+      .comment('work')
+      .request()
+      .then(response => {
+        ReactGA.event({
+          category: 'Liquidity',
+          action: 'Remove',
+          label: [tokens[Field.TOKEN0]?.symbol, tokens[Field.TOKEN1]?.symbol].join('/')
         })
-      )
+        setPendingConfirmation(false)
+        setTxHash(response.hash)
+        addTransaction(response, {
+          summary:
+            'Remove ' +
+            parsedAmounts[Field.TOKEN0]?.toSignificant(3) +
+            ' ' +
+            tokens[Field.TOKEN0]?.symbol +
+            ' and ' +
+            parsedAmounts[Field.TOKEN1]?.toSignificant(3) +
+            ' ' +
+            tokens[Field.TOKEN1]?.symbol
+        })
+      })
       .catch(e => {
         console.error(e)
         resetModalState()
@@ -530,7 +486,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
       <>
         <RowBetween>
           <Text color={theme.text2} fontWeight={500} fontSize={16}>
-            {'UNI ' + tokens[Field.TOKEN0]?.symbol + ':' + tokens[Field.TOKEN1]?.symbol} Burned
+            {'VEX ' + tokens[Field.TOKEN0]?.symbol + ':' + tokens[Field.TOKEN1]?.symbol} Burned
           </Text>
           <RowFixed>
             <DoubleLogo
@@ -554,18 +510,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
           </Text>
         </RowBetween>
         <RowBetween>
-          <ButtonConfirmed
-            style={{ margin: '20px 0 0 0' }}
-            width="48%"
-            onClick={onSign}
-            confirmed={signed}
-            disabled={signed}
-          >
-            <ConfirmedText fontWeight={500} fontSize={20} confirmed={signed}>
-              {signed ? 'Signed' : 'Sign'}
-            </ConfirmedText>
-          </ButtonConfirmed>
-          <ButtonPrimary width="48%" disabled={!signed} style={{ margin: '20px 0 0 0' }} onClick={onRemove}>
+          <ButtonPrimary style={{ margin: '20px 0 0 0' }} onClick={onRemove}>
             <Text fontWeight={500} fontSize={20}>
               Confirm
             </Text>

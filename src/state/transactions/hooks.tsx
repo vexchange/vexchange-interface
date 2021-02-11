@@ -1,4 +1,3 @@
-import { TransactionResponse } from '@ethersproject/providers'
 import { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -8,18 +7,12 @@ import { addTransaction } from './actions'
 import { TransactionDetails } from './reducer'
 
 // helper that can take a ethers library transaction response and add it to the list of transactions
-export function useTransactionAdder(): (
-  response,
-  customData?: { summary?: string; approvalOfToken?: string }
-) => void {
+export function useTransactionAdder(): (response, customData?: { summary?: string; approvalOfToken?: string }) => void {
   const { chainId, account } = useWeb3React()
   const dispatch = useDispatch<AppDispatch>()
 
   return useCallback(
-    (
-      response,
-      { summary, approvalOfToken }: { summary?: string; approvalOfToken?: string } = {}
-    ) => {
+    (response, { summary, approvalOfToken }: { summary?: string; approvalOfToken?: string } = {}) => {
       const { txid } = response
       if (!txid) {
         throw Error('No transaction hash found.')

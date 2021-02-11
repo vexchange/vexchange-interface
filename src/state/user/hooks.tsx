@@ -142,7 +142,7 @@ export function usePairAdder(): (pair: Pair) => void {
 
 const bases = [
   ...Object.values(VVET),
-  new Token(ChainId.MAINNET, '0x0000000000000000000000000000456E65726779', 18, 'VTHO', 'VeThor'),
+  new Token(ChainId.MAINNET, '0x0000000000000000000000000000456E65726779', 18, 'VTHO', 'VeThor')
 ]
 
 export function useAllDummyPairs(): Pair[] {
@@ -178,13 +178,12 @@ export function useAllDummyPairs(): Pair[] {
 
   const userPairs = useMemo(
     () =>
-      Object.values<SerializedPair>(savedSerializedPairs[chainId] ?? {}).map(
-        pair =>
-          new Pair(
-            new TokenAmount(deserializeToken(pair.token0), ZERO),
-            new TokenAmount(deserializeToken(pair.token1), ZERO)
-          )
-      ),
+      Object.values<SerializedPair>(savedSerializedPairs[chainId] ?? {}).map(pair => {
+        return new Pair(
+          new TokenAmount(deserializeToken(pair.token0), ZERO),
+          new TokenAmount(deserializeToken(pair.token1), ZERO)
+        )
+      }),
     [savedSerializedPairs, chainId]
   )
 

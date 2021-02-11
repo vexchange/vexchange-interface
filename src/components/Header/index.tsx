@@ -150,7 +150,7 @@ const VersionToggle = styled.a`
 `
 
 export default function Header() {
-  const { account, chainId } = useWeb3React()
+  const { account, chainId, active } = useWeb3React()
 
   const userEthBalance = useTokenBalanceTreatingWETHasETH(account, VVET[chainId])
   const [isDark] = useDarkModeManager()
@@ -208,7 +208,7 @@ export default function Header() {
                 {userEthBalance?.toSignificant(4)} VET
               </Text>
             ) : null}
-            <Web3Status />
+            <Web3Status account={account} active={active} />
           </AccountElement>
           <div style={{ pointerEvents: 'auto' }}>
             <Menu />

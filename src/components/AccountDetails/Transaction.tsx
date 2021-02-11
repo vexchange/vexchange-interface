@@ -60,7 +60,7 @@ export default function Transaction({ hash }: { hash: string }) {
   const pending = !allTransactions?.[hash]?.receipt
   const success =
     !pending &&
-    (allTransactions[hash].receipt.status === 1 || typeof allTransactions[hash].receipt.status === 'undefined')
+    (allTransactions[hash].receipt.status === false || typeof allTransactions[hash].receipt.status === 'undefined')
 
   return (
     <TransactionWrapper>

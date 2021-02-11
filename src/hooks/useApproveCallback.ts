@@ -7,8 +7,7 @@ import { useTokenAllowance } from '../data/Allowances'
 import { Field } from '../state/swap/actions'
 import { useTransactionAdder } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
-import { calculateGasMargin } from '../utils'
-import { useTokenContract, useWeb3React } from './index'
+import { useWeb3React } from './index'
 import ERC20_ABI from '../constants/abis/erc20.json'
 
 // returns a function to approve the amount required to execute a trade if necessary, otherwise null
@@ -25,7 +24,7 @@ export function useApproveCallback(trade?: Trade, allowedSlippage = 0): [undefin
     // we treat VVET as VET which requires no approvals
     if (trade?.inputAmount?.token?.equals(VVET[chainId])) return false
     // return undefined if we don't have enough data to know whether or not we need to approve
-    if (!currentAllowance) return undefined
+    if (!currentAllowance || !slippageAdjustedAmountIn) return undefined
     // slippageAdjustedAmountIn will be defined if currentAllowance is
     return currentAllowance.lessThan(slippageAdjustedAmountIn)
   }, [trade, chainId, currentAllowance, slippageAdjustedAmountIn])
@@ -34,22 +33,13 @@ export function useApproveCallback(trade?: Trade, allowedSlippage = 0): [undefin
   const approve = useCallback(async (): Promise<void> => {
     if (!mustApprove) return
 
-    let useUserBalance = false
-
     const abi = find(ERC20_ABI, { name: 'approve' })
     const method = library.thor.account(trade?.inputAmount?.token?.address).method(abi)
 
-    const clause = method.asClause(
-      ROUTER_ADDRESS,
-      useUserBalance
-        ? slippageAdjustedAmountIn.raw.toString() 
-        : MaxUint256
-    )
-    return library.vendor.sign('tx', [ 
-      {
-        ...clause,
-      }
-    ])
+    const clause = method.asClause(ROUTER_ADDRESS, MaxUint256)
+
+    return library.vendor
+      .sign('tx', [{ ...clause }])
       .comment('approve')
       .request()
       .then(response => {
@@ -62,7 +52,7 @@ export function useApproveCallback(trade?: Trade, allowedSlippage = 0): [undefin
         console.debug('Failed to approve token', error)
         throw error
       })
-  }, [mustApprove, slippageAdjustedAmountIn, trade, addTransaction])
+  }, [library.thor, library.vendor, mustApprove, trade, addTransaction])
 
   return [mustApprove, approve]
 }

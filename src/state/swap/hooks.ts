@@ -68,7 +68,7 @@ export function useDerivedSwapInfo(): {
   tokens: { [field in Field]?: Token }
   tokenBalances: { [field in Field]?: TokenAmount }
   parsedAmounts: { [field in Field]?: TokenAmount }
-  bestTrade?: Trade
+  bestTrade: Trade | null
   error?: string
   v1TradeLinkIfBetter?: string
 } {
@@ -115,7 +115,7 @@ export function useDerivedSwapInfo(): {
     tokens[Field.INPUT],
     tokens[Field.OUTPUT],
     isExactIn ? parsedAmounts[Field.INPUT] : parsedAmounts[Field.OUTPUT],
-    bestTrade,
+    bestTrade ?? undefined,
     V1_TRADE_LINK_THRESHOLD
   )
 

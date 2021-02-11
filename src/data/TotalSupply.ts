@@ -12,18 +12,25 @@ export function useTotalSupply(token?: Token): TokenAmount {
 
   useEffect(() => {
     const getTotalSupply = async () => {
-      const method = library.thor.account(token.address).method(abi)
-      const { decoded: { 0: totalSupply } } = await method.call()
+      const account = library.thor.account(token?.address)
+      const method = account.method(abi)
 
-      const tokenAmount = new TokenAmount(token, totalSupply.toString())
+      try {
+        const {
+          decoded: { 0: totalSupply }
+        } = await method.call()
 
-      setAmount(tokenAmount)
+        const tokenAmount = new TokenAmount(token, totalSupply.toString())
+        setAmount(tokenAmount)
+      } catch (error) {
+        console.log(error)
+      }
     }
 
     if (token?.address) {
       getTotalSupply()
     }
-  }, [token])
+  }, [token, abi, library.thor])
 
   return amount
 }

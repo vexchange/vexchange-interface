@@ -1,10 +1,9 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Contract } from '@ethersproject/contracts'
 import { Token, Trade, TradeType, VVET } from '@uniswap/sdk'
 import { useMemo } from 'react'
 import { find } from 'lodash'
 import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE, ROUTER_ADDRESS } from '../constants'
-import { abi as IUniswapV2Router01ABI } from '../constants/abis/IUniswapV2Router01.json'
+import { abi as IUniswapV2Router02ABI } from '../constants/abis/IUniswapV2Router02.json'
 import { useTokenAllowance } from '../data/Allowances'
 import { Field } from '../state/swap/actions'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -80,11 +79,11 @@ export function useSwapCallback(
         chainId
       )
 
-      let method, args, value, abi
+      let args, value, abi
+
       switch (swapType) {
         case SwapType.EXACT_TOKENS_FOR_TOKENS:
-          abi = find(IUniswapV2Router01ABI, { name: 'swapExactTokensForTokens' })
-          method = library.thor.account(ROUTER_ADDRESS).method(abi)
+          abi = find(IUniswapV2Router02ABI, { name: 'swapExactTokensForTokens' })
 
           args = [
             slippageAdjustedAmounts[Field.INPUT].raw.toString(),
@@ -96,8 +95,7 @@ export function useSwapCallback(
           value = null
           break
         case SwapType.TOKENS_FOR_EXACT_TOKENS:
-          abi = find(IUniswapV2Router01ABI, { name: 'swapTokensForExactTokens' })
-          method = library.thor.account(ROUTER_ADDRESS).method(abi)
+          abi = find(IUniswapV2Router02ABI, { name: 'swapTokensForExactTokens' })
 
           args = [
             slippageAdjustedAmounts[Field.OUTPUT].raw.toString(),
@@ -109,15 +107,13 @@ export function useSwapCallback(
           value = null
           break
         case SwapType.EXACT_ETH_FOR_TOKENS:
-          abi = find(IUniswapV2Router01ABI, { name: 'swapExactETHForTokens' })
-          method = library.thor.account(ROUTER_ADDRESS).method(abi)
+          abi = find(IUniswapV2Router02ABI, { name: 'swapExactETHForTokens' })
 
           args = [slippageAdjustedAmounts[Field.OUTPUT].raw.toString(), path, account, deadlineFromNow]
           value = BigNumber.from(slippageAdjustedAmounts[Field.INPUT].raw.toString())
           break
         case SwapType.TOKENS_FOR_EXACT_ETH:
-          abi = find(IUniswapV2Router01ABI, { name: 'swapTokensForExactETH' })
-          method = library.thor.account(ROUTER_ADDRESS).method(abi)
+          abi = find(IUniswapV2Router02ABI, { name: 'swapTokensForExactETH' })
 
           args = [
             slippageAdjustedAmounts[Field.OUTPUT].raw.toString(),
@@ -129,8 +125,7 @@ export function useSwapCallback(
           value = null
           break
         case SwapType.EXACT_TOKENS_FOR_ETH:
-          abi = find(IUniswapV2Router01ABI, { name: 'swapExactTokensForETH' })
-          method = library.thor.account(ROUTER_ADDRESS).method(abi)
+          abi = find(IUniswapV2Router02ABI, { name: 'swapExactTokensForETH' })
 
           args = [
             slippageAdjustedAmounts[Field.INPUT].raw.toString(),
@@ -142,22 +137,24 @@ export function useSwapCallback(
           value = null
           break
         case SwapType.ETH_FOR_EXACT_TOKENS:
-          abi = find(IUniswapV2Router01ABI, { name: 'swapETHForExactTokens' })
-          method = library.thor.account(ROUTER_ADDRESS).method(abi)
+          abi = find(IUniswapV2Router02ABI, { name: 'swapETHForExactTokens' })
 
           args = [slippageAdjustedAmounts[Field.OUTPUT].raw.toString(), path, account, deadlineFromNow]
           value = BigNumber.from(slippageAdjustedAmounts[Field.INPUT].raw.toString())
           break
       }
 
+      const method = library.thor.account(ROUTER_ADDRESS).method(abi)
+
       const clause = method.asClause(...args)
 
-      return library.vendor.sign('tx', [ 
-        {
-          ...clause,
-          value: value ? value.toString() : 0
-        }
-      ])
+      return library.vendor
+        .sign('tx', [
+          {
+            ...clause,
+            value: value ? value.toString() : 0
+          }
+        ])
         .comment('work')
         .request()
         .then(response => {
@@ -189,7 +186,7 @@ export function useSwapCallback(
             })
           }
 
-          return response.hash
+          return response.txid
         })
         .catch(error => {
           console.error(`Swap or gas estimate failed`, error)

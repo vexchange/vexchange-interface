@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { MaxUint256 } from '@ethersproject/constants'
-import { Contract } from '@ethersproject/contracts'
+import { find } from 'lodash'
 import { parseEther, parseUnits } from '@ethersproject/units'
 import { JSBI, Percent, Price, Route, Token, TokenAmount, VVET } from '@uniswap/sdk'
 import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
@@ -9,6 +9,7 @@ import ReactGA from 'react-ga'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
+import { abi as IUniswapV2Router02ABI } from '../../constants/abis/IUniswapV2Router02.json'
 import { ButtonLight, ButtonPrimary } from '../../components/Button'
 import { BlueCard, GreyCard, LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
@@ -18,6 +19,7 @@ import DoubleLogo from '../../components/DoubleLogo'
 import PositionCard from '../../components/PositionCard'
 import Row, { AutoRow, RowBetween, RowFixed, RowFlat } from '../../components/Row'
 import SearchModal from '../../components/SearchModal'
+import ERC20_ABI from '../../constants/abis/erc20.json'
 
 import TokenLogo from '../../components/TokenLogo'
 
@@ -25,13 +27,13 @@ import { ROUTER_ADDRESS } from '../../constants'
 import { useTokenAllowance } from '../../data/Allowances'
 import { usePair } from '../../data/Reserves'
 import { useTotalSupply } from '../../data/TotalSupply'
-import { useTokenContract, useWeb3React } from '../../hooks'
+import { useWeb3React } from '../../hooks'
 
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
 import { useHasPendingApproval, useTransactionAdder } from '../../state/transactions/hooks'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
 import { TYPE } from '../../theme'
-import { calculateGasMargin, calculateSlippageAmount, getRouterContract } from '../../utils'
+import { calculateSlippageAmount } from '../../utils'
 import { Dots, Wrapper } from './styleds'
 
 // denominated in bips
@@ -159,10 +161,6 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     [Field.INPUT]: useTokenByAddressAndAutomaticallyAdd(fieldData[Field.INPUT].address),
     [Field.OUTPUT]: useTokenByAddressAndAutomaticallyAdd(fieldData[Field.OUTPUT].address)
   }
-
-  // token contracts for approvals and direct sends
-  const tokenContractInput: Contract = useTokenContract(tokens[Field.INPUT]?.address)
-  const tokenContractOutput: Contract = useTokenContract(tokens[Field.OUTPUT]?.address)
 
   // exchange data
   const pair = usePair(tokens[Field.INPUT], tokens[Field.OUTPUT])
@@ -393,19 +391,17 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
 
   async function onAdd() {
     setAttemptingTxn(true)
-    const router = getRouterContract(chainId, library, account)
 
     const minInput = calculateSlippageAmount(parsedAmounts[Field.INPUT], ALLOWED_SLIPPAGE)[0]
     const minOutput = calculateSlippageAmount(parsedAmounts[Field.OUTPUT], ALLOWED_SLIPPAGE)[0]
 
     const deadline = Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW
 
-    let method, estimate, args, value
+    let args, value, abi
 
     // one of the tokens is ETH
     if (tokens[Field.INPUT].equals(VVET[chainId]) || tokens[Field.OUTPUT].equals(VVET[chainId])) {
-      method = router.addLiquidityETH
-      estimate = router.estimateGas.addLiquidityETH
+      abi = find(IUniswapV2Router02ABI, { name: 'addLiquidityETH' })
 
       const outputIsETH = tokens[Field.OUTPUT].equals(VVET[chainId])
 
@@ -419,8 +415,8 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
       ]
       value = BigNumber.from(parsedAmounts[outputIsETH ? Field.OUTPUT : Field.INPUT].raw.toString())
     } else {
-      method = router.addLiquidity
-      estimate = router.estimateGas.addLiquidity
+      abi = find(IUniswapV2Router02ABI, { name: 'addLiquidity' })
+
       args = [
         tokens[Field.INPUT].address,
         tokens[Field.OUTPUT].address,
@@ -434,32 +430,38 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
       value = null
     }
 
-    await estimate(...args, value ? { value } : {})
-      .then(estimatedGasLimit =>
-        method(...args, {
-          ...(value ? { value } : {}),
-          gasLimit: calculateGasMargin(estimatedGasLimit)
-        }).then(response => {
-          ReactGA.event({
-            category: 'Liquidity',
-            action: 'Add',
-            label: [tokens[Field.INPUT]?.symbol, tokens[Field.OUTPUT]?.symbol].join('/')
-          })
-          setTxHash(response.hash)
-          addTransaction(response, {
-            summary:
-              'Add ' +
-              parsedAmounts[Field.INPUT]?.toSignificant(3) +
-              ' ' +
-              tokens[Field.INPUT]?.symbol +
-              ' and ' +
-              parsedAmounts[Field.OUTPUT]?.toSignificant(3) +
-              ' ' +
-              tokens[Field.OUTPUT]?.symbol
-          })
-          setPendingConfirmation(false)
+    const method = library.thor.account(ROUTER_ADDRESS).method(abi)
+    const clause = method.asClause(...args)
+
+    return library.vendor
+      .sign('tx', [
+        {
+          ...clause,
+          value: value ? value.toString() : 0
+        }
+      ])
+      .comment('work')
+      .request()
+      .then(response => {
+        ReactGA.event({
+          category: 'Liquidity',
+          action: 'Add',
+          label: [tokens[Field.INPUT]?.symbol, tokens[Field.OUTPUT]?.symbol].join('/')
         })
-      )
+        setTxHash(response.txid)
+        addTransaction(response, {
+          summary:
+            'Add ' +
+            parsedAmounts[Field.INPUT]?.toSignificant(3) +
+            ' ' +
+            tokens[Field.INPUT]?.symbol +
+            ' and ' +
+            parsedAmounts[Field.OUTPUT]?.toSignificant(3) +
+            ' ' +
+            tokens[Field.OUTPUT]?.symbol
+        })
+        setPendingConfirmation(false)
+      })
       .catch((e: Error) => {
         console.error(e)
         setPendingConfirmation(true)
@@ -469,19 +471,17 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
   }
 
   async function approveAmount(field) {
-    let useUserBalance = false
-    const tokenContract = field === Field.INPUT ? tokenContractInput : tokenContractOutput
+    const tokenAddress = field === Field.INPUT ? tokens[Field.INPUT]?.address : tokens[Field.OUTPUT]?.address
 
-    const estimatedGas = await tokenContract.estimateGas.approve(ROUTER_ADDRESS, MaxUint256).catch(() => {
-      // general fallback for tokens who restrict approval amounts
-      useUserBalance = true
-      return tokenContract.estimateGas.approve(ROUTER_ADDRESS, userBalances[field])
-    })
+    const abi = find(ERC20_ABI, { name: 'approve' })
+    const method = library.thor.account(tokenAddress).method(abi)
 
-    tokenContract
-      .approve(ROUTER_ADDRESS, useUserBalance ? userBalances[field] : MaxUint256, {
-        gasLimit: calculateGasMargin(estimatedGas)
-      })
+    const clause = method.asClause(ROUTER_ADDRESS, MaxUint256)
+
+    return library.vendor
+      .sign('tx', [{ ...clause }])
+      .comment('approve')
+      .request()
       .then(response => {
         addTransaction(response, {
           summary: 'Approve ' + tokens[field]?.symbol,

@@ -3,7 +3,8 @@ import { VVET, Token, TokenAmount, Trade, ChainId, Pair } from '@uniswap/sdk'
 import { useWeb3React } from './index'
 import { usePair } from '../data/Reserves'
 
-const VTHO = new Token(ChainId.MAINNET, '0x0000000000000000000000000000456E65726779', 18, 'VTHO', 'VeThor');
+const VTHO = new Token(ChainId.MAINNET, '0x0000000000000000000000000000456E65726779', 18, 'VTHO', 'VeThor')
+
 function useAllCommonPairs(tokenA?: Token, tokenB?: Token): Pair[] {
   const { chainId } = useWeb3React()
 
@@ -15,11 +16,11 @@ function useAllCommonPairs(tokenA?: Token, tokenB?: Token): Pair[] {
   const bToETH = usePair(tokenB, VVET[chainId])
 
   // get token<->VTHO pairs
-  const aToVTHO = usePair(tokenA, chainId === ChainId.MAINNET ? VTHO : null)
-  const bToVTHO = usePair(tokenB, chainId === ChainId.MAINNET ? VTHO : null)
+  const aToVTHO = usePair(tokenA, chainId === ChainId.MAINNET ? VTHO : undefined)
+  const bToVTHO = usePair(tokenB, chainId === ChainId.MAINNET ? VTHO : undefined)
 
   // get connecting pairs
-  const VTHOToETH = usePair(chainId === ChainId.MAINNET ? VTHO : null, VVET[chainId])
+  const VTHOToETH = usePair(chainId === ChainId.MAINNET ? VTHO : undefined, VVET[chainId])
 
   // only pass along valid pairs, non-duplicated pairs
   return useMemo(

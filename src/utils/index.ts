@@ -7,7 +7,7 @@ import { parseBytes32String } from '@ethersproject/strings'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
-import { abi as IUniswapV2Router01ABI } from '@uniswap/v2-periphery/build/IUniswapV2Router01.json'
+import { abi as IUniswapV2Router02ABI } from '../constants/abis/IUniswapV2Router02.json'
 import { ROUTER_ADDRESS } from '../constants'
 
 import ERC20_ABI from '../constants/abis/erc20.json'
@@ -105,8 +105,7 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 
 // account is optional
 export function getRouterContract(chainId, library, account) {
-  console.log(library)
-  return getContract(ROUTER_ADDRESS, IUniswapV2Router01ABI, library, account)
+  return getContract(ROUTER_ADDRESS, IUniswapV2Router02ABI, library, account)
 }
 
 // account is optional
@@ -120,7 +119,7 @@ export async function getTokenName(tokenAddress, library) {
     throw Error(`Invalid 'tokenAddress' parameter '${tokenAddress}'.`)
   }
 
-  const abi = find(ERC20_ABI, { name: "name" })
+  const abi = find(ERC20_ABI, { name: 'name' })
   const method = library.thor.account(tokenAddress).method(abi)
 
   return method

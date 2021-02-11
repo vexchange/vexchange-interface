@@ -6,7 +6,7 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { useTokenBalanceTreatingWETHasETH } from '../state/wallet/hooks'
 
-import { calculateGasMargin, isAddress } from '../utils'
+import { isAddress } from '../utils'
 import { useTokenContract, useWeb3React } from './index'
 
 // returns a callback for sending a token amount, treating VVET as VET
@@ -28,31 +28,33 @@ export function useSendCallback(amount?: TokenAmount, recipient?: string): null 
 
     return async function onSend(): Promise<string> {
       if (token.equals(VVET[chainId])) {
-        return library.vendor.sign('tx', [ 
-          {
-            to: recipient,
-            value: BigNumber.from(amount.raw.toString()).toString()
-          }
-        ])
-        .comment('work')
-        .request()
-        .then(response => {
-          addTransaction(response, {
-            summary: 'Send ' + amount.toSignificant(3) + ' ' + token?.symbol + ' to ' + recipient
+        return library.vendor
+          .sign('tx', [
+            {
+              to: recipient,
+              value: BigNumber.from(amount.raw.toString()).toString()
+            }
+          ])
+          .comment('work')
+          .request()
+          .then(response => {
+            addTransaction(response, {
+              summary: 'Send ' + amount.toSignificant(3) + ' ' + token?.symbol + ' to ' + recipient
+            })
+            return response.hash
           })
-          return response.hash
-        })
-        .catch(error => {
-          console.error('Failed to transfer VET', error)
-          throw error
-        })
+          .catch(error => {
+            console.error('Failed to transfer VET', error)
+            throw error
+          })
       } else {
         const abi = find(ERC20_ABI, { name: 'transfer' })
         const method = library.thor.account(amount?.token?.address).method(abi)
 
         const clause = method.asClause(recipient, amount.raw.toString())
 
-        return library.vendor.sign('tx', [{ ...clause }])
+        return library.vendor
+          .sign('tx', [{ ...clause }])
           .comment('work')
           .request()
           .then(response => {
@@ -60,7 +62,6 @@ export function useSendCallback(amount?: TokenAmount, recipient?: string): null 
               summary: 'Send ' + amount.toSignificant(3) + ' ' + token.symbol + ' to ' + recipient
             })
 
-            console.log(response)
             return response.txid
           })
           .catch(error => {

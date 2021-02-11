@@ -1,7 +1,7 @@
 {
   "name": "@uniswap/sdk",
   "license": "GPL-3.0-or-later",
-  "version": "2.0.5+0143eda4",
+  "version": "2.0.5+33ba19f0",
   "description": "🛠 An SDK for building applications on top of Uniswap.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -28,6 +28,7 @@
     "@ethersproject/providers": "^5.0.0-beta.153",
     "@ethersproject/solidity": "^5.0.0-beta.131",
     "@uniswap/v2-core": "^1.0.0",
+    "@vechain/connex": "^2.0.0",
     "big.js": "^5.2.2",
     "decimal.js-light": "^2.5.0",
     "jsbi": "^3.1.1",
@@ -43,5 +44,5 @@
     "semi": false,
     "singleQuote": true
   },
-  "yalcSig": "0143eda4bc934809bf3f7ac9d18367c0"
+  "yalcSig": "33ba19f01781b13227b65e6f6e9c3a4a"
 }

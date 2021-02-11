@@ -27,11 +27,8 @@ export default function Updater() {
             !allTransactions[hash].blockNumberChecked || allTransactions[hash].blockNumberChecked < lastBlockNumber
         )
         .forEach(hash => {
-          library
-            .thor
-            .transaction(hash)
-            .get()
-            .then(receipt => {
+          library.thor.transaction(hash).get().then(tx => {
+            library.thor.transaction(hash).getReceipt().then(receipt => {
               if (!receipt) {
                 dispatch(checkTransaction({ chainId, hash, blockNumber: lastBlockNumber }))
               } else {
@@ -42,17 +39,15 @@ export default function Updater() {
                     receipt: {
                       blockHash: receipt.meta.blockID,
                       blockNumber: receipt.meta.blockNumber,
-                      contractAddress: receipt.contractAddress,
-                      from: receipt.origin,
-                      status: receipt.status,
-                      // to: receipt.to,
-                      transactionHash: receipt.id,
-                      // transactionIndex: receipt.transactionIndex
+                      from: tx.origin,
+                      status: !receipt.reverted,
+                      to: receipt.to,
+                      transactionHash: tx.id,
                     }
                   })
                 )
-                // add success or failure popup
-                if (receipt.status === 1) {
+
+                if (!receipt.reverted) {
                   addPopup({
                     txn: {
                       hash,
@@ -68,8 +63,12 @@ export default function Updater() {
               }
             })
             .catch(error => {
-              console.error(`failed to check transaction hash: ${hash}`, error)
+              console.error(`failed to check transaction receipt: ${hash}`, error)
             })
+          })
+          .catch(error => {
+            console.error(`failed to check transaction hash: ${hash}`, error)
+          })
         })
     }
   }, [chainId, library, allTransactions, lastBlockNumber, dispatch, addPopup])

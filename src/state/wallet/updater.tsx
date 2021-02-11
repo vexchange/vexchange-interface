@@ -7,11 +7,11 @@ import { useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
 import { updateEtherBalances, updateTokenBalances } from './actions'
 import { balanceKey } from './reducer'
-import { find } from 'lodash';
+import { find, pull } from 'lodash';
 import ERC20_ABI from '../../constants/abis/erc20.json'
 
 function convertBalanceMapValuesToString(balanceMap: BalanceMap): { [key: string]: string } {
-  return Object.keys(balanceMap).reduce<{ [key: string]: string }>((map, key) => {
+  return balanceMap && Object.keys(balanceMap).reduce<{ [key: string]: string }>((map, key) => {
     // map[key] = balanceMap[key].toString()
     map[key] = BigNumber.from(balanceMap[key]).toString()
     return map
@@ -97,9 +97,12 @@ export default function Updater() {
 
   const getTokenBalance = (tokenAddress, address, library) => {
     const abi = find(ERC20_ABI, { name: 'balanceOf'})
+
     return new Promise(async(resolve, reject) => {
       const detail = tokenAddress.reduce(async(acc, cur) => {
-        const method = library.thor.account(cur).method(abi)
+        const account = library.thor.account(cur) 
+
+        const method = account.method(abi)
         try {
           let { decoded: { balance } } = await method.call(address)
 
@@ -107,7 +110,6 @@ export default function Updater() {
             [cur]: balance
           }
         } catch(error) {
-          console.log(error);
           reject(error)
         }
 
@@ -122,15 +124,17 @@ export default function Updater() {
       if (tokenBalancesNeedUpdate[address].length === 0) return
       getTokenBalance(tokenBalancesNeedUpdate[address], address, library)
         .then(tokenBalanceMap => {
-          dispatch(
-            updateTokenBalances({
-              address,
-              chainId,
-              blockNumber: lastBlockNumber,
-              //@ts-ignore
-              tokenBalances: convertBalanceMapValuesToString(tokenBalanceMap)
-            })
-          )
+          if (tokenBalanceMap) {
+            dispatch(
+              updateTokenBalances({
+                address,
+                chainId,
+                blockNumber: lastBlockNumber,
+                //@ts-ignore
+                tokenBalances: convertBalanceMapValuesToString(tokenBalanceMap)
+              })
+            )
+          }
         })
         .catch(error => {
           console.error(`failed to get token balances`, address, tokenBalancesNeedUpdate[address], error)

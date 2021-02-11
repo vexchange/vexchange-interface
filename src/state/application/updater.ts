@@ -1,9 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useWeb3React } from '../../hooks'
 import { updateBlockNumber } from './actions'
 import { useDispatch } from 'react-redux'
 
 export default function Updater() {
+  const [ticker, setTicker] = useState()
   const { library, chainId } = useWeb3React()
   const dispatch = useDispatch()
 
@@ -12,26 +13,24 @@ export default function Updater() {
     if (library) {
       let stale = false
 
-      const update = () => {
-        library
-          .thor
-          .ticker()
-          .next()
-          .then(({ number: blockNumber }) => {
-            if (!stale) {
-              dispatch(updateBlockNumber({ networkId: chainId, blockNumber }))
-            }
-          })
-          .catch(() => {
-            if (!stale) {
-              dispatch(updateBlockNumber({ networkId: chainId, blockNumber: null }))
-            }
-          })
+      const update = async () => {
+        try {
+          const { number: blockNumber } = await library.thor.ticker().next()
+
+          if (!stale) {
+            setTicker(blockNumber)
+            dispatch(updateBlockNumber({ networkId: chainId, blockNumber }))
+          }
+        } catch(error) {
+          if (!stale) {
+            dispatch(updateBlockNumber({ networkId: chainId, blockNumber: null }))
+          }
+        }
       }
 
       update()
     }
-  }, [dispatch, chainId, library])
+  }, [dispatch, chainId, library, ticker])
 
   return null
 }

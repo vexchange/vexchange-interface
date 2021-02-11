@@ -109,6 +109,6 @@ export class InjectedConnector extends AbstractConnector {
   public deactivate() {}
 
   public async isAuthorized(): Promise<boolean> {
-    return true
+    return false
   }
 }

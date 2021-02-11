@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { useWeb3React, UnsupportedChainIdError } from '../../context/'
@@ -127,9 +127,9 @@ function recentTransactionsOnly(a: TransactionDetails) {
   return new Date().getTime() - a.addedTime < 86_400_000
 }
 
-export default function Web3Status() {
+export default function Web3Status({ account, active }) {
   const { t } = useTranslation()
-  const { active, account, connector, error } = useWeb3React()
+  const { connector, error } = useWeb3React()
   const contextNetwork = useWeb3React(NetworkContextName)
 
   const allTransactions = useAllTransactions()
@@ -146,13 +146,6 @@ export default function Web3Status() {
 
   const toggleWalletModal = useWalletModalToggle()
 
-  // handle the logo we want to show with the account
-  function getStatusIcon() {
-    if (connector === injected) {
-      return <Identicon />
-    }
-  }
-
   function getWeb3Status() {
     if (account) {
       return (
@@ -164,7 +157,7 @@ export default function Web3Status() {
           ) : (
             <Text>{shortenAddress(account)}</Text>
           )}
-          {!hasPendingTransactions && getStatusIcon()}
+          {!hasPendingTransactions && <Identicon />}
         </Web3StatusConnected>
       )
     } else if (error) {

@@ -14,7 +14,7 @@ import Option from './Option'
 import { SUPPORTED_WALLETS } from '../../constants'
 import { usePrevious } from '../../hooks'
 import { Link } from '../../theme'
-import MetamaskIcon from '../../assets/images/metamask.png'
+import SyncIcon from '../../assets/images/sync-logo.svg'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { injected } from '../../connectors'
 
@@ -190,24 +190,21 @@ export default function WalletModal({
       const option = SUPPORTED_WALLETS[key]
       // check for mobile options
       if (isMobile) {
-        if (!window.web3 && !window.ethereum && option.mobile) {
-          return (
-            <Option
-              onClick={() => {
-                option.connector !== connector && !option.href && tryActivation(option.connector)
-              }}
-              id={`connect-${key}`}
-              key={key}
-              active={option.connector && option.connector === connector}
-              color={option.color}
-              link={option.href}
-              header={option.name}
-              subheader={null}
-              icon={require('../../assets/images/' + option.iconName)}
-            />
-          )
-        }
-        return null
+        return (
+          <Option
+            onClick={() => {
+              option.connector !== connector && !option.href && tryActivation(option.connector)
+            }}
+            id={`connect-${key}`}
+            key={key}
+            active={option.connector && option.connector === connector}
+            color={option.color}
+            link={option.href}
+            header={option.name}
+            subheader={null}
+            icon={require('../../assets/images/' + option.iconName)}
+          />
+        )
       }
 
       // overwrite injected when needed
@@ -223,7 +220,7 @@ export default function WalletModal({
                 header={'Install Metamask'}
                 subheader={null}
                 link={'https://metamask.io/'}
-                icon={MetamaskIcon}
+                icon={SyncIcon}
               />
             )
           } else {
@@ -328,7 +325,7 @@ export default function WalletModal({
           )}
           {walletView !== WALLET_VIEWS.PENDING && (
             <Blurb>
-              <span>New to Ethereum? &nbsp;</span>{' '}
+              <span>New to VeChain? &nbsp;</span>{' '}
               <Link href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
                 Learn more about wallets
               </Link>
