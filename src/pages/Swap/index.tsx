@@ -19,12 +19,11 @@ import SwapModalFooter from '../../components/swap/SwapModalFooter'
 import V1TradeLink from '../../components/swap/V1TradeLink'
 import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
 import { useWeb3React } from '../../hooks'
-import { useApproveCallback } from '../../hooks/useApproveCallback'
+import { useApproveCallbackFromTrade, Approval } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
 import { useDefaultsFromURL, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
-import { useHasPendingApproval } from '../../state/transactions/hooks'
 import { CursorPointer, TYPE } from '../../theme'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningServerity } from '../../utils/prices'
 import SwapModalHeader from '../../components/swap/SwapModalHeader'
@@ -64,8 +63,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   const noRoute = !route
 
   // check whether the user has approved the router on the input token
-  const [mustApprove, approveCallback] = useApproveCallback(bestTrade, allowedSlippage)
-  const pendingApprovalInput = useHasPendingApproval(tokens[Field.INPUT]?.address)
+  const [approval, approveCallback] = useApproveCallbackFromTrade(bestTrade, allowedSlippage)
 
   const formattedAmounts = {
     [independentField]: typedValue,
@@ -195,7 +193,18 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           />
 
           <CursorPointer>
-            <AutoColumn style={{ padding: '0 1rem' }}>
+            <AutoColumn
+              style={{
+                padding: '0.5rem',
+                backgroundImage: `
+                  linear-gradient(
+                    270deg,
+                    rgba(255,255,255,0.13) 0%,
+                    rgba(255,255,255,0.03) 97%
+                  )
+                `
+              }}
+            >
               <ArrowWrapper>
                 <ArrowDown
                   size="16"
@@ -221,7 +230,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         </>
 
         {!noRoute && tokens[Field.OUTPUT] && tokens[Field.INPUT] && (
-          <Card padding={'.25rem 1.25rem 0 .75rem'} borderRadius={'20px'}>
+          <Card padding={'.25rem 1.25rem 0 .75rem'} borderRadius={'3px'}>
             <AutoColumn gap="4px">
               <RowBetween align="center">
                 <Text fontWeight={500} fontSize={14} color={theme.text2}>
@@ -278,9 +287,9 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           <GreyCard style={{ textAlign: 'center' }}>
             <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
           </GreyCard>
-        ) : mustApprove === true ? (
-          <ButtonLight onClick={approveCallback} disabled={pendingApprovalInput}>
-            {pendingApprovalInput ? (
+        ) : approval === Approval.NOT_APPROVED || approval === Approval.PENDING ? (
+          <ButtonLight onClick={approveCallback} disabled={approval === Approval.PENDING}>
+            {approval === Approval.PENDING ? (
               <Dots>Approving {tokens[Field.INPUT]?.symbol}</Dots>
             ) : (
               'Approve ' + tokens[Field.INPUT]?.symbol

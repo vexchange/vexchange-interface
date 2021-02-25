@@ -58,7 +58,7 @@ function Supply({ history }: RouteComponentProps) {
     })
 
   return (
-    <AutoColumn gap="lg" justify="center">
+    <AutoColumn gap="lg" justify="center" style={{ padding: '1rem' }}>
       <ButtonPrimary
         id="join-pool-button"
         padding="16px"

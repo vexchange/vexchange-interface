@@ -58,17 +58,45 @@ const BodyWrapper = styled.div`
 `
 
 const Body = styled.div`
-  max-width: 420px;
+  max-width: 534px;
   width: 100%;
-  /* min-height: 340px; */
-  background: ${({ theme }) => theme.bg1};
+
+  background-image: linear-gradient(
+    210deg,
+    rgba(189, 162, 47, 0.02) 0%,
+    rgba(255, 255, 255, 0.02) 13%,
+    rgba(217, 216, 216, 0.15) 38%,
+    rgba(226, 225, 225, 0.08) 61%,
+    rgba(51, 41, 41, 0) 77%,
+    #751f0d 100%
+  );
+
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 30px;
+  box-shadow: 0 14px 22px 0 #001926;
+  border-radius: 3px;
   box-sizing: border-box;
-  padding: 1rem;
+  // padding: 1rem;
+  padding: 4px;
   position: relative;
   margin-bottom: 10rem;
+  z-index: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 4px;
+    border-radius: 3px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(18, 39, 68, 0.4));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+  }
 `
 
 const StyledRed = styled.div`

@@ -11,7 +11,7 @@ const Base = styled(RebassButton)<{ padding?: string; width?: string; borderRadi
   width: ${({ width }) => (width ? width : '100%')};
   font-weight: 500;
   text-align: center;
-  border-radius: 20px;
+  border-radius: 3px;
   border-radius: ${({ borderRadius }) => borderRadius && borderRadius};
   outline: none;
   border: 1px solid transparent;
@@ -33,6 +33,7 @@ const Base = styled(RebassButton)<{ padding?: string; width?: string; borderRadi
 export const ButtonPrimary = styled(Base)`
   background-color: ${({ theme }) => theme.primary1};
   color: white;
+
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme }) => darken(0.05, theme.primary1)};
     background-color: ${({ theme }) => darken(0.05, theme.primary1)};
@@ -57,16 +58,42 @@ export const ButtonLight = styled(Base)`
   color: ${({ theme }) => theme.primaryText1};
   font-size: 16px;
   font-weight: 500;
+
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
     background-color: ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
   }
+
   &:hover {
     background-color: ${({ theme, disabled }) => !disabled && darken(0.03, theme.primary5)};
   }
+
   &:active {
     box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.05, theme.primary5)};
     background-color: ${({ theme, disabled }) => !disabled && darken(0.05, theme.primary5)};
+  }
+
+  background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
+  border: none;
+  color: #ffffff;
+
+  position: relative;
+  z-index: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #e79631, #d92921);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
   }
 `
 
@@ -92,7 +119,7 @@ export const ButtonSecondary = styled(Base)`
   background-color: ${({ theme }) => theme.primary5};
   color: ${({ theme }) => theme.primaryText1};
   font-size: 16px;
-  border-radius: 8px;
+  border-radius: 3px;
   padding: ${({ padding }) => (padding ? padding : '10px')};
 
   &:focus {

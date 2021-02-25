@@ -52,7 +52,7 @@ function PoolFinder({ history }: RouteComponentProps) {
 
   return (
     <>
-      <AutoColumn gap="md">
+      <AutoColumn gap="md" style={{ padding: '1rem' }}>
         {!token0Address ? (
           <ButtonDropwdown
             onClick={() => {
@@ -106,7 +106,7 @@ function PoolFinder({ history }: RouteComponentProps) {
         )}
         {allowImport && (
           <ColumnCenter
-            style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px', borderRadius: '12px' }}
+            style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px', borderRadius: '3px' }}
           >
             <Text textAlign="center" fontWeight={500} color="">
               Pool Imported!

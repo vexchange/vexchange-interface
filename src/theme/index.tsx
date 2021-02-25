@@ -221,6 +221,9 @@ html {
 export const ThemedGlobalStyle = createGlobalStyle`
 html {
   color: ${({ theme }) => theme.text1};
-  background-color: ${({ theme }) => theme.bg2};
+  // background-color: ${({ theme }) => theme.bg2};
+
+  background-color: #004467;
+  background-image: radial-gradient(50% 100%, rgba(0,0,0,0.00) 0%, #000000 100%);
 }
 `

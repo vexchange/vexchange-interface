@@ -6,7 +6,7 @@ import ReactGA from 'react-ga'
 import { Text } from 'rebass'
 import { find } from 'lodash'
 import { ThemeContext } from 'styled-components'
-import { ButtonPrimary } from '../../components/Button'
+import { ButtonConfirmed, ButtonPrimary } from '../../components/Button'
 import { LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 import ConfirmationModal from '../../components/ConfirmationModal'
@@ -30,6 +30,8 @@ import { useTokenBalance } from '../../state/wallet/hooks'
 import { TYPE } from '../../theme'
 import { calculateSlippageAmount } from '../../utils'
 import { ClickableText, FixedBottom, MaxButton, Wrapper } from './styleds'
+import { useApproveCallback, Approval } from '../../hooks/useApproveCallback'
+import { Dots } from '../../components/swap/styleds'
 
 // denominated in bips
 const ALLOWED_SLIPPAGE = 50
@@ -127,8 +129,6 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
   // pool token data
   const userLiquidity = useTokenBalance(account, pair?.liquidityToken)
   const totalPoolTokens = useTotalSupply(pair?.liquidityToken)
-  console.log('userLiquidity: ', userLiquidity?.toExact())
-  console.log('totalPoolTokens: ', totalPoolTokens?.toExact())
 
   // input state
   const [state, dispatch] = useReducer(reducer, initializeRemoveState(userLiquidity?.toExact(), token0, token1))
@@ -261,6 +261,8 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
     )
   }
 
+  const [approval, approveCallback] = useApproveCallback(parsedAmounts[Field.LIQUIDITY], ROUTER_ADDRESS)
+
   // adjust amounts for slippage
   const slippageAdjustedAmounts = {
     [Field.TOKEN0]:
@@ -362,6 +364,10 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
     setPendingConfirmation(true)
   }
 
+  async function approveAmount() {
+    approveCallback()
+  }
+
   async function onRemove() {
     setAttemptedRemoval(true)
 
@@ -369,44 +375,36 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
     const oneTokenIsETH = token0IsETH || tokens[Field.TOKEN1].equals(VVET[chainId])
 
     let args, abi
+    if (approval === Approval.APPROVED) {
+      if (oneTokenIsETH) {
+        abi = find(IUniswapV2Router02ABI, { name: 'removeLiquidityETH' })
+
+        args = [
+          tokens[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].address,
+          parsedAmounts[Field.LIQUIDITY].raw.toString(),
+          slippageAdjustedAmounts[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].raw.toString(),
+          slippageAdjustedAmounts[token0IsETH ? Field.TOKEN0 : Field.TOKEN1].raw.toString(),
+          account,
+          Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW
+        ]
+      }
+      //removal without ETH
+      else {
+        abi = find(IUniswapV2Router02ABI, { name: 'removeLiquidity' })
+
+        args = [
+          tokens[Field.TOKEN0].address,
+          tokens[Field.TOKEN1].address,
+          parsedAmounts[Field.LIQUIDITY].raw.toString(),
+          slippageAdjustedAmounts[Field.TOKEN0].raw.toString(),
+          slippageAdjustedAmounts[Field.TOKEN1].raw.toString(),
+          account,
+          Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW
+        ]
+      }
+    }
 
     // removal with ETH
-    if (oneTokenIsETH) {
-      abi = find(IUniswapV2Router02ABI, { name: 'removeLiquidityETH' })
-
-      args = [
-        tokens[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].address,
-        parsedAmounts[Field.LIQUIDITY].raw.toString(),
-        slippageAdjustedAmounts[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].raw.toString(),
-        slippageAdjustedAmounts[token0IsETH ? Field.TOKEN0 : Field.TOKEN1].raw.toString(),
-        account,
-        Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW
-      ]
-
-      console.log('token: ', tokens[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].address)
-      console.log('liquidity: ', parsedAmounts[Field.LIQUIDITY].raw.toString())
-      console.log('amountTokenMin: ', slippageAdjustedAmounts[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].raw.toString())
-      console.log('amountETHMin: ', slippageAdjustedAmounts[token0IsETH ? Field.TOKEN0 : Field.TOKEN1].raw.toString())
-      console.log('to: ', account)
-      console.log('deadline: ', Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW)
-    }
-    //removal without ETH
-    else {
-      console.log('removeLiquidity')
-      abi = find(IUniswapV2Router02ABI, { name: 'removeLiquidity' })
-
-      args = [
-        tokens[Field.TOKEN0].address,
-        tokens[Field.TOKEN1].address,
-        parsedAmounts[Field.LIQUIDITY].raw.toString(),
-        slippageAdjustedAmounts[Field.TOKEN0].raw.toString(),
-        slippageAdjustedAmounts[Field.TOKEN1].raw.toString(),
-        account,
-        Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW
-      ]
-    }
-
-    console.log(args)
     const method = library.thor.account(ROUTER_ADDRESS).method(abi)
     const clause = method.asClause(...args)
 
@@ -509,8 +507,25 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
             }`}
           </Text>
         </RowBetween>
-        <RowBetween>
-          <ButtonPrimary style={{ margin: '20px 0 0 0' }} onClick={onRemove}>
+        <RowBetween mt="1rem">
+          <ButtonConfirmed
+            onClick={approveAmount}
+            confirmed={approval === Approval.APPROVED}
+            disabled={approval !== Approval.NOT_APPROVED}
+            mr="0.5rem"
+            fontWeight={500}
+            fontSize={20}
+          >
+            {approval === Approval.PENDING ? (
+              <Dots>Approving</Dots>
+            ) : approval === Approval.APPROVED ? (
+              'Approved'
+            ) : (
+              'Approve'
+            )}
+          </ButtonConfirmed>
+
+          <ButtonPrimary disabled={!(approval === Approval.APPROVED)} onClick={onRemove} ml="0.5rem">
             <Text fontWeight={500} fontSize={20}>
               Confirm
             </Text>

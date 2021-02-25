@@ -32,7 +32,7 @@ const tabOrder = [
 const Tabs = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
-  border-radius: 3rem;
+  background-image: linear-gradient(270deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.03) 96%);
 `
 
 const activeClassName = 'ACTIVE'
@@ -45,16 +45,18 @@ const StyledNavLink = styled(NavLink).attrs({
   justify-content: center;
   height: 3rem;
   flex: 1 0 auto;
-  border-radius: 3rem;
+  // border-radius: 3rem;
   outline: none;
   cursor: pointer;
   text-decoration: none;
   color: ${({ theme }) => theme.text3};
   font-size: 20px;
   box-sizing: border-box;
+  padding: 1rem;
 
   &.${activeClassName} {
-    border-radius: 12px;
+    background-image: linear-gradient(270deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.03) 96%);
+    border-radius: 3px 0 0 0;
     box-sizing: border-box;
     font-weight: 500;
     color: ${({ theme }) => theme.text1};
@@ -139,7 +141,7 @@ function NavigationTabs({ location: { pathname }, history }: RouteComponentProps
           </RowBetween>
         </Tabs>
       ) : (
-        <Tabs style={{ marginBottom: '20px' }}>
+        <Tabs>
           {tabOrder.map(({ path, textKey, regex }) => (
             <StyledNavLink
               id={`${textKey}-nav-link`}

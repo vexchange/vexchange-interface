@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link as HistoryLink } from 'react-router-dom'
+import { Send, Sun, Moon } from 'react-feather'
 
 import styled from 'styled-components'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
@@ -15,6 +16,7 @@ import { isMobile } from 'react-device-detect'
 import { YellowCard } from '../Card'
 import { useWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
+import { ButtonSecondary } from '../Button'
 
 import Logo from '../../assets/svg/logo.svg'
 import Wordmark from '../../assets/svg/wordmark.svg'
@@ -70,7 +72,7 @@ const AccountElement = styled.div<{ active: boolean }>`
   flex-direction: row;
   align-items: center;
   background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
-  border-radius: 12px;
+  border-radius: 3px;
   white-space: nowrap;
 
   :focus {
@@ -107,7 +109,8 @@ const MigrateBanner = styled(AutoColumn)`
   padding: 12px 0;
   display: flex;
   justify-content: center;
-  background-color: ${({ theme }) => theme.primary5};
+  // background-color: ${({ theme }) => theme.primary5};
+  background-color: rgba(255, 255, 255, 0.1);
   color: ${({ theme }) => theme.primaryText1};
   font-weight: 400;
   text-align: center;
@@ -124,7 +127,7 @@ const MigrateBanner = styled(AutoColumn)`
 
 const VersionLabel = styled.span<{ isV2?: boolean }>`
   padding: ${({ isV2 }) => (isV2 ? '0.15rem 0.5rem 0.16rem 0.45rem' : '0.15rem 0.5rem 0.16rem 0.35rem')};
-  border-radius: 14px;
+  border-radius: 3px;
   background: ${({ theme, isV2 }) => (isV2 ? theme.primary1 : 'none')};
   color: ${({ theme, isV2 }) => (isV2 ? theme.white : theme.primary1)};
   font-size: 0.825rem;
@@ -137,7 +140,7 @@ const VersionLabel = styled.span<{ isV2?: boolean }>`
 `
 
 const VersionToggle = styled.a`
-  border-radius: 16px;
+  border-radius: 3px;
   border: 1px solid ${({ theme }) => theme.primary1};
   color: ${({ theme }) => theme.primary1};
   display: flex;
@@ -151,6 +154,7 @@ const VersionToggle = styled.a`
 
 export default function Header() {
   const { account, chainId, active } = useWeb3React()
+  const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   const userEthBalance = useTokenBalanceTreatingWETHasETH(account, VVET[chainId])
   const [isDark] = useDarkModeManager()
@@ -172,14 +176,20 @@ export default function Header() {
         <HeaderElement>
           <Title>
             <UniIcon id="link" to="/">
-              <img src={isDark ? LogoDark : Logo} alt="logo" />
+              {/* <img src={isDark ? LogoDark : Logo} alt="logo" /> */}
+              <img src={Logo} alt="logo" />
             </UniIcon>
             {!isMobile && (
               <TitleText>
                 <HistoryLink id="link" to="/">
-                  <img
+                  {/* <img
                     style={{ marginLeft: '4px', marginTop: '4px' }}
                     src={isDark ? WordmarkDark : Wordmark}
+                    alt="logo"
+                  /> */}
+                  <img
+                    style={{ marginLeft: '10px', marginTop: '4px' }}
+                    src={Wordmark}
                     alt="logo"
                   />
                 </HistoryLink>
@@ -210,6 +220,15 @@ export default function Header() {
             ) : null}
             <Web3Status account={account} active={active} />
           </AccountElement>
+          <ButtonSecondary
+            ml="0.5rem"
+            onClick={toggleDarkMode}
+            p="8px 12px"
+            style={{ pointerEvents: 'auto' }}
+            width="min-content"
+          >
+            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+          </ButtonSecondary>
           <div style={{ pointerEvents: 'auto' }}>
             <Menu />
           </div>

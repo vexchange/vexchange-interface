@@ -23,7 +23,7 @@ const TransactionState = styled(Link)<{ pending: boolean; success?: boolean }>`
   justify-content: space-between;
   text-decoration: none !important;
 
-  border-radius: 0.5rem;
+  border-radius: 3px;
   padding: 0.5rem 0.75rem;
   font-weight: 500;
   font-size: 0.75rem;

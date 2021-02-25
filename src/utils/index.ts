@@ -124,15 +124,7 @@ export async function getTokenName(tokenAddress, library) {
 
   return method
     .call()
-    .then(data => {
-      console.log(data)
-    })
-    // .name()
-    // .catch(() =>
-    //   getContract(tokenAddress, ERC20_BYTES32_ABI, library)
-    //     .name()
-    //     .then(parseBytes32String)
-    // )
+    .then(({ decoded }) => decoded[0])
     .catch(error => {
       error.code = ERROR_CODES.TOKEN_SYMBOL
       throw error
@@ -141,17 +133,16 @@ export async function getTokenName(tokenAddress, library) {
 
 // get token symbol
 export async function getTokenSymbol(tokenAddress, library) {
-  console.log(library)
   if (!isAddress(tokenAddress)) {
     throw Error(`Invalid 'tokenAddress' parameter '${tokenAddress}'.`)
   }
 
-  return getContract(tokenAddress, ERC20_ABI, library)
-    .symbol()
-    .catch(() => {
-      const contractBytes32 = getContract(tokenAddress, ERC20_BYTES32_ABI, library)
-      return contractBytes32.symbol().then(parseBytes32String)
-    })
+  const abi = find(ERC20_ABI, { name: 'symbol' })
+  const method = library.thor.account(tokenAddress).method(abi)
+
+  return method
+    .call()
+    .then(({ decoded }) => decoded[0])
     .catch(error => {
       error.code = ERROR_CODES.TOKEN_SYMBOL
       throw error
@@ -164,8 +155,12 @@ export async function getTokenDecimals(tokenAddress, library) {
     throw Error(`Invalid 'tokenAddress' parameter '${tokenAddress}'.`)
   }
 
-  return getContract(tokenAddress, ERC20_ABI, library)
-    .decimals()
+  const abi = find(ERC20_ABI, { name: 'decimals' })
+  const method = library.thor.account(tokenAddress).method(abi)
+
+  return method
+    .call()
+    .then(({ decoded }) => decoded[0])
     .catch(error => {
       error.code = ERROR_CODES.TOKEN_DECIMALS
       throw error

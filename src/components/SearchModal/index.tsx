@@ -48,7 +48,7 @@ const TokenModalInfo = styled.div`
 const ItemList = styled.div`
   flex-grow: 1;
   height: 240px;
-  overflow-y: scroll;
+  overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 `
 
@@ -79,7 +79,6 @@ const Input = styled.input`
   border: none;
   outline: none;
   box-sizing: border-box;
-  border-radius: 20px;
   color: ${({ theme }) => theme.text1};
   border-style: solid;
   border: 1px solid ${({ theme }) => theme.bg3};
@@ -96,7 +95,7 @@ const FilterWrapper = styled(RowFixed)`
   padding: 8px;
   background-color: ${({ selected, theme }) => selected && theme.bg2};
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text2)};
-  border-radius: 8px;
+  border-radius: 3px;
   user-select: none;
   & > * {
     user-select: none;
@@ -128,7 +127,7 @@ const MenuItem = styled(PaddedItem)`
 const BaseWrapper = styled(AutoRow)<{ disable?: boolean }>`
   border: 1px solid ${({ theme, disable }) => (disable ? 'transparent' : theme.bg3)};
   padding: 0 6px;
-  border-radius: 10px;
+  border-radius: 3px;
   width: 120px;
 
   :hover {
@@ -407,7 +406,7 @@ function SearchModal({
             <ButtonPrimary
               padding={'6px 8px'}
               width={'fit-content'}
-              borderRadius={'12px'}
+              borderRadius={'3px'}
               onClick={() => {
                 history.push('/add/' + token0.address + '-' + token1.address)
                 onDismiss()
@@ -427,7 +426,7 @@ function SearchModal({
         if (temporaryToken === undefined) {
           return <TokenModalInfo>Searching for Token...</TokenModalInfo>
         } else if (temporaryToken === null) {
-          return <TokenModalInfo>Address is not a valid ERC-20 token.</TokenModalInfo>
+          return <TokenModalInfo>Address is not a valid VIP-180 token.</TokenModalInfo>
         } else {
           // a user found a token by search that isn't yet added to localstorage
           return (

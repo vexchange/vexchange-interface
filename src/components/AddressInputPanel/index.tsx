@@ -11,8 +11,8 @@ import { getExploreLink } from '../../utils'
 const InputPanel = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
-  border-radius: 1.25rem;
-  background-color: ${({ theme }) => theme.bg1};
+  // background-color: ${({ theme }) => theme.bg1};
+  background-color: transparent;
   z-index: 1;
   width: 100%;
 `
@@ -21,9 +21,9 @@ const ContainerRow = styled.div<{ error: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 1.25rem;
-  border: 1px solid ${({ error, theme }) => (error ? theme.red1 : theme.bg2)};
+  // border: 1px solid ${({ error, theme }) => (error ? theme.red1 : theme.bg2)};
   background-color: ${({ theme }) => theme.bg1};
+  background-color: transparent;
 `
 
 const InputContainer = styled.div`
@@ -37,7 +37,8 @@ const Input = styled.input<{ error?: boolean }>`
   border: none;
   flex: 1 1 auto;
   width: 0;
-  background-color: ${({ theme }) => theme.bg1};
+  // background-color: ${({ theme }) => theme.bg1};
+  background-color: transparent;
   color: ${({ error, theme }) => (error ? theme.red1 : theme.primary1)};
   overflow: hidden;
   text-overflow: ellipsis;

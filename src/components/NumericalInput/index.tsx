@@ -14,6 +14,7 @@ const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: s
   border: none;
   flex: 1 1 auto;
   background-color: ${({ theme }) => theme.bg1};
+  background-color: transparent;
   font-size: ${({ fontSize }) => fontSize && fontSize};
   text-align: ${({ align }) => align && align};
   white-space: nowrap;
@@ -37,6 +38,7 @@ const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: s
 
   ::placeholder {
     color: ${({ theme }) => theme.text4};
+    color: #ffffff;
   }
 `
 

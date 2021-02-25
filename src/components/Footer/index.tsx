@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Send, Sun, Moon } from 'react-feather'
-import { useDarkModeManager } from '../../state/user/hooks'
+import { Send } from 'react-feather'
 
 import { ButtonSecondary } from '../Button'
 
@@ -18,7 +17,6 @@ const FooterFrame = styled.div`
 `
 
 export default function Footer() {
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
 
   return (
     <FooterFrame>
@@ -27,9 +25,6 @@ export default function Footer() {
           <Send size={16} style={{ marginRight: '8px' }} /> Feedback
         </ButtonSecondary>
       </form>
-      <ButtonSecondary onClick={toggleDarkMode} p="8px 12px" ml="0.5rem" width="min-content">
-        {darkMode ? <Sun size={16} /> : <Moon size={16} />}
-      </ButtonSecondary>
     </FooterFrame>
   )
 }

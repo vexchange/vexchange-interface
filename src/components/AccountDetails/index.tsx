@@ -27,6 +27,10 @@ const HeaderRow = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem;
   `};
+
+  background-image: linear-gradient(270deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.03) 96%);
+
+  border-radius: 0 0 3px 3px;
 `
 
 const UpperSection = styled.div`
@@ -52,7 +56,7 @@ const UpperSection = styled.div`
 const InfoCard = styled.div`
   padding: 1rem;
   background-color: ${({ theme }) => theme.bg2};
-  border-radius: 20px;
+  border-radius: 3px;
 `
 
 const AccountGroupingRow = styled.div`
@@ -118,8 +122,8 @@ const LowerSection = styled.div`
   flex-grow: 1;
   overflow: auto;
   background-color: ${({ theme }) => theme.bg2};
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
 
   h5 {
     margin: 0;

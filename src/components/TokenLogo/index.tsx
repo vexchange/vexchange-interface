@@ -7,7 +7,7 @@ import { VVET } from '@uniswap/sdk'
 import { ReactComponent as VeChainLogo } from '../../assets/images/vet-logo.svg'
 
 const TOKEN_ICON_API = address =>
-  `https://raw.githubusercontent.com/vechain/token-registry/master/tokens/main/${address}/token.png`
+  `https://raw.githubusercontent.com/vechain/token-registry/master/tokens/test/${address}/token.png`
 const BAD_IMAGES = {}
 
 const Image = styled.img<{ size: string }>`

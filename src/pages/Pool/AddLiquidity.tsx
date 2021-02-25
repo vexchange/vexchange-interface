@@ -493,7 +493,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
   const modalHeader = () => {
     return noLiquidity ? (
       <AutoColumn gap="12px">
-        <LightCard margin={'30px 0'} borderRadius="20px">
+        <LightCard margin={'30px 0'} borderRadius="3px">
           <ColumnCenter>
             <RowFixed>
               <Text fontSize={36} fontWeight={500} marginRight={20}>
@@ -504,7 +504,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
           </ColumnCenter>
         </LightCard>
         <TYPE.body>Starting pool prices</TYPE.body>
-        <LightCard borderRadius="20px">
+        <LightCard borderRadius="3px">
           <TYPE.mediumHeader>
             {parsedAmounts[0] &&
               parsedAmounts[1] &&
@@ -704,7 +704,18 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
           label="Input"
           id="add-liquidity-input"
         />
-        <ColumnCenter>
+        <ColumnCenter
+          style={{
+            padding: '0.5rem 0',
+            backgroundImage: `
+              linear-gradient(
+                270deg,
+                rgba(255,255,255,0.13) 0%,
+                rgba(255,255,255,0.03) 97%
+              )
+            `
+          }}
+        >
           <Plus size="16" color={theme.text2} />
         </ColumnCenter>
         <CurrencyInputPanel
@@ -722,13 +733,13 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
         />
         {tokens[Field.OUTPUT] && tokens[Field.INPUT] && (
           <>
-            <GreyCard padding="0px" borderRadius={'20px'}>
-              <RowBetween padding="1rem">
+            <GreyCard borderRadius={'3px'}>
+              <RowBetween marginBottom="1rem">
                 <TYPE.subHeader fontWeight={500} fontSize={14}>
                   {noLiquidity ? 'Initial prices' : 'Prices'} and pool share
                 </TYPE.subHeader>
               </RowBetween>{' '}
-              <LightCard padding="1rem" borderRadius={'20px'}>
+              <LightCard padding="1rem" borderRadius={'3px'}>
                 <PriceBar />
               </LightCard>
             </GreyCard>
@@ -773,11 +784,13 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
             </ButtonPrimary>
           )
         ) : (
-          <ButtonPrimary disabled={true}>
-            <Text fontSize={20} fontWeight={500}>
-              {generalError ? generalError : inputError ? inputError : outputError ? outputError : 'Supply'}
-            </Text>
-          </ButtonPrimary>
+          <div style={{ padding: '2.4rem 4rem' }}>
+            <ButtonPrimary disabled={true}>
+              <Text fontSize={20} fontWeight={500}>
+                {generalError ? generalError : inputError ? inputError : outputError ? outputError : 'Supply'}
+              </Text>
+            </ButtonPrimary>
+          </div>
         )}
       </AutoColumn>
 

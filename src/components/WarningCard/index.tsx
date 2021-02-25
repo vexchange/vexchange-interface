@@ -26,7 +26,7 @@ const Wrapper = styled.div`
   position: relative;
   padding: 1rem;
   border: 0.5px solid #f3be1e;
-  border-radius: 10px;
+  border-radius: 3px;
   margin-bottom: 20px;
   display: grid;
   grid-template-rows: 1fr 1fr 1fr;
@@ -108,7 +108,7 @@ const Popup = styled(Flex)`
   line-height: 150%;
   background: ${({ theme }) => theme.bg2};
   border: 1px solid ${({ theme }) => theme.bg3};
-  border-radius: 8px;
+  border-radius: 3px;
   animation: ${fadeIn} 0.15s linear;
   color: ${({ theme }) => theme.text1};
   font-style: italic;

@@ -31,7 +31,7 @@ const CurrencySelect = styled.button<{ selected: boolean }>`
   font-weight: 500;
   background-color: ${({ selected, theme }) => (selected ? theme.bg1 : theme.primary1)};
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
-  border-radius: 12px;
+  border-radius: 3px;
   box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
   outline: none;
   cursor: pointer;
@@ -43,6 +43,8 @@ const CurrencySelect = styled.button<{ selected: boolean }>`
   :hover {
     background-color: ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};
   }
+
+  background-color: rgba(255, 255, 255, 0.1);
 `
 
 const LabelRow = styled.div`
@@ -78,29 +80,27 @@ const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
 const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
-  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  background-color: ${({ theme }) => theme.bg2};
+  // border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  // background-color: ${({ theme }) => theme.bg2};
   z-index: 1;
 `
 
 const Container = styled.div<{ hideInput: boolean }>`
-  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
-  border: 1px solid ${({ theme }) => theme.bg2};
-  background-color: ${({ theme }) => theme.bg1};
+  // border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  // border: 1px solid ${({ theme }) => theme.bg2};
+  // background-color: ${({ theme }) => theme.bg1};
 `
 
 const StyledTokenName = styled.span<{ active?: boolean }>`
   ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
   font-size:  ${({ active }) => (active ? '20px' : '16px')};
-
 `
-
 const StyledBalanceMax = styled.button`
-  height: 28px;
   background-color: ${({ theme }) => theme.primary5};
   border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: 0.5rem;
+  border-radius: 3px;
   font-size: 0.875rem;
+  padding: 0.5rem;
 
   font-weight: 500;
   cursor: pointer;
@@ -117,6 +117,10 @@ const StyledBalanceMax = styled.button`
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
     margin-right: 0.5rem;
   `};
+
+  background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
+  border: none;
+  color: #ffffff;
 `
 
 interface CurrencyInputPanelProps {
@@ -192,7 +196,7 @@ export default function CurrencyInputPanel({
             </RowBetween>
           </LabelRow>
         )}
-        <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableTokenSelect}>
+        <InputRow style={hideInput ? { padding: '0', borderRadius: '3px' } : {}} selected={disableTokenSelect}>
           {!hideInput && (
             <>
               <NumericalInput

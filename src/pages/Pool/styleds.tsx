@@ -20,7 +20,8 @@ export const MaxButton = styled.button<{ width: string }>`
   padding: 0.5rem 1rem;
   background-color: ${({ theme }) => theme.primary5};
   border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: 0.5rem;
+  border: 1px solid #ffffff;
+  border-radius: 3px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;

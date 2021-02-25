@@ -45,7 +45,7 @@ const Popup = styled.div`
   background: ${({ theme }) => theme.bg1};
   border: 1px solid ${({ theme }) => theme.bg3};
 
-  border-radius: 8px;
+  border-radius: 3px;
 
   animation: ${fadeIn} 0.15s linear;
 
