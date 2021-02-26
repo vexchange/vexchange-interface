@@ -326,8 +326,8 @@ export default function WalletModal({
           {walletView !== WALLET_VIEWS.PENDING && (
             <Blurb>
               <span>New to VeChain? &nbsp;</span>{' '}
-              <Link href="https://ethereum.org/use/#3-what-is-a-wallet-and-which-one-should-i-use">
-                Learn more about wallets
+              <Link href="https://medium.com/vechain-foundation/announcing-vechain-sync-2-unlocking-revolution-for-the-entire-blockchain-dapp-industry-enabling-5b1b21cd7b9b">
+                Learn more about Sync
               </Link>
             </Blurb>
           )}

@@ -71,7 +71,8 @@ const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
+  // background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
+  background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
   border-radius: 3px;
   white-space: nowrap;
 
@@ -127,7 +128,6 @@ const MigrateBanner = styled(AutoColumn)`
 
 const VersionLabel = styled.span<{ isV2?: boolean }>`
   padding: ${({ isV2 }) => (isV2 ? '0.15rem 0.5rem 0.16rem 0.45rem' : '0.15rem 0.5rem 0.16rem 0.35rem')};
-  border-radius: 3px;
   background: ${({ theme, isV2 }) => (isV2 ? theme.primary1 : 'none')};
   color: ${({ theme, isV2 }) => (isV2 ? theme.white : theme.primary1)};
   font-size: 0.825rem;

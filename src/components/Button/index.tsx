@@ -31,7 +31,7 @@ const Base = styled(RebassButton)<{ padding?: string; width?: string; borderRadi
 `
 
 export const ButtonPrimary = styled(Base)`
-  background-color: ${({ theme }) => theme.primary1};
+  background-color: ${({ theme }) => theme.primary4};
   color: white;
 
   &:focus {
@@ -46,10 +46,48 @@ export const ButtonPrimary = styled(Base)`
     background-color: ${({ theme }) => darken(0.1, theme.primary1)};
   }
   &:disabled {
-    background-color: ${({ theme }) => theme.bg3};
-    color: ${({ theme }) => theme.text3}
+    background: linear-gradient(137.29deg, rgba(255, 255, 255, 0.572361) -7.97%, rgba(119, 119, 119, 0.403655) 101.51%);
     cursor: auto;
     box-shadow: none;
+
+    &:before {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 1px;
+      border-radius: 3px;
+      background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+    }
+  }
+
+  background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
+  border: none;
+  color: #ffffff;
+
+  position: relative;
+  z-index: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #e79631, #d92921);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
   }
 `
 
@@ -163,7 +201,7 @@ export const ButtonPink = styled(Base)`
 `
 
 export const ButtonOutlined = styled(Base)`
-  border: 1px solid ${({ theme }) => theme.bg2};
+  // border: 1px solid ${({ theme }) => theme.bg2};
   background-color: transparent;
   color: ${({ theme }) => theme.text1};
 
@@ -171,14 +209,53 @@ export const ButtonOutlined = styled(Base)`
     box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
   }
   &:hover {
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
+    // box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
+    &:before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 1px;
+      border-radius: 3px;
+      background: linear-gradient(to right, #e79631, #d92921);
+      -webkit-mask: 
+        linear-gradient(#fff 0 0) content-box, 
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+    }
   }
   &:active {
     box-shadow: 0 0 0 1px ${({ theme }) => theme.bg4};
   }
+
   &:disabled {
     opacity: 50%;
     cursor: auto;
+  }
+
+  position: relative;
+  z-index: 0;
+
+  &:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1px;
+    border-radius: 3px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
+    -webkit-mask: 
+       linear-gradient(#fff 0 0) content-box, 
+       linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
   }
 `
 

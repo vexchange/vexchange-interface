@@ -230,7 +230,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         </>
 
         {!noRoute && tokens[Field.OUTPUT] && tokens[Field.INPUT] && (
-          <Card padding={'.25rem 1.25rem 0 .75rem'} borderRadius={'3px'}>
+          <Card padding={'0.75rem 0.75rem 0.75rem 1rem'}>
             <AutoColumn gap="4px">
               <RowBetween align="center">
                 <Text fontWeight={500} fontSize={14} color={theme.text2}>

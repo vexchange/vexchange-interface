@@ -86,7 +86,7 @@ export const StyledNumerical = styled(NumericalInput)`
 export const StyledBalanceMaxMini = styled.button<{ active?: boolean }>`
   height: 22px;
   width: 22px;
-  background-color: ${({ theme }) => theme.bg2};
+  background-color: transparent;
   border: none;
   border-radius: 50%;
   padding: 0.2rem;
@@ -101,7 +101,8 @@ export const StyledBalanceMaxMini = styled.button<{ active?: boolean }>`
   float: right;
 
   :hover {
-    background-color: ${({ theme }) => theme.bg3};
+    // background-color: ${({ theme }) => theme.bg3};
+    border: 1px solid #e79631;
   }
   :focus {
     background-color: ${({ theme }) => theme.bg3};

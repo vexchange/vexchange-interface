@@ -59,6 +59,7 @@ const BodyWrapper = styled.div`
 
 const Body = styled.div`
   max-width: 534px;
+  // max-width: 420px;
   width: 100%;
 
   background-image: linear-gradient(
