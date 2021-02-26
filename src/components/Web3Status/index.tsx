@@ -59,14 +59,14 @@ const Web3StatusError = styled(Web3StatusGeneric)`
 
 const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
   background-color: ${({ theme }) => theme.primary4};
-  border: none;
-  color: ${({ theme }) => theme.primaryText1};
+  // color: ${({ theme }) => theme.primaryText1};
+  color: #ffffff;
   font-weight: 500;
 
   :hover,
   :focus {
     border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-    color: ${({ theme }) => theme.primaryText1};
+    // color: ${({ theme }) => theme.primaryText1};
   }
 
   ${({ faded }) =>
@@ -79,13 +79,31 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
       :hover,
       :focus {
         border: 1px solid ${({ theme }) => darken(0.05, theme.primary4)};
-        color: ${({ theme }) => darken(0.05, theme.primaryText1)};
+        // color: ${({ theme }) => darken(0.05, theme.primaryText1)};
       }
     `}
 
   background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
-  border: none;
   color: #ffffff;
+
+  position: relative;
+  z-index: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #e79631, #d92921);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+  }
 `
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
@@ -132,7 +150,7 @@ function recentTransactionsOnly(a: TransactionDetails) {
 
 export default function Web3Status({ account, active }) {
   const { t } = useTranslation()
-  const { connector, error } = useWeb3React()
+  const { error } = useWeb3React()
   const contextNetwork = useWeb3React(NetworkContextName)
 
   const allTransactions = useAllTransactions()
