@@ -31,7 +31,7 @@ export const FixedBottom = styled.div`
 export const AdvancedDropwdown = styled.div`
   position: absolute;
   margin-top: -12px;
-  max-width: 455px;
+  max-width: 526px;
   width: 100%;
   margin-bottom: 100px;
   padding: 10px 0;

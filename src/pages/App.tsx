@@ -68,7 +68,7 @@ const Body = styled.div`
     rgba(217, 216, 216, 0.15) 38%,
     rgba(226, 225, 225, 0.08) 61%,
     rgba(51, 41, 41, 0) 77%,
-    #751f0d 100%
+    #893726 100%
   );
 
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
