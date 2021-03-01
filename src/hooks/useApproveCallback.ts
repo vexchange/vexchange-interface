@@ -32,10 +32,9 @@ export function useApproveCallback(
     // we treat VVET as VET which requires no approvals
     if (amountToApprove?.token?.equals(VVET[amountToApprove?.token?.chainId])) return Approval.APPROVED
     // we might not have enough data to know whether or not we need to approve
-    if (!currentAllowance) return Approval.UNKNOWN
+    if (!currentAllowance || !amountToApprove) return Approval.UNKNOWN
     if (pendingApproval) return Approval.PENDING
     // amountToApprove will be defined if currentAllowance is
-    console.log(currentAllowance, amountToApprove)
     return currentAllowance.lessThan(amountToApprove) ? Approval.NOT_APPROVED : Approval.APPROVED
   }, [amountToApprove, currentAllowance, pendingApproval])
 
