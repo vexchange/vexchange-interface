@@ -32,6 +32,7 @@ import { useWeb3React } from '../../hooks'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
 import { useHasPendingApproval, useTransactionAdder } from '../../state/transactions/hooks'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
+import { useDarkModeManager } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { calculateSlippageAmount } from '../../utils'
 import { Dots, Wrapper } from './styleds'
@@ -144,6 +145,7 @@ interface AddLiquidityProps extends RouteComponentProps {
 function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
   const { account, chainId, library } = useWeb3React()
   const theme = useContext(ThemeContext)
+  const [isDark] = useDarkModeManager()
 
   // modal states
   const [showSearch, setShowSearch] = useState<boolean>(false)
@@ -707,13 +709,10 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
         <ColumnCenter
           style={{
             padding: '0.5rem 0',
-            backgroundImage: `
-              linear-gradient(
-                270deg,
-                rgba(255,255,255,0.13) 0%,
-                rgba(255,255,255,0.03) 97%
-              )
-            `
+            backgroundImage: isDark
+              ? `linear-gradient(270deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.03) 97%)`
+              : `none`,
+            backgroundColor: isDark ? `none` : `rgba(99, 113, 142, 0.10)`
           }}
         >
           <Plus size="16" color={theme.text2} />

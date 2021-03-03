@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
-import styled, { ThemeContext } from 'styled-components'
+import styled, { ThemeContext, css } from 'styled-components'
 
+import { useDarkModeManager } from '../../state/user/hooks'
 import { isAddress } from '../../utils'
 import { useWeb3React, useDebounce } from '../../hooks'
 import { Link, TYPE } from '../../theme'
@@ -31,22 +32,20 @@ const InputContainer = styled.div`
   padding: 1rem;
 `
 
-const Input = styled.input<{ error?: boolean }>`
+const Input = styled.input<{ error?: boolean; isDark?: boolean }>`
   font-size: 1.25rem;
   outline: none;
   border: none;
   flex: 1 1 auto;
   width: 0;
+  color: ${({ error, theme }) => (error ? theme.red1 : theme.primary1)};
   // background-color: ${({ theme }) => theme.bg1};
   background-color: transparent;
-  color: ${({ error, theme }) => (error ? theme.red1 : theme.primary1)};
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 500;
   width: 100%;
-  ::placeholder {
-    color: ${({ theme }) => theme.text4};
-  }
+
   padding: 0px;
   -webkit-appearance: textfield;
 
@@ -62,6 +61,7 @@ const Input = styled.input<{ error?: boolean }>`
   ::placeholder {
     color: ${({ theme }) => theme.text4};
   }
+  }
 `
 
 export default function AddressInputPanel({
@@ -75,6 +75,7 @@ export default function AddressInputPanel({
 }) {
   const { chainId, library } = useWeb3React()
   const theme = useContext(ThemeContext)
+  const [isDark] = useDarkModeManager()
 
   const [input, setInput] = useState(initialInput ? initialInput : '')
   const debouncedInput = useDebounce(input, 200)
@@ -140,6 +141,7 @@ export default function AddressInputPanel({
               error={input !== '' && error}
               onChange={onInput}
               value={input}
+              isDark={isDark}
             />
           </AutoColumn>
         </InputContainer>

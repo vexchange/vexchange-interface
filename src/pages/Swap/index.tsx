@@ -23,6 +23,7 @@ import { useApproveCallbackFromTrade, Approval } from '../../hooks/useApproveCal
 import { useSwapCallback } from '../../hooks/useSwapCallback'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
+import { useDarkModeManager } from '../../state/user/hooks'
 import { useDefaultsFromURL, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
 import { CursorPointer, TYPE } from '../../theme'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningServerity } from '../../utils/prices'
@@ -34,6 +35,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   // const { t } = useTranslation()
   const { chainId, account } = useWeb3React()
   const theme = useContext(ThemeContext)
+  const [isDark] = useDarkModeManager()
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle()
@@ -196,13 +198,10 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
             <AutoColumn
               style={{
                 padding: '0.5rem',
-                backgroundImage: `
-                  linear-gradient(
-                    270deg,
-                    rgba(255,255,255,0.13) 0%,
-                    rgba(255,255,255,0.03) 97%
-                  )
-                `
+                backgroundImage: isDark
+                  ? `linear-gradient(270deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.03) 97%)`
+                  : `none`,
+                backgroundColor: isDark ? `none` : `rgba(99, 113, 142, 0.10)`
               }}
             >
               <ArrowWrapper>

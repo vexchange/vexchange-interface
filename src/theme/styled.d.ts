@@ -20,6 +20,9 @@ export interface Colors {
   bg4: Color
   bg5: Color
 
+  bgImage1: Color
+  bgImage2: Color
+
   modalBG: Color
   advancedBG: Color
 

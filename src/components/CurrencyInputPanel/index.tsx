@@ -1,10 +1,11 @@
 import { Pair, Token } from '@uniswap/sdk'
 import React, { useState, useContext } from 'react'
-import styled, { ThemeContext } from 'styled-components'
+import styled, { ThemeContext, css } from 'styled-components'
 import '@reach/tooltip/styles.css'
 import { darken } from 'polished'
 import { Field } from '../../state/swap/actions'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
+import { useDarkModeManager } from '../../state/user/hooks'
 
 import TokenLogo from '../TokenLogo'
 import DoubleLogo from '../DoubleLogo'
@@ -23,28 +24,41 @@ const InputRow = styled.div<{ selected: boolean }>`
   padding: ${({ selected }) => (selected ? '0.75rem 0.5rem 0.75rem 1rem' : '0.75rem 0.75rem 0.75rem 1rem')};
 `
 
-const CurrencySelect = styled.button<{ selected: boolean }>`
+const CurrencySelect = styled.button<{ selected: boolean; isDark?: boolean }>`
   align-items: center;
   height: 2.2rem;
   font-size: 20px;
   font-family: 'Inter';
   font-weight: 500;
-  background-color: ${({ selected, theme }) => (selected ? theme.bg1 : theme.primary1)};
-  color: ${({ selected, theme }) => (selected ? theme.text1 : theme.white)};
-  border-radius: 3px;
+  background-color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(99, 113, 142, 0.1)')};
+  color: ${({ isDark }) => (isDark ? 'white' : '#000000')};
   box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
-  outline: none;
-  cursor: pointer;
-  user-select: none;
   border: none;
+  cursor: pointer;
+  outline: none;
   padding: 0 0.5rem;
+  position: relative;
+  user-select: none;
+  z-index: 0;
 
   :focus,
   :hover {
-    background-color: ${({ selected, theme }) => (selected ? theme.bg2 : darken(0.05, theme.primary1))};
+    &:before {
+      content: '';
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 1px;
+      border-radius: 3px;
+      background: linear-gradient(to right, #e79631, #d92921);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+    }
   }
-
-  background-color: rgba(255, 255, 255, 0.1);
 `
 
 const LabelRow = styled.div`
@@ -163,6 +177,7 @@ export default function CurrencyInputPanel({
   id
 }: CurrencyInputPanelProps) {
   const { t } = useTranslation()
+  const [isDark] = useDarkModeManager()
 
   const [modalOpen, setModalOpen] = useState(false)
   const { account } = useWeb3React()
@@ -212,6 +227,7 @@ export default function CurrencyInputPanel({
             </>
           )}
           <CurrencySelect
+            isDark={isDark}
             selected={!!token}
             className="open-currency-select-button"
             onClick={() => {

@@ -8,6 +8,7 @@ import { isMobile } from 'react-device-detect'
 import '@reach/dialog/styles.css'
 import { transparentize } from 'polished'
 import { useGesture } from 'react-use-gesture'
+import { useDarkModeManager } from '../../state/user/hooks'
 
 // errors emitted, fix with https://github.com/styled-components/styled-components/pull/3006
 const AnimatedDialogOverlay = animated(DialogOverlay)
@@ -41,14 +42,27 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
 
 // destructure to not pass custom props to Dialog DOM element
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, ...rest }) => <DialogContent {...rest} />)`
+const StyledDialogContent = styled(({ minHeight, maxHeight, mobile, isOpen, isDark, ...rest }) => <DialogContent {...rest} />)`
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
-    border: 1px solid ${({ theme }) => theme.bg1};
-    background-color: ${({ theme }) => theme.bg1};
-    box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
     padding: 0px;
     width: 50vw;
+
+    ${({ isDark }) =>
+      isDark
+        ? css`
+            background-image: linear-gradient(210deg, #3f6a80 0%, #244150 100%);
+            box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.shadow1)};
+            border: 1px solid ${({ theme }) => theme.bg1};
+            border: 3px solid #507589;
+            box-shadow: 0 14px 22px 0 #001926;
+          `
+        : css`
+            background-color: #fffff;
+            background-image: none;
+            border: 2px solid #ffffff;
+            box-shadow: 0 14px 22px 0 rgba(221, 77, 43, 0.22);
+          `}
 
     max-width: 420px;
     ${({ maxHeight }) =>
@@ -107,6 +121,8 @@ export default function Modal({
   initialFocusRef = null,
   children
 }: ModalProps) {
+  const [isDark] = useDarkModeManager()
+
   const transitions = useTransition(isOpen, null, {
     config: { duration: 200 },
     from: { opacity: 0 },
@@ -163,11 +179,12 @@ export default function Modal({
                       }}
                     >
                       <StyledDialogContent
-                        style={props}
                         hidden={true}
-                        minHeight={minHeight}
+                        isDark={isDark}
                         maxHeight={maxHeight}
+                        minHeight={minHeight}
                         mobile={isMobile}
+                        style={props}
                       >
                         <HiddenCloseButton onClick={onDismiss} />
                         {children}
@@ -194,6 +211,7 @@ export default function Modal({
                 mobile={isMobile ? isMobile : undefined}
               >
                 <StyledDialogContent
+                  isDark={isDark}
                   hidden={true}
                   minHeight={minHeight}
                   maxHeight={maxHeight}

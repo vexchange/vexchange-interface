@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { Link } from '../../theme'
 
 const InfoCard = styled.button<{ active?: boolean }>`
-  background-color: ${({ theme, active }) => (active ? theme.bg3 : theme.bg2)};
+  background-color: transparent;
   padding: 1rem;
   outline: none;
   border: 1px solid;

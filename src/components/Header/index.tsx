@@ -19,9 +19,9 @@ import { useDarkModeManager } from '../../state/user/hooks'
 import { ButtonSecondary } from '../Button'
 
 import Logo from '../../assets/svg/logo.svg'
-import Wordmark from '../../assets/svg/wordmark.svg'
+import Wordmark from '../../assets/svg/wordmark_light.svg'
 import LogoDark from '../../assets/svg/logo_white.svg'
-import WordmarkDark from '../../assets/svg/wordmark_white.svg'
+import WordmarkDark from '../../assets/svg/wordmark_dark.svg'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
 
@@ -105,19 +105,19 @@ const UniIcon = styled(HistoryLink)<{ to: string }>`
   }
 `
 
-const MigrateBanner = styled(AutoColumn)`
+const MigrateBanner = styled(AutoColumn)<{ isDark?: boolean }>`
   width: 100%;
   padding: 12px 0;
   display: flex;
   justify-content: center;
-  // background-color: ${({ theme }) => theme.primary5};
-  background-color: rgba(255, 255, 255, 0.1);
-  color: ${({ theme }) => theme.primaryText1};
+  background-color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(99, 113, 142, 0.1)')};
+  color: ${({ isDark }) => (isDark ? '#dddddd' : '#da472a')};
   font-weight: 400;
   text-align: center;
   pointer-events: auto;
+
   a {
-    color: ${({ theme }) => theme.primaryText1};
+    color: ${({ isDark }) => (isDark ? '#dddddd' : '#da472a')};
   }
 
   ${({ theme }) => theme.mediaWidth.upToSmall`
@@ -135,7 +135,7 @@ const VersionLabel = styled.span<{ isV2?: boolean }>`
   :hover {
     user-select: ${({ isV2 }) => (isV2 ? 'none' : 'initial')};
     background: ${({ theme, isV2 }) => (isV2 ? theme.primary1 : 'none')};
-    color: ${({ theme, isV2 }) => (isV2 ? theme.white : theme.primary3)};
+    color: ${({ theme, isV2 }) => (isV2 ? theme.white : theme.primary1)};
   }
 `
 
@@ -161,7 +161,7 @@ export default function Header() {
 
   return (
     <HeaderFrame>
-      <MigrateBanner>
+      <MigrateBanner isDark={isDark}>
         Vexchange V2 is live! Read the&nbsp;
         <Link href="https://uniswap.org/blog/launch-uniswap-v2/">
           <b>blog post ↗</b>
@@ -176,20 +176,14 @@ export default function Header() {
         <HeaderElement>
           <Title>
             <UniIcon id="link" to="/">
-              {/* <img src={isDark ? LogoDark : Logo} alt="logo" /> */}
-              <img src={Logo} alt="logo" />
+              <img src={isDark ? LogoDark : Logo} alt="logo" />
             </UniIcon>
             {!isMobile && (
               <TitleText>
                 <HistoryLink id="link" to="/">
-                  {/* <img
-                    style={{ marginLeft: '4px', marginTop: '4px' }}
-                    src={isDark ? WordmarkDark : Wordmark}
-                    alt="logo"
-                  /> */}
                   <img
                     style={{ marginLeft: '10px', marginTop: '4px' }}
-                    src={Wordmark}
+                    src={isDark ? WordmarkDark : Wordmark}
                     alt="logo"
                   />
                 </HistoryLink>
@@ -221,6 +215,7 @@ export default function Header() {
             <Web3Status account={account} active={active} />
           </AccountElement>
           <ButtonSecondary
+            isDark={isDark}
             ml="0.5rem"
             onClick={toggleDarkMode}
             p="8px 12px"

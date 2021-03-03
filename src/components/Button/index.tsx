@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { darken, lighten } from 'polished'
 
+import { useDarkModeManager } from '../../state/user/hooks'
 import { RowBetween } from '../Row'
 import { ChevronDown } from 'react-feather'
 import { Button as RebassButton, ButtonProps } from 'rebass/styled-components'
@@ -153,23 +154,48 @@ export const ButtonGray = styled(Base)`
   }
 `
 
-export const ButtonSecondary = styled(Base)`
-  background-color: ${({ theme }) => theme.primary5};
-  color: ${({ theme }) => theme.primaryText1};
+export const ButtonSecondary = styled(Base)<{ isDark?: boolean }>`
+  background-color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(99, 113, 142, 0.14)')};
+  color: ${({ isDark }) => (isDark ? '#f5a788' : '#da472a')};
   font-size: 16px;
   border-radius: 3px;
   padding: ${({ padding }) => (padding ? padding : '10px')};
+  position: relative;
+  z-index: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1px;
+    border-radius: 3px;
+    background: transparent;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+  }
 
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme }) => theme.primary4};
-    background-color: ${({ theme }) => theme.primary4};
+    &:before {
+      background: linear-gradient(to right, #e79631, #d92921);
+    }
   }
+
   &:hover {
-    background-color: ${({ theme }) => theme.primary4};
+    &:before {
+      background: linear-gradient(to right, #e79631, #d92921);
+    }
   }
   &:active {
     box-shadow: 0 0 0 1pt ${({ theme }) => theme.primary4};
-    background-color: ${({ theme }) => theme.primary4};
+    &:before {
+      background: linear-gradient(to right, #e79631, #d92921);
+    }
   }
   &:disabled {
     background-color: ${({ theme }) => theme.primary5};
@@ -200,7 +226,7 @@ export const ButtonPink = styled(Base)`
   }
 `
 
-export const ButtonOutlined = styled(Base)`
+export const ButtonOutlined = styled(Base)<{ isDark?: boolean }>`
   // border: 1px solid ${({ theme }) => theme.bg2};
   background-color: transparent;
   color: ${({ theme }) => theme.text1};
@@ -362,8 +388,10 @@ export function ButtonDropwdown({ disabled = false, children, ...rest }: { disab
 }
 
 export function ButtonDropwdownLight({ disabled = false, children, ...rest }: { disabled?: boolean } & ButtonProps) {
+  const [isDark] = useDarkModeManager()
+
   return (
-    <ButtonOutlined {...rest} disabled={disabled}>
+    <ButtonOutlined {...rest} disabled={disabled} isDark={isDark}>
       <RowBetween>
         <div style={{ display: 'flex', alignItems: 'center' }}>{children}</div>
         <ChevronDown size={24} />

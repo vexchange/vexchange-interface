@@ -52,7 +52,7 @@ const HeaderRow = styled.div`
 `
 
 const ContentWrapper = styled.div`
-  background-color: ${({ theme }) => theme.bg2};
+  background-image: linear-gradient(210deg, #3F6A80 0%, #244150 100%);
   padding: 2rem;
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;

@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { AutoColumn } from '../Column'
 import { Text } from 'rebass'
 
@@ -38,7 +38,7 @@ export const AdvancedDropwdown = styled.div`
   border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
   color: ${({ theme }) => theme.text2};
-  background-color: ${({ theme }) => theme.advancedBG};
+  // background-color: ${({ theme }) => theme.advancedBG};
   color: ${({ theme }) => theme.text2};
   z-index: -1;
 `
@@ -49,18 +49,25 @@ export const SectionBreak = styled.div`
   background-color: ${({ theme }) => theme.bg3};
 `
 
-export const BottomGrouping = styled.div`
+export const BottomGrouping = styled.div<{ isDark?: boolean }>`
   position: relative;
   padding: 2.4rem 4rem;
 
-  background-image: linear-gradient(
-    137deg,
-    rgba(217, 41, 33, 0.1) 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(231, 150, 49, 0.1) 100%
-  );
-
   border-radius: 0 0 3px 3px;
+
+  ${({ isDark }) =>
+    isDark
+      ? css`
+          background-image: linear-gradient(
+            137deg,
+            rgba(217, 41, 33, 0.1) 0%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(231, 150, 49, 0.1) 100%
+          );
+        `
+      : css`
+          background-color: rgba(100, 112, 142, 0.10);
+        `}
 `
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 }>`

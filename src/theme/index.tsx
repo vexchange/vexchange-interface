@@ -51,18 +51,21 @@ export function colors(darkMode: boolean): Colors {
     text5: darkMode ? '#2C2F36' : '#EDEEF2',
 
     // backgrounds / greys
-    bg1: darkMode ? '#212429' : '#FFFFFF',
+    bg1: darkMode ? '#004467' : '#FFFFFF',
     bg2: darkMode ? '#2C2F36' : '#F7F8FA',
     bg3: darkMode ? '#40444F' : '#EDEEF2',
     bg4: darkMode ? '#565A69' : '#CED0D9',
     bg5: darkMode ? '#565A69' : '#888D9B',
+
+    bgImage1: darkMode ? 'rgba(0, 0, 0, 0.00)' : 'rgba(242, 242, 242, 0.00)',
+    bgImage2: darkMode ? '#000000' : '#ECF1F4',
 
     //specialty colors
     modalBG: darkMode ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.6)',
     advancedBG: darkMode ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.6)',
 
     //primary colors
-    primary1: darkMode ? '#2172E5' : '#ff007a',
+    primary1: darkMode ? '#f5a788' : '#da472a',
     primary2: darkMode ? '#3680E7' : '#FF8CC3',
     primary3: darkMode ? '#4D8FEA' : '#FF99C9',
     primary4: darkMode ? '#376bad70' : '#F6DDE8',
@@ -221,9 +224,14 @@ html {
 export const ThemedGlobalStyle = createGlobalStyle`
 html {
   color: ${({ theme }) => theme.text1};
-  // background-color: ${({ theme }) => theme.bg2};
 
-  background-color: #004467;
-  background-image: radial-gradient(50% 100%, rgba(0,0,0,0.00) 0%, #000000 100%);
+
+  background-color: ${({ theme }) => theme.bg1};
+
+  background-image: radial-gradient(
+    50% 100%, 
+    ${({ theme }) => theme.bgImage1} 0%,
+    ${({ theme }) => theme.bgImage2} 100%
+  );
 }
 `

@@ -22,6 +22,7 @@ import { ButtonPrimary, ButtonSecondary } from '../../components/Button'
 import { Spinner, TYPE } from '../../theme'
 import { RowBetween, RowFixed, AutoRow } from '../Row'
 
+import { useDarkModeManager } from '../../state/user/hooks'
 import { isAddress, escapeRegExp } from '../../utils'
 import { useWeb3React } from '../../hooks'
 import {
@@ -68,26 +69,24 @@ const SpinnerWrapper = styled(Spinner)`
   opacity: 0.6;
 `
 
-const Input = styled.input`
+const Input = styled.input<{ isDark?: boolean }>`
   position: relative;
   display: flex;
   padding: 16px;
   align-items: center;
   width: 100%;
   white-space: nowrap;
-  background: none;
+  background-color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(99, 113, 142, 0.1)')};
   border: none;
   outline: none;
   box-sizing: border-box;
-  color: ${({ theme }) => theme.text1};
-  border-style: solid;
-  border: 1px solid ${({ theme }) => theme.bg3};
+  color: rgba(255, 255, 255, 0.57);
   -webkit-appearance: none;
 
   font-size: 18px;
 
   ::placeholder {
-    color: ${({ theme }) => theme.text3};
+    color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.57)' : 'rgba(0, 0, 0, 0.57)')};
   }
 `
 
@@ -97,11 +96,34 @@ const FilterWrapper = styled(RowFixed)`
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text2)};
   border-radius: 3px;
   user-select: none;
+  background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
+  border: none;
+  color: #ffffff;
+
+  position: relative;
+  z-index: 0;
+
   & > * {
     user-select: none;
   }
   :hover {
     cursor: pointer;
+  }
+
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #e79631, #d92921);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
   }
 `
 
@@ -175,6 +197,7 @@ function SearchModal({
   const { t } = useTranslation()
   const { account, chainId } = useWeb3React()
   const theme = useContext(ThemeContext)
+  const [isDark] = useDarkModeManager();
 
   const allTokens = useAllTokens()
   const allPairs = useAllDummyPairs()
@@ -571,7 +594,14 @@ function SearchModal({
             <TYPE.body style={{ marginTop: '10px' }}>
               To import a custom token, paste token address in the search bar.
             </TYPE.body>
-            <Input type={'text'} placeholder={'0x000000...'} value={searchQuery} ref={inputRef} onChange={onInput} />
+            <Input
+              isDark={isDark}
+              type={'text'}
+              placeholder={'0x000000...'}
+              value={searchQuery}
+              ref={inputRef}
+              onChange={onInput}
+            />
             {renderTokenList()}
           </PaddedColumn>
         ) : (
@@ -583,6 +613,7 @@ function SearchModal({
               <CloseIcon onClick={onDismiss} />
             </RowBetween>
             <Input
+              isDark={isDark}
               type={'text'}
               id="token-search-input"
               placeholder={t('tokenSearchPlaceholder')}
@@ -629,9 +660,25 @@ function SearchModal({
             </RowBetween>
           </PaddedColumn>
         )}
-        {!showTokenImport && <div style={{ width: '100%', height: '1px', backgroundColor: theme.bg2 }} />}
+        {!showTokenImport && (
+          <div
+            style={{
+              width: '100%',
+              height: '1px',
+              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(99, 113, 142, 0.16)'
+            }}
+          />
+        )}
         {!showTokenImport && <ItemList>{filterType === 'tokens' ? renderTokenList() : renderPairsList()}</ItemList>}
-        {!showTokenImport && <div style={{ width: '100%', height: '1px', backgroundColor: theme.bg2 }} />}
+        {!showTokenImport && (
+          <div
+            style={{
+              width: '100%',
+              height: '1px',
+              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(99, 113, 142, 0.16)'
+            }}
+          />
+        )}
         {!showTokenImport && (
           <Card>
             <AutoRow justify={'center'}>

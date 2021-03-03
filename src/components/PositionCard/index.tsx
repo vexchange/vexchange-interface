@@ -17,6 +17,7 @@ import { AutoColumn } from '../Column'
 import { ChevronDown, ChevronUp } from 'react-feather'
 import { ButtonSecondary } from '../Button'
 import { RowBetween, RowFixed, AutoRow } from '../Row'
+import { useDarkModeManager } from '../../state/user/hooks'
 
 const FixedHeightRow = styled(RowBetween)`
   height: 24px;
@@ -37,6 +38,7 @@ interface PositionCardProps extends RouteComponentProps<{}> {
 
 function PositionCard({ pair, history, border, minimal = false }: PositionCardProps) {
   const { account } = useWeb3React()
+  const [isDark] = useDarkModeManager()
 
   const token0 = pair?.token0
   const token1 = pair?.token1
@@ -208,6 +210,7 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
               </AutoRow>
               <RowBetween marginTop="10px">
                 <ButtonSecondary
+                  isDark={isDark}
                   width="48%"
                   onClick={() => {
                     history.push('/add/' + token0?.address + '-' + token1?.address)
@@ -216,6 +219,7 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
                   Add
                 </ButtonSecondary>
                 <ButtonSecondary
+                  isDark={isDark}
                   width="48%"
                   onClick={() => {
                     history.push('/remove/' + token0?.address + '-' + token1?.address)

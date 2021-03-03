@@ -5,6 +5,7 @@ import { ReactComponent as MenuIcon } from '../../assets/images/menu.svg'
 
 import { Link } from '../../theme'
 import { useToggle } from '../../hooks'
+import { useDarkModeManager } from '../../state/user/hooks'
 
 const StyledMenuIcon = styled(MenuIcon)`
   path {
@@ -12,28 +13,46 @@ const StyledMenuIcon = styled(MenuIcon)`
   }
 `
 
-const StyledMenuButton = styled.button`
+const StyledMenuButton = styled.button<{ isDark?: boolean }>`
   width: 100%;
   height: 100%;
   border: none;
-  background-color: transparent;
   margin: 0;
   padding: 0;
-  // height: 35px;
+  height: 38px;
+  width: 38px;
+  position: relative;
+  z-index: 0;
 
-  background-color: ${({ theme }) => theme.primary5};
+  background-color: ${({ isDark }) => (isDark ? 'rgba(99, 113, 142, 0.14)' : 'rgba(255, 255, 255, 0.14)')};
   color: ${({ theme }) => theme.primaryText1};
   font-size: 16px;
   border-radius: 3px;
 
-  padding: 0.15rem 0.5rem;
-  border-radius: 3px;
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1px;
+    border-radius: 3px;
+    background: transparent;
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+  }
 
   :hover,
   :focus {
+    &:before {
+      background: linear-gradient(to right, #e79631, #d92921);
+    }
+
     cursor: pointer;
     outline: none;
-    background-color: ${({ theme }) => theme.bg4};
   }
 
   svg {
@@ -52,9 +71,9 @@ const StyledMenu = styled.div`
   text-align: left;
 `
 
-const MenuFlyout = styled.span`
+const MenuFlyout = styled.span<{ isDark?: boolean }>`
   min-width: 8.125rem;
-  background-color: ${({ theme }) => theme.bg3};
+  background-color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(99, 113, 142, 0.14)')};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
   border-radius: 3px;
@@ -85,6 +104,7 @@ const CODE_LINK = !!process.env.REACT_APP_GIT_COMMIT_HASH
 export default function Menu() {
   const node = useRef<HTMLDivElement>()
   const [open, toggle] = useToggle(false)
+  const [isDark] = useDarkModeManager();
 
   useEffect(() => {
     const handleClickOutside = e => {
@@ -111,7 +131,7 @@ export default function Menu() {
         <StyledMenuIcon />
       </StyledMenuButton>
       {open ? (
-        <MenuFlyout>
+        <MenuFlyout isDark={isDark}>
           <MenuItem id="link" href="https://uniswap.org/">
             About
           </MenuItem>

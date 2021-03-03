@@ -1,8 +1,9 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { escapeRegExp } from '../../utils'
+import { useDarkModeManager } from '../../state/user/hooks'
 
-const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: string }>`
+const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: string; isDark?: boolean }>`
   color: ${({ error, theme }) => error && theme.red1};
   color: ${({ theme }) => theme.text1};
   width: 0;
@@ -40,6 +41,17 @@ const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: s
     color: ${({ theme }) => theme.text4};
     color: #ffffff;
   }
+
+  ::placeholder {
+    ${({ isDark }) =>
+      isDark
+        ? css`
+            color: ${({ theme }) => theme.text4};
+          `
+        : css`
+            color: #000000;
+          `}
+
 `
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
@@ -56,6 +68,7 @@ export const Input = React.memo(function InnerInput({
   fontSize?: string
   align?: 'right' | 'left'
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
+  const [isDark] = useDarkModeManager()
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
       onUserInput(nextUserInput)
@@ -65,6 +78,7 @@ export const Input = React.memo(function InnerInput({
   return (
     <StyledInput
       {...rest}
+      isDark={isDark}
       value={value}
       onChange={event => {
         enforcer(event.target.value)

@@ -40,9 +40,11 @@ import { useHasPendingApproval } from '../../state/transactions/hooks'
 import { useAllTokenBalancesTreatingWETHasETH } from '../../state/wallet/hooks'
 import { CursorPointer, TYPE } from '../../theme'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningServerity } from '../../utils/prices'
+import { useDarkModeManager } from '../../state/user/hooks'
 
 export default function Send({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURL(search)
+  const [isDark] = useDarkModeManager();
 
   // text translation
   // const { t } = useTranslation()
@@ -316,6 +318,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
           </InputGroup>
           <RowBetween style={{ width: 'fit-content' }}>
             <ButtonSecondary
+              isDark={isDark}
               width="fit-content"
               style={{ fontSize: '14px' }}
               padding={'4px 8px'}
@@ -325,6 +328,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
             </ButtonSecondary>
             {account && (
               <ButtonSecondary
+                isDark={isDark}
                 style={{ fontSize: '14px', marginLeft: '8px' }}
                 padding={'4px 8px'}
                 width="fit-content"

@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import ReactGA from 'react-ga'
 import { BrowserRouter, Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom'
 
@@ -7,6 +7,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import NavigationTabs from '../components/NavigationTabs'
 import Web3ReactManager from '../components/Web3ReactManager'
+import { useDarkModeManager } from '../state/user/hooks'
 
 import Popups from '../components/Popups'
 import { isAddress } from '../utils'
@@ -57,30 +58,14 @@ const BodyWrapper = styled.div`
   z-index: 1;
 `
 
-const Body = styled.div`
-  max-width: 534px;
-  // max-width: 420px;
-  width: 100%;
-
-  background-image: linear-gradient(
-    210deg,
-    rgba(189, 162, 47, 0.02) 0%,
-    rgba(255, 255, 255, 0.02) 13%,
-    rgba(217, 216, 216, 0.15) 38%,
-    rgba(226, 225, 225, 0.08) 61%,
-    rgba(51, 41, 41, 0) 77%,
-    #893726 100%
-  );
-
-  box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
-    0px 24px 32px rgba(0, 0, 0, 0.01);
-  box-shadow: 0 14px 22px 0 #001926;
+const Body = styled.div<{ isDark?: boolean }>`
   border-radius: 3px;
   box-sizing: border-box;
-  // padding: 1rem;
+  margin-bottom: 10rem;
+  max-width: 534px;
   padding: 4px;
   position: relative;
-  margin-bottom: 10rem;
+  width: 100%;
   z-index: 0;
 
   &:before {
@@ -93,11 +78,49 @@ const Body = styled.div`
     bottom: 0;
     padding: 4px;
     border-radius: 3px;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(18, 39, 68, 0.4));
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
     mask-composite: exclude;
   }
+
+  ${({ isDark }) =>
+    isDark
+      ? css`
+          background-image: linear-gradient(
+            210deg,
+            rgba(189, 162, 47, 0.02) 0%,
+            rgba(255, 255, 255, 0.02) 13%,
+            rgba(217, 216, 216, 0.15) 38%,
+            rgba(226, 225, 225, 0.08) 61%,
+            rgba(51, 41, 41, 0) 77%,
+            #893726 100%
+          );
+
+          box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
+            0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
+          box-shadow: 0 14px 22px 0 #001926;
+
+          &:before {
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(18, 39, 68, 0.4));
+          }
+        `
+      : css`
+          background-image: linear-gradient(
+            210deg,
+            rgba(189, 162, 47, 0.02) 0%,
+            rgba(255, 255, 255, 0.02) 13%,
+            rgba(217, 216, 216, 0.15) 38%,
+            rgba(226, 225, 225, 0.08) 61%,
+            rgba(51, 41, 41, 0) 77%,
+            rgba(117, 31, 13, 0.07) 100%
+          );
+
+          box-shadow: 0 14px 22px 0 rgba(221, 77, 43, 0.22);
+
+          &:before {
+            background: rgba(255, 255, 255, 0.25);
+          }
+        `}
 `
 
 const StyledRed = styled.div`
@@ -128,6 +151,8 @@ function GoogleAnalyticsReporter({ location: { pathname, search } }: RouteCompon
 }
 
 export default function App() {
+  const [isDark] = useDarkModeManager()
+
   return (
     <>
       <Suspense fallback={null}>
@@ -140,7 +165,7 @@ export default function App() {
             <BodyWrapper>
               <Popups />
               <Web3ReactManager>
-                <Body>
+                <Body isDark={isDark}>
                   <NavigationTabs />
                   <Switch>
                     <Route exact strict path="/swap" component={Swap} />

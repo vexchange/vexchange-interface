@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { CardProps, Text } from 'rebass'
 import { Box } from 'rebass/styled-components'
 
@@ -12,7 +12,7 @@ const Card = styled(Box)<{ padding?: string; border?: string; borderRadius?: str
 `
 export default Card
 
-export const LightCard = styled(Card)`
+export const LightCard = styled(Card)<{ isDark?: boolean }>`
   // border: 1px solid ${({ theme }) => theme.bg2};
   // background-color: ${({ theme }) => theme.bg1};
   display: inline-block;
@@ -29,7 +29,15 @@ export const LightCard = styled(Card)`
     bottom: 0;
     padding: 1px;
     border-radius: 3px;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
+    ${({ isDark }) =>
+      isDark
+        ? css`
+            background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
+          `
+        : css`
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+          `};
+
     -webkit-mask: 
        linear-gradient(#fff 0 0) content-box, 
        linear-gradient(#fff 0 0);

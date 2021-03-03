@@ -16,7 +16,7 @@ import { AutoColumn, ColumnCenter } from '../../components/Column'
 
 import { useWeb3React } from '../../hooks'
 import { usePair } from '../../data/Reserves'
-import { useAllDummyPairs } from '../../state/user/hooks'
+import { useAllDummyPairs, useDarkModeManager } from '../../state/user/hooks'
 
 const Positions = styled.div`
   position: relative;
@@ -38,6 +38,7 @@ function Supply({ history }: RouteComponentProps) {
   const theme = useContext(ThemeContext)
   const { account } = useWeb3React()
   const [showPoolSearch, setShowPoolSearch] = useState(false)
+  const [isDark] = useDarkModeManager();
 
   // initiate listener for LP balances
   const pairs = useAllDummyPairs()
@@ -80,6 +81,7 @@ function Supply({ history }: RouteComponentProps) {
           </RowBetween>
           {filteredExchangeList?.length === 0 && (
             <LightCard
+              isDark={isDark}
               padding="40px
           "
             >
@@ -103,7 +105,13 @@ function Supply({ history }: RouteComponentProps) {
         </AutoColumn>
         <FixedBottom>
           <ColumnCenter>
-            <ButtonSecondary width="136px" padding="8px" borderRadius="10px" onClick={() => history.push('/create')}>
+            <ButtonSecondary
+              isDark={isDark}
+              width="136px"
+              padding="8px"
+              borderRadius="10px"
+              onClick={() => history.push('/create')}
+            >
               + Create Pool
             </ButtonSecondary>
           </ColumnCenter>
