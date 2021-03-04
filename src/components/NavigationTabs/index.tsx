@@ -46,9 +46,9 @@ const Tabs = styled.div<{ isDark?: boolean }>`
 
 const activeClassName = 'ACTIVE'
 
-const StyledNavLink = styled(NavLink).attrs({
+const StyledNavLink = styled(({ ...props }) => <NavLink {...props} />).attrs({
   activeClassName
-})<{ isDark?: boolean }>`
+})<{ isdark?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   justify-content: center;
@@ -69,8 +69,8 @@ const StyledNavLink = styled(NavLink).attrs({
     font-weight: 500;
     color: ${({ theme }) => theme.text1};
 
-    ${({ isDark }) =>
-      isDark
+    ${props =>
+      props.isdark
         ? css`
             background-image: linear-gradient(270deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.03) 96%);
           `
@@ -162,11 +162,11 @@ function NavigationTabs({ location: { pathname }, history }: RouteComponentProps
         <Tabs isDark={isDark}>
           {tabOrder.map(({ path, textKey, regex }) => (
             <StyledNavLink
+              isdark={isDark ? 1 : 0}
               id={`${textKey}-nav-link`}
               key={path}
               to={path}
               isActive={(_, { pathname }) => !!pathname.match(regex)}
-              isDark={isDark}
             >
               {t(textKey)}
             </StyledNavLink>

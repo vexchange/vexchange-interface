@@ -15,15 +15,6 @@ export const COMMON_BASES = {
 }
 
 const MAINNET_WALLETS = {
-  INJECTED: {
-    connector: injected,
-    name: 'Injected',
-    iconName: 'arrow-right.svg',
-    description: 'Injected web3 provider.',
-    href: null,
-    color: '#010101',
-    primary: true
-  },
   SYNC: {
     connector: injected,
     name: 'Sync',
@@ -38,7 +29,7 @@ export const SUPPORTED_WALLETS =
   process.env.REACT_APP_CHAIN_ID !== '1'
     ? MAINNET_WALLETS
     : {
-        ...MAINNET_WALLETS,
+        ...MAINNET_WALLETS
       }
 
 export const NetworkContextName = 'NETWORK'
