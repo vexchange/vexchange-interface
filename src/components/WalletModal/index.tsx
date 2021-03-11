@@ -4,7 +4,6 @@ import styled from 'styled-components'
 import { isMobile } from 'react-device-detect'
 import { UnsupportedChainIdError } from '../../context'
 import { useWeb3React } from '../../hooks'
-import { URI_AVAILABLE } from '@web3-react/walletconnect-connector'
 import { useWalletModalOpen, useWalletModalToggle } from '../../state/application/hooks'
 
 import Modal from '../Modal'
@@ -54,8 +53,8 @@ const HeaderRow = styled.div`
 const ContentWrapper = styled.div`
   background-image: linear-gradient(210deg, #3F6A80 0%, #244150 100%);
   padding: 2rem;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
 `

@@ -62,7 +62,7 @@ const Popup = styled.div`
   box-sizing: border-box;
   background-color: ${({ theme }) => theme.bg1};
   position: relative;
-  border-radius: 3px;
+  border-radius: 10px;
   padding: 20px;
   padding-right: 35px;
   z-index: 2;

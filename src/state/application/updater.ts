@@ -11,7 +11,7 @@ export default function Updater() {
   // update block number
   useEffect(() => {
     if (library) {
-      let stale = false
+      const stale = false
 
       const update = async () => {
         try {

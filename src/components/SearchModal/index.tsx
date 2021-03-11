@@ -80,6 +80,7 @@ const Input = styled.input<{ isDark?: boolean }>`
   border: none;
   outline: none;
   box-sizing: border-box;
+  border-radius: 20px;
   color: rgba(255, 255, 255, 0.57);
   -webkit-appearance: none;
 
@@ -94,7 +95,7 @@ const FilterWrapper = styled(RowFixed)`
   padding: 8px;
   background-color: ${({ selected, theme }) => selected && theme.bg2};
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text2)};
-  border-radius: 3px;
+  border-radius: 8px;
   user-select: none;
   background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
   border: none;
@@ -119,7 +120,7 @@ const FilterWrapper = styled(RowFixed)`
     right: 0;
     bottom: 0;
     padding: 1px;
-    border-radius: 3px;
+    border-radius: 8px;
     background: linear-gradient(to right, #e79631, #d92921);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
@@ -149,7 +150,7 @@ const MenuItem = styled(PaddedItem)`
 const BaseWrapper = styled(AutoRow)<{ disable?: boolean }>`
   border: 1px solid ${({ theme, disable }) => (disable ? 'transparent' : theme.bg3)};
   padding: 0 6px;
-  border-radius: 3px;
+  border-radius: 10px;
   width: 120px;
 
   :hover {
@@ -429,7 +430,7 @@ function SearchModal({
             <ButtonPrimary
               padding={'6px 8px'}
               width={'fit-content'}
-              borderRadius={'3px'}
+              borderRadius={'12px'}
               onClick={() => {
                 history.push('/add/' + token0.address + '-' + token1.address)
                 onDismiss()

@@ -7,14 +7,13 @@ import ERC20_ABI from '../constants/abis/erc20.json'
 import { useTokenBalanceTreatingWETHasETH } from '../state/wallet/hooks'
 
 import { isAddress } from '../utils'
-import { useTokenContract, useWeb3React } from './index'
+import { useWeb3React } from './index'
 
 // returns a callback for sending a token amount, treating VVET as VET
 // returns null with invalid arguments
 export function useSendCallback(amount?: TokenAmount, recipient?: string): null | (() => Promise<string>) {
   const { library, account, chainId } = useWeb3React()
   const addTransaction = useTransactionAdder()
-  const tokenContract = useTokenContract(amount?.token?.address)
   const balance = useTokenBalanceTreatingWETHasETH(account, amount?.token)
 
   return useMemo(() => {
@@ -70,5 +69,5 @@ export function useSendCallback(amount?: TokenAmount, recipient?: string): null 
           })
       }
     }
-  }, [addTransaction, library, account, chainId, amount, recipient, tokenContract, balance])
+  }, [addTransaction, library, chainId, amount, recipient, balance])
 }

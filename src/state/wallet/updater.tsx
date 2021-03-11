@@ -1,4 +1,4 @@
-import { BalanceMap, getEtherBalances, getTokensBalance } from '@mycrypto/eth-scan'
+import { BalanceMap } from '@mycrypto/eth-scan'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,7 +7,7 @@ import { useBlockNumber } from '../application/hooks'
 import { AppDispatch, AppState } from '../index'
 import { updateEtherBalances, updateTokenBalances } from './actions'
 import { balanceKey } from './reducer'
-import { find, pull } from 'lodash';
+import { find } from 'lodash'
 import ERC20_ABI from '../../constants/abis/erc20.json'
 
 function convertBalanceMapValuesToString(balanceMap: BalanceMap): { [key: string]: string } {

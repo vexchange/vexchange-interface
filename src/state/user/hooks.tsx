@@ -1,11 +1,9 @@
 import { ChainId, JSBI, Pair, Token, TokenAmount, VVET } from '@uniswap/sdk'
-import { find } from 'lodash'
 import { useWeb3React } from '../../hooks'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useAllTokens } from '../../hooks/Tokens'
 import { getTokenDecimals, getTokenName, getTokenSymbol } from '../../utils'
-import ERC20_ABI from '../../constants/abis/erc20.json'
 import { AppDispatch, AppState } from '../index'
 import {
   addSerializedPair,

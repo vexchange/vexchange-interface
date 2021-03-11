@@ -3,7 +3,6 @@ import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { find } from 'lodash'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
-import { parseBytes32String } from '@ethersproject/strings'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
@@ -11,7 +10,6 @@ import { abi as IUniswapV2Router02ABI } from '../constants/abis/IUniswapV2Router
 import { ROUTER_ADDRESS } from '../constants'
 
 import ERC20_ABI from '../constants/abis/erc20.json'
-import ERC20_BYTES32_ABI from '../constants/abis/erc20_bytes32.json'
 import { ChainId, JSBI, Percent, TokenAmount } from '@uniswap/sdk'
 
 // returns the checksummed address if the address is valid, otherwise returns false

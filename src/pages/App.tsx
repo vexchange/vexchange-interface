@@ -59,7 +59,7 @@ const BodyWrapper = styled.div`
 `
 
 const Body = styled.div<{ isDark?: boolean }>`
-  border-radius: 3px;
+  border-radius: 30px;
   box-sizing: border-box;
   margin-bottom: 10rem;
   max-width: 534px;
@@ -77,7 +77,7 @@ const Body = styled.div<{ isDark?: boolean }>`
     right: 0;
     bottom: 0;
     padding: 4px;
-    border-radius: 3px;
+    border-radius: 30px;
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
     mask-composite: exclude;

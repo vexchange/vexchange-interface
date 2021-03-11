@@ -1,6 +1,6 @@
 import { Pair, Token } from '@uniswap/sdk'
 import React, { useState, useContext } from 'react'
-import styled, { ThemeContext, css } from 'styled-components'
+import styled, { ThemeContext } from 'styled-components'
 import '@reach/tooltip/styles.css'
 import { darken } from 'polished'
 import { Field } from '../../state/swap/actions'
@@ -34,6 +34,7 @@ const CurrencySelect = styled.button<{ selected: boolean; isDark?: boolean }>`
   color: ${({ isDark }) => (isDark ? 'white' : '#000000')};
   box-shadow: ${({ selected }) => (selected ? 'none' : '0px 6px 10px rgba(0, 0, 0, 0.075)')};
   border: none;
+  border-radius: 12px;
   cursor: pointer;
   outline: none;
   padding: 0 0.5rem;
@@ -52,7 +53,7 @@ const CurrencySelect = styled.button<{ selected: boolean; isDark?: boolean }>`
       right: 0;
       bottom: 0;
       padding: 1px;
-      border-radius: 3px;
+      border-radius: 20px;
       background: linear-gradient(to right, #e79631, #d92921);
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: destination-out;
@@ -94,13 +95,13 @@ const StyledDropDown = styled(DropDown)<{ selected: boolean }>`
 const InputPanel = styled.div<{ hideInput?: boolean }>`
   ${({ theme }) => theme.flexColumnNoWrap}
   position: relative;
-  // border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
   // background-color: ${({ theme }) => theme.bg2};
   z-index: 1;
 `
 
 const Container = styled.div<{ hideInput: boolean }>`
-  // border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
+  border-radius: ${({ hideInput }) => (hideInput ? '8px' : '20px')};
   // border: 1px solid ${({ theme }) => theme.bg2};
   // background-color: ${({ theme }) => theme.bg1};
 `
@@ -112,7 +113,7 @@ const StyledTokenName = styled.span<{ active?: boolean }>`
 const StyledBalanceMax = styled.button`
   background-color: ${({ theme }) => theme.primary5};
   border: 1px solid ${({ theme }) => theme.primary5};
-  border-radius: 3px;
+  border-radius: 0.5rem;
   font-size: 0.875rem;
   padding: 0.5rem;
 
@@ -211,7 +212,7 @@ export default function CurrencyInputPanel({
             </RowBetween>
           </LabelRow>
         )}
-        <InputRow style={hideInput ? { padding: '0', borderRadius: '3px' } : {}} selected={disableTokenSelect}>
+        <InputRow style={hideInput ? { padding: '0', borderRadius: '8px' } : {}} selected={disableTokenSelect}>
           {!hideInput && (
             <>
               <NumericalInput

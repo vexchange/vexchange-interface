@@ -4,15 +4,12 @@ import { useAddUserToken, useFetchTokenByAddress, useUserAddedTokens } from '../
 
 import { useWeb3React } from './index'
 import MAINNET_TOKENS from '../constants/tokens/mainnet'
-import RINKEBY_TOKENS from '../constants/tokens/rinkeby'
-import KOVAN_TOKENS from '../constants/tokens/kovan'
-import ROPSTEN_TOKENS from '../constants/tokens/ropsten'
 
 export const ALL_TOKENS = [
   // VVET on all chains
   ...Object.values(VVET),
   // chain-specific tokens
-  ...MAINNET_TOKENS,
+  ...MAINNET_TOKENS
 ]
   // remap VVET to VET
   .map(token => {

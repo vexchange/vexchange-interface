@@ -35,7 +35,6 @@ export function createWeb3ReactRoot(key: string): (args: Web3ReactProviderArgume
   return function Web3ReactProvider({ getLibrary, children }: Web3ReactProviderArguments): JSX.Element {
     const {
       connector,
-      provider,
       chainId,
       account,
 
@@ -48,11 +47,8 @@ export function createWeb3ReactRoot(key: string): (args: Web3ReactProviderArgume
 
     const active = connector !== undefined && chainId !== undefined && account !== undefined && !!!error
     const library = useMemo(
-      () =>
-        active && chainId !== undefined && Number.isInteger(chainId) && !!connector
-          ? getLibrary()
-          : undefined,
-      [active, getLibrary, provider, connector, chainId]
+      () => (active && chainId !== undefined && Number.isInteger(chainId) && !!connector ? getLibrary() : undefined),
+      [active, getLibrary, connector, chainId]
     )
 
     const web3ReactContext: Web3ReactContextInterface = {

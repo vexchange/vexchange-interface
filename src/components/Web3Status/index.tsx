@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { useWeb3React, UnsupportedChainIdError } from '../../context/'
@@ -18,27 +18,16 @@ import { RowBetween } from '../Row'
 import { shortenAddress } from '../../utils'
 import { useAllTransactions } from '../../state/transactions/hooks'
 import { NetworkContextName } from '../../constants'
-import { injected } from '../../connectors'
 
 const SpinnerWrapper = styled(Spinner)`
   margin: 0 0.25rem 0 0.25rem;
-`
-
-const IconWrapper = styled.div<{ size?: number }>`
-  ${({ theme }) => theme.flexColumnNoWrap};
-  align-items: center;
-  justify-content: center;
-  & > * {
-    height: ${({ size }) => (size ? size + 'px' : '32px')};
-    width: ${({ size }) => (size ? size + 'px' : '32px')};
-  }
 `
 
 const Web3StatusGeneric = styled(ButtonSecondary)`
   ${({ theme }) => theme.flexRowNoWrap}
   width: 100%;
   align-items: center;
-  border-radius: 3px;
+  border-radius: 20px;
   box-sizing: border-box;
   cursor: pointer;
   user-select: none;
@@ -98,7 +87,7 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
     right: 0;
     bottom: 0;
     padding: 1px;
-    border-radius: 3px;
+    border-radius: 20px;
     background: linear-gradient(to right, #e79631, #d92921);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
@@ -136,7 +125,7 @@ const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
     right: 0;
     bottom: 0;
     padding: 1px;
-    border-radius: 3px;
+    border-radius: 20px;
     background: linear-gradient(to right, #e79631, #d92921);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;

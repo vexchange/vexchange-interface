@@ -33,6 +33,7 @@ const tabOrder = [
 const Tabs = styled.div<{ isDark?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
+  border-radius: 26px 26px 0 0;
 
   ${({ isDark }) =>
     isDark
@@ -54,7 +55,6 @@ const StyledNavLink = styled(({ ...props }) => <NavLink {...props} />).attrs({
   justify-content: center;
   height: 3rem;
   flex: 1 0 auto;
-  // border-radius: 3rem;
   outline: none;
   cursor: pointer;
   text-decoration: none;
@@ -64,10 +64,17 @@ const StyledNavLink = styled(({ ...props }) => <NavLink {...props} />).attrs({
   padding: 1rem;
 
   &.${activeClassName} {
-    border-radius: 3px 0 0 0;
     box-sizing: border-box;
     font-weight: 500;
     color: ${({ theme }) => theme.text1};
+
+    &:first-of-type {
+      border-radius: 26px 0 0 0;
+    }
+
+    &:last-of-type {
+      border-radius: 0 26px 0 0;
+    }
 
     ${props =>
       props.isdark

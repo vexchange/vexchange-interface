@@ -106,7 +106,7 @@ function PoolFinder({ history }: RouteComponentProps) {
         )}
         {allowImport && (
           <ColumnCenter
-            style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px', borderRadius: '3px' }}
+            style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px', borderRadius: '12px' }}
           >
             <Text textAlign="center" fontWeight={500} color="">
               Pool Imported!

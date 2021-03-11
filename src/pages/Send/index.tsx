@@ -36,7 +36,6 @@ import { useSwapCallback } from '../../hooks/useSwapCallback'
 import { useWalletModalToggle } from '../../state/application/hooks'
 import { Field } from '../../state/swap/actions'
 import { useDefaultsFromURL, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
-import { useHasPendingApproval } from '../../state/transactions/hooks'
 import { useAllTokenBalancesTreatingWETHasETH } from '../../state/wallet/hooks'
 import { CursorPointer, TYPE } from '../../theme'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningServerity } from '../../utils/prices'
@@ -44,7 +43,7 @@ import { useDarkModeManager } from '../../state/user/hooks'
 
 export default function Send({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURL(search)
-  const [isDark] = useDarkModeManager();
+  const [isDark] = useDarkModeManager()
 
   // text translation
   // const { t } = useTranslation()
@@ -94,7 +93,6 @@ export default function Send({ location: { search } }: RouteComponentProps) {
 
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(bestTrade, allowedSlippage)
-  const pendingApprovalInput = useHasPendingApproval(tokens[Field.INPUT]?.address)
 
   const formattedAmounts = {
     [independentField]: typedValue,

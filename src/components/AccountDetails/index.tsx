@@ -56,7 +56,7 @@ const UpperSection = styled.div`
 const InfoCard = styled.div`
   padding: 1rem;
   background-color: ${({ theme }) => theme.bg2};
-  border-radius: 3px;
+  border-radius: 20px;
 `
 
 const AccountGroupingRow = styled.div`
@@ -122,8 +122,8 @@ const LowerSection = styled.div`
   flex-grow: 1;
   overflow: auto;
   background-color: ${({ theme }) => theme.bg2};
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
 
   h5 {
     margin: 0;

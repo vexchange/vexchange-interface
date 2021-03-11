@@ -495,7 +495,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
   const modalHeader = () => {
     return noLiquidity ? (
       <AutoColumn gap="12px">
-        <LightCard margin={'30px 0'} borderRadius="3px">
+        <LightCard margin={'30px 0'} borderRadius="20px">
           <ColumnCenter>
             <RowFixed>
               <Text fontSize={36} fontWeight={500} marginRight={20}>
@@ -506,7 +506,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
           </ColumnCenter>
         </LightCard>
         <TYPE.body>Starting pool prices</TYPE.body>
-        <LightCard borderRadius="3px">
+        <LightCard borderRadius="20px">
           <TYPE.mediumHeader>
             {parsedAmounts[0] &&
               parsedAmounts[1] &&
@@ -732,13 +732,13 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
         />
         {tokens[Field.OUTPUT] && tokens[Field.INPUT] && (
           <>
-            <GreyCard borderRadius={'3px'}>
+            <GreyCard borderRadius={'20px'}>
               <RowBetween marginBottom="1rem">
                 <TYPE.subHeader fontWeight={500} fontSize={14}>
                   {noLiquidity ? 'Initial prices' : 'Prices'} and pool share
                 </TYPE.subHeader>
               </RowBetween>{' '}
-              <LightCard padding="1rem" borderRadius={'3px'}>
+              <LightCard padding="1rem" borderRadius={'20px'}>
                 <PriceBar />
               </LightCard>
             </GreyCard>

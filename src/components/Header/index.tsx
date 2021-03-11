@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link as HistoryLink } from 'react-router-dom'
-import { Send, Sun, Moon } from 'react-feather'
+import { Sun, Moon } from 'react-feather'
 
 import styled from 'styled-components'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
@@ -73,7 +73,7 @@ const AccountElement = styled.div<{ active: boolean }>`
   align-items: center;
   // background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
   background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
-  border-radius: 3px;
+  border-radius: 20px;
   white-space: nowrap;
 
   :focus {
@@ -128,6 +128,7 @@ const MigrateBanner = styled(AutoColumn)<{ isDark?: boolean }>`
 
 const VersionLabel = styled.span<{ isV2?: boolean }>`
   padding: ${({ isV2 }) => (isV2 ? '0.15rem 0.5rem 0.16rem 0.45rem' : '0.15rem 0.5rem 0.16rem 0.35rem')};
+  border-radius: 14px;
   background: ${({ theme, isV2 }) => (isV2 ? theme.primary1 : 'none')};
   color: ${({ theme, isV2 }) => (isV2 ? theme.white : theme.primary1)};
   font-size: 0.825rem;
@@ -140,7 +141,7 @@ const VersionLabel = styled.span<{ isV2?: boolean }>`
 `
 
 const VersionToggle = styled.a`
-  border-radius: 3px;
+  border-radius: 16px;
   border: 1px solid ${({ theme }) => theme.primary1};
   color: ${({ theme }) => theme.primary1};
   display: flex;

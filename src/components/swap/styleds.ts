@@ -10,7 +10,7 @@ export const Wrapper = styled.div`
 
 export const ArrowWrapper = styled.div`
   padding: 2px;
-  border-radius: 3px;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -35,8 +35,8 @@ export const AdvancedDropwdown = styled.div`
   margin-bottom: 100px;
   padding: 10px 0;
   padding-top: 24px;
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
   color: ${({ theme }) => theme.text2};
   // background-color: ${({ theme }) => theme.advancedBG};
   color: ${({ theme }) => theme.text2};
@@ -50,10 +50,9 @@ export const SectionBreak = styled.div`
 `
 
 export const BottomGrouping = styled.div<{ isDark?: boolean }>`
+  border-radius: 0 0 26px 26px;
   position: relative;
   padding: 2.4rem 4rem;
-
-  border-radius: 0 0 3px 3px;
 
   ${({ isDark }) =>
     isDark

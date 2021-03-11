@@ -12,7 +12,7 @@ const Base = styled(RebassButton)<{ padding?: string; width?: string; borderRadi
   width: ${({ width }) => (width ? width : '100%')};
   font-weight: 500;
   text-align: center;
-  border-radius: 3px;
+  border-radius: 20px;
   border-radius: ${({ borderRadius }) => borderRadius && borderRadius};
   outline: none;
   border: 1px solid transparent;
@@ -60,7 +60,7 @@ export const ButtonPrimary = styled(Base)`
       right: 0;
       bottom: 0;
       padding: 1px;
-      border-radius: 3px;
+      border-radius: 20px;
       background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: destination-out;
@@ -84,7 +84,7 @@ export const ButtonPrimary = styled(Base)`
     right: 0;
     bottom: 0;
     padding: 1px;
-    border-radius: 3px;
+    border-radius: 20px;
     background: linear-gradient(to right, #e79631, #d92921);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
@@ -128,7 +128,7 @@ export const ButtonLight = styled(Base)`
     right: 0;
     bottom: 0;
     padding: 1px;
-    border-radius: 3px;
+    border-radius: 20px;
     background: linear-gradient(to right, #e79631, #d92921);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
@@ -140,6 +140,7 @@ export const ButtonGray = styled(Base)`
   background-color: ${({ theme }) => theme.bg3};
   color: ${({ theme }) => theme.text2};
   font-size: 16px;
+  border-radius: 8px;
   font-weight: 500;
   &:focus {
     box-shadow: 0 0 0 1pt ${({ theme, disabled }) => !disabled && darken(0.05, theme.bg2)};
@@ -158,7 +159,7 @@ export const ButtonSecondary = styled(Base)<{ isDark?: boolean }>`
   background-color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(99, 113, 142, 0.14)')};
   color: ${({ isDark }) => (isDark ? '#f5a788' : '#da472a')};
   font-size: 16px;
-  border-radius: 3px;
+  border-radius: 0.5rem;
   padding: ${({ padding }) => (padding ? padding : '10px')};
   position: relative;
   z-index: 0;
@@ -172,7 +173,7 @@ export const ButtonSecondary = styled(Base)<{ isDark?: boolean }>`
     right: 0;
     bottom: 0;
     padding: 1px;
-    border-radius: 3px;
+    border-radius: 0.5rem;
     background: transparent;
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
@@ -245,7 +246,7 @@ export const ButtonOutlined = styled(Base)<{ isDark?: boolean }>`
       right: 0;
       bottom: 0;
       padding: 1px;
-      border-radius: 3px;
+      border-radius: 20px;
       background: linear-gradient(to right, #e79631, #d92921);
       -webkit-mask: 
         linear-gradient(#fff 0 0) content-box, 
@@ -275,7 +276,7 @@ export const ButtonOutlined = styled(Base)<{ isDark?: boolean }>`
     right: 0;
     bottom: 0;
     padding: 1px;
-    border-radius: 3px;
+    border-radius: 20px;
     background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
     -webkit-mask: 
        linear-gradient(#fff 0 0) content-box, 

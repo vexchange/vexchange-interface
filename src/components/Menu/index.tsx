@@ -27,7 +27,7 @@ const StyledMenuButton = styled.button<{ isDark?: boolean }>`
   background-color: ${({ isDark }) => (isDark ? 'rgba(99, 113, 142, 0.14)' : 'rgba(255, 255, 255, 0.14)')};
   color: ${({ theme }) => theme.primaryText1};
   font-size: 16px;
-  border-radius: 3px;
+  border-radius: 0.5rem;
 
   &:before {
     content: '';
@@ -38,7 +38,7 @@ const StyledMenuButton = styled.button<{ isDark?: boolean }>`
     right: 0;
     bottom: 0;
     padding: 1px;
-    border-radius: 3px;
+    border-radius: 0.5rem;
     background: transparent;
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: destination-out;
@@ -76,7 +76,7 @@ const MenuFlyout = styled.span<{ isDark?: boolean }>`
   background-color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(99, 113, 142, 0.14)')};
   box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04), 0px 16px 24px rgba(0, 0, 0, 0.04),
     0px 24px 32px rgba(0, 0, 0, 0.01);
-  border-radius: 3px;
+  border-radius: 0.5rem;
   padding: 0.5rem;
   display: flex;
   flex-direction: column;

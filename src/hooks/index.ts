@@ -8,7 +8,7 @@ import copy from 'copy-to-clipboard'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { injected } from '../connectors'
 import { NetworkContextName } from '../constants'
-import { getContract, getExchangeContract, isAddress } from '../utils'
+import { getContract, getExchangeContract } from '../utils'
 
 export function useWeb3React() {
   const context = useWeb3ReactCore<Web3Provider>()
