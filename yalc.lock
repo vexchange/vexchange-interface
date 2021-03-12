@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@uniswap/sdk": {
-      "signature": "33ba19f01781b13227b65e6f6e9c3a4a",
+      "signature": "cdc795d2c2f114c5c3fd3bcabf121cd5",
       "file": true,
       "replaced": "^2.0.5"
     }

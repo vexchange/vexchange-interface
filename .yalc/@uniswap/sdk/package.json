@@ -1,7 +1,7 @@
 {
   "name": "@uniswap/sdk",
   "license": "GPL-3.0-or-later",
-  "version": "2.0.5+33ba19f0",
+  "version": "2.0.5+cdc795d2",
   "description": "🛠 An SDK for building applications on top of Uniswap.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -44,5 +44,5 @@
     "semi": false,
     "singleQuote": true
   },
-  "yalcSig": "33ba19f01781b13227b65e6f6e9c3a4a"
+  "yalcSig": "cdc795d2c2f114c5c3fd3bcabf121cd5"
 }

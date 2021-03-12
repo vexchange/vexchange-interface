@@ -138,11 +138,11 @@ const PaddedItem = styled(RowBetween)`
   height: 56px;
 `
 
-const MenuItem = styled(PaddedItem)`
+const MenuItem = styled(PaddedItem)<{ isDark?: boolean }>`
   cursor: ${({ disabled }) => !disabled && 'pointer'};
   pointer-events: ${({ disabled }) => disabled && 'none'};
   :hover {
-    background-color: ${({ theme, disabled }) => !disabled && theme.bg2};
+    background-color: rgba(0, 0, 0, 0.1);
   }
   opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};
 `
@@ -198,7 +198,7 @@ function SearchModal({
   const { t } = useTranslation()
   const { account, chainId } = useWeb3React()
   const theme = useContext(ThemeContext)
-  const [isDark] = useDarkModeManager();
+  const [isDark] = useDarkModeManager()
 
   const allTokens = useAllTokens()
   const allPairs = useAllDummyPairs()
@@ -417,6 +417,7 @@ function SearchModal({
         return (
           <MenuItem
             key={i}
+            isDark={isDark}
             onClick={() => {
               history.push('/add/' + token0.address + '-' + token1.address)
               onDismiss()
