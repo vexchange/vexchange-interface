@@ -25,7 +25,6 @@ import WordmarkDark from '../../assets/svg/wordmark_dark.svg'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
 
-console.log(VVET)
 const HeaderFrame = styled.div`
   display: flex;
   align-items: center;
