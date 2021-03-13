@@ -13,9 +13,7 @@ import Option from './Option'
 import { SUPPORTED_WALLETS } from '../../constants'
 import { usePrevious } from '../../hooks'
 import { Link } from '../../theme'
-import SyncIcon from '../../assets/images/sync-logo.svg'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
-import { injected } from '../../connectors'
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -184,7 +182,6 @@ export default function WalletModal({
 
   // get wallets user can switch too, depending on device/browser
   function getOptions() {
-    const isMetamask = window.ethereum && window.ethereum.isMetaMask
     return Object.keys(SUPPORTED_WALLETS).map(key => {
       const option = SUPPORTED_WALLETS[key]
       // check for mobile options
@@ -204,36 +201,6 @@ export default function WalletModal({
             icon={require('../../assets/images/' + option.iconName)}
           />
         )
-      }
-
-      // overwrite injected when needed
-      if (option.connector === injected) {
-        // don't show injected if there's no injected provider
-        if (!(window.web3 || window.ethereum)) {
-          if (option.name === 'MetaMask') {
-            return (
-              <Option
-                id={`connect-${key}`}
-                key={key}
-                color={'#E8831D'}
-                header={'Install Metamask'}
-                subheader={null}
-                link={'https://metamask.io/'}
-                icon={SyncIcon}
-              />
-            )
-          } else {
-            return null //dont want to return install twice
-          }
-        }
-        // don't return metamask if injected provider isn't metamask
-        else if (option.name === 'MetaMask' && !isMetamask) {
-          return null
-        }
-        // likewise for generic
-        else if (option.name === 'Injected' && isMetamask) {
-          return null
-        }
       }
 
       // return rest of options
