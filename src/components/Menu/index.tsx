@@ -130,7 +130,7 @@ export default function Menu() {
       </StyledMenuButton>
       {open ? (
         <MenuFlyout isDark={isDark}>
-          <MenuItem id="link" href="docs.vexchange.io">
+          <MenuItem id="link" href="https://docs.vexchange.io">
             Docs
           </MenuItem>
           <MenuItem id="link" href={CODE_LINK}>
