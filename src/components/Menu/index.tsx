@@ -97,14 +97,12 @@ const MenuItem = styled(Link)`
   }
 `
 
-const CODE_LINK = !!process.env.REACT_APP_GIT_COMMIT_HASH
-  ? `https://github.com/Uniswap/uniswap-frontend/tree/${process.env.REACT_APP_GIT_COMMIT_HASH}`
-  : 'https://github.com/Uniswap/uniswap-frontend'
+const CODE_LINK = 'https://github.com/VeChainDEXCode/vexchange-interface'
 
 export default function Menu() {
   const node = useRef<HTMLDivElement>()
   const [open, toggle] = useToggle(false)
-  const [isDark] = useDarkModeManager();
+  const [isDark] = useDarkModeManager()
 
   useEffect(() => {
     const handleClickOutside = e => {
@@ -132,17 +130,11 @@ export default function Menu() {
       </StyledMenuButton>
       {open ? (
         <MenuFlyout isDark={isDark}>
-          <MenuItem id="link" href="https://uniswap.org/">
-            About
-          </MenuItem>
-          <MenuItem id="link" href="https://uniswap.org/docs/v2">
+          <MenuItem id="link" href="docs.vexchange.io">
             Docs
           </MenuItem>
           <MenuItem id="link" href={CODE_LINK}>
             Code
-          </MenuItem>
-          <MenuItem id="link" href="https://uniswap.info/">
-            Analytics
           </MenuItem>
         </MenuFlyout>
       ) : (

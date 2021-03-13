@@ -9,7 +9,6 @@ import Row from '../Row'
 import Menu from '../Menu'
 import Web3Status from '../Web3Status'
 
-import { Link } from '../../theme'
 import { Text } from 'rebass'
 import { VVET, ChainId } from 'vexchange-sdk'
 import { isMobile } from 'react-device-detect'
@@ -22,7 +21,6 @@ import Logo from '../../assets/svg/logo.svg'
 import Wordmark from '../../assets/svg/wordmark_light.svg'
 import LogoDark from '../../assets/svg/logo_white.svg'
 import WordmarkDark from '../../assets/svg/wordmark_dark.svg'
-import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
 
 const HeaderFrame = styled.div`
@@ -105,54 +103,6 @@ const UniIcon = styled(HistoryLink)<{ to: string }>`
   }
 `
 
-const MigrateBanner = styled(AutoColumn)<{ isDark?: boolean }>`
-  width: 100%;
-  padding: 12px 0;
-  display: flex;
-  justify-content: center;
-  background-color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(99, 113, 142, 0.1)')};
-  color: ${({ isDark }) => (isDark ? '#dddddd' : '#da472a')};
-  font-weight: 400;
-  text-align: center;
-  pointer-events: auto;
-
-  a {
-    color: ${({ isDark }) => (isDark ? '#dddddd' : '#da472a')};
-  }
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 0;
-    display: none;
-  `};
-`
-
-const VersionLabel = styled.span<{ isV2?: boolean }>`
-  padding: ${({ isV2 }) => (isV2 ? '0.15rem 0.5rem 0.16rem 0.45rem' : '0.15rem 0.5rem 0.16rem 0.35rem')};
-  border-radius: 14px;
-  background: ${({ theme, isV2 }) => (isV2 ? theme.primary1 : 'none')};
-  color: ${({ theme, isV2 }) => (isV2 ? theme.white : theme.primary1)};
-  font-size: 0.825rem;
-  font-weight: 400;
-  :hover {
-    user-select: ${({ isV2 }) => (isV2 ? 'none' : 'initial')};
-    background: ${({ theme, isV2 }) => (isV2 ? theme.primary1 : 'none')};
-    color: ${({ theme, isV2 }) => (isV2 ? theme.white : theme.primary1)};
-  }
-`
-
-const VersionToggle = styled.a`
-  border-radius: 16px;
-  border: 1px solid ${({ theme }) => theme.primary1};
-  color: ${({ theme }) => theme.primary1};
-  display: flex;
-  width: fit-content;
-  cursor: pointer;
-  text-decoration: none;
-  :hover {
-    text-decoration: none;
-  }
-`
-
 export default function Header() {
   const { account, chainId, active } = useWeb3React()
   const [darkMode, toggleDarkMode] = useDarkModeManager()
@@ -162,17 +112,6 @@ export default function Header() {
 
   return (
     <HeaderFrame>
-      <MigrateBanner isDark={isDark}>
-        Vexchange V2 is live! Read the&nbsp;
-        <Link href="https://uniswap.org/blog/launch-uniswap-v2/">
-          <b>blog post ↗</b>
-        </Link>
-        &nbsp;or&nbsp;
-        <Link href="https://migrate.uniswap.exchange/">
-          <b>migrate your liquidity ↗</b>
-        </Link>
-        .
-      </MigrateBanner>
       <RowBetween padding="1rem">
         <HeaderElement>
           <Title>
@@ -191,14 +130,6 @@ export default function Header() {
               </TitleText>
             )}
           </Title>
-          <TestnetWrapper style={{ pointerEvents: 'auto' }}>
-            {!isMobile && (
-              <VersionToggle target="_self" href="https://v1.uniswap.exchange">
-                <VersionLabel isV2={true}>V2</VersionLabel>
-                <VersionLabel isV2={false}>V1</VersionLabel>
-              </VersionToggle>
-            )}
-          </TestnetWrapper>
         </HeaderElement>
         <HeaderElement>
           <TestnetWrapper>
