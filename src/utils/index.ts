@@ -27,7 +27,7 @@ export enum ERROR_CODES {
 }
 
 const EXPLORE_PREFIXES: { [chainId in ChainId]: string } = {
-  1: 'explore.',
+  1: 'explore-testnet.',
   3: 'explore-testnet.',
   4: 'rinkeby.',
   5: 'goerli.',

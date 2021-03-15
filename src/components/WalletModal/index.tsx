@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import ReactGA from 'react-ga'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { isMobile } from 'react-device-detect'
 import { UnsupportedChainIdError } from '../../context'
 import { useWeb3React } from '../../hooks'
 import { useWalletModalOpen, useWalletModalToggle } from '../../state/application/hooks'
+import { useDarkModeManager } from '../../state/user/hooks'
 
 import Modal from '../Modal'
 import AccountDetails from '../AccountDetails'
@@ -48,8 +49,16 @@ const HeaderRow = styled.div`
   `};
 `
 
-const ContentWrapper = styled.div`
-  background-image: linear-gradient(210deg, #3F6A80 0%, #244150 100%);
+const ContentWrapper = styled.div<{ isDark?: boolean }>`
+  ${({ isDark }) =>
+    isDark
+      ? css`
+          background-image: linear-gradient(210deg, #3F6A80 0%, #244150 100%);
+        `
+      : css`
+          background-image: none;
+        `}
+
   padding: 2rem;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
@@ -113,12 +122,13 @@ const WALLET_VIEWS = {
 
 export default function WalletModal({
   pendingTransactions,
-  confirmedTransactions,
+  confirmedTransactions
 }: {
   pendingTransactions: string[] // hashes of pending
   confirmedTransactions: string[] // hashes of confirmed
 }) {
   const { active, account, connector, activate, error } = useWeb3React()
+  const [isDark] = useDarkModeManager()
 
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
 

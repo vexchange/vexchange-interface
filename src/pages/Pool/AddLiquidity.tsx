@@ -1,5 +1,4 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { MaxUint256 } from '@ethersproject/constants'
 import { find } from 'lodash'
 import { parseEther, parseUnits } from '@ethersproject/units'
 import { JSBI, Percent, Price, Route, Token, TokenAmount, VVET } from 'vexchange-sdk'
@@ -19,18 +18,18 @@ import DoubleLogo from '../../components/DoubleLogo'
 import PositionCard from '../../components/PositionCard'
 import Row, { AutoRow, RowBetween, RowFixed, RowFlat } from '../../components/Row'
 import SearchModal from '../../components/SearchModal'
-import ERC20_ABI from '../../constants/abis/erc20.json'
 
 import TokenLogo from '../../components/TokenLogo'
 
 import { ROUTER_ADDRESS } from '../../constants'
-import { useTokenAllowance } from '../../data/Allowances'
 import { usePair } from '../../data/Reserves'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useWeb3React } from '../../hooks'
 
+import { useApproveCallback, Approval } from '../../hooks/useApproveCallback'
+import { useWalletModalToggle } from '../../state/application/hooks'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
-import { useHasPendingApproval, useTransactionAdder } from '../../state/transactions/hooks'
+import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
@@ -145,6 +144,7 @@ interface AddLiquidityProps extends RouteComponentProps {
 function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
   const { account, chainId, library } = useWeb3React()
   const theme = useContext(ThemeContext)
+  const toggleWalletModal = useWalletModalToggle()
   const [isDark] = useDarkModeManager()
 
   // modal states
@@ -239,23 +239,6 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     [independentField]: typedValue,
     [dependentField]: parsedAmounts[dependentField] ? parsedAmounts[dependentField]?.toSignificant(6) : ''
   }
-
-  // check whether the user has approved the router on both tokens
-  const inputApproval: TokenAmount = useTokenAllowance(tokens[Field.INPUT], account, ROUTER_ADDRESS)
-  const outputApproval: TokenAmount = useTokenAllowance(tokens[Field.OUTPUT], account, ROUTER_ADDRESS)
-  const inputApproved =
-    tokens[Field.INPUT]?.equals(VVET[chainId]) ||
-    (!!inputApproval &&
-      !!parsedAmounts[Field.INPUT] &&
-      JSBI.greaterThanOrEqual(inputApproval.raw, parsedAmounts[Field.INPUT].raw))
-  const outputApproved =
-    tokens[Field.OUTPUT]?.equals(VVET[chainId]) ||
-    (!!outputApproval &&
-      !!parsedAmounts[Field.OUTPUT] &&
-      JSBI.greaterThanOrEqual(outputApproval.raw, parsedAmounts[Field.OUTPUT].raw))
-  // check on pending approvals for token amounts
-  const pendingApprovalInput = useHasPendingApproval(tokens[Field.INPUT]?.address)
-  const pendingApprovalOutput = useHasPendingApproval(tokens[Field.OUTPUT]?.address)
 
   // used for displaying approximate starting price in UI
   const derivedPrice =
@@ -387,6 +370,10 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     }
   }, [noLiquidity, parsedAmounts, tokens, userBalances, account])
 
+  // check whether the user has approved the router on the tokens
+  const [approvalA, approveACallback] = useApproveCallback(parsedAmounts[Field.INPUT], ROUTER_ADDRESS)
+  const [approvalB, approveBCallback] = useApproveCallback(parsedAmounts[Field.OUTPUT], ROUTER_ADDRESS)
+
   // state for txn
   const addTransaction = useTransactionAdder()
   const [txHash, setTxHash] = useState<string>('')
@@ -442,7 +429,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
           value: value ? value.toString() : 0
         }
       ])
-      .comment('work')
+      .comment('Add Liquidity')
       .request()
       .then(response => {
         ReactGA.event({
@@ -469,26 +456,6 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
         setPendingConfirmation(true)
         setAttemptingTxn(false)
         setShowConfirm(false)
-      })
-  }
-
-  async function approveAmount(field) {
-    const tokenAddress = field === Field.INPUT ? tokens[Field.INPUT]?.address : tokens[Field.OUTPUT]?.address
-
-    const abi = find(ERC20_ABI, { name: 'approve' })
-    const method = library.thor.account(tokenAddress).method(abi)
-
-    const clause = method.asClause(ROUTER_ADDRESS, MaxUint256)
-
-    return library.vendor
-      .sign('tx', [{ ...clause }])
-      .comment('approve')
-      .request()
-      .then(response => {
-        addTransaction(response, {
-          summary: 'Approve ' + tokens[field]?.symbol,
-          approvalOfToken: tokens[field].address
-        })
       })
   }
 
@@ -541,7 +508,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
           </Text>
         </Row>
         <TYPE.italic fontSize={12} textAlign="left" padding={'8px 0 0 0 '}>
-          {`Output is estimated. You will receive at least ${liquidityMinted?.toSignificant(6)} UNI ${
+          {`Output is estimated. You will receive at least ${liquidityMinted?.toSignificant(6)} VEX ${
             tokens[Field.INPUT]?.symbol
           }/${tokens[Field.OUTPUT]?.symbol} or the transaction will revert.`}
         </TYPE.italic>
@@ -744,28 +711,21 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
             </GreyCard>
           </>
         )}
-        {isValid ? (
-          !inputApproved ? (
-            <ButtonLight
-              onClick={() => {
-                approveAmount(Field.INPUT)
-              }}
-              disabled={pendingApprovalInput}
-            >
-              {pendingApprovalInput ? (
+
+        <div style={{ padding: '2.4rem 4rem' }}>
+          {!account ? (
+            <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+          ) : approvalA === Approval.NOT_APPROVED || approvalA === Approval.PENDING ? (
+            <ButtonLight onClick={approveACallback} disabled={approvalA === Approval.PENDING}>
+              {approvalA === Approval.PENDING ? (
                 <Dots>Approving {tokens[Field.INPUT]?.symbol}</Dots>
               ) : (
                 'Approve ' + tokens[Field.INPUT]?.symbol
               )}
             </ButtonLight>
-          ) : !outputApproved ? (
-            <ButtonLight
-              onClick={() => {
-                approveAmount(Field.OUTPUT)
-              }}
-              disabled={pendingApprovalOutput}
-            >
-              {pendingApprovalOutput ? (
+          ) : approvalB === Approval.NOT_APPROVED || approvalB === Approval.PENDING ? (
+            <ButtonLight onClick={approveBCallback} disabled={approvalB === Approval.PENDING}>
+              {approvalB === Approval.PENDING ? (
                 <Dots>Approving {tokens[Field.OUTPUT]?.symbol}</Dots>
               ) : (
                 'Approve ' + tokens[Field.OUTPUT]?.symbol
@@ -776,21 +736,14 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
               onClick={() => {
                 setShowConfirm(true)
               }}
+              disabled={!isValid}
             >
-              <Text fontSize={20} fontWeight={500}>
-                Supply
-              </Text>
-            </ButtonPrimary>
-          )
-        ) : (
-          <div style={{ padding: '2.4rem 4rem' }}>
-            <ButtonPrimary disabled={true}>
               <Text fontSize={20} fontWeight={500}>
                 {generalError ? generalError : inputError ? inputError : outputError ? outputError : 'Supply'}
               </Text>
             </ButtonPrimary>
-          </div>
-        )}
+          )}
+        </div>
       </AutoColumn>
 
       {!noLiquidity && (

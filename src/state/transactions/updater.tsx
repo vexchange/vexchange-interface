@@ -27,48 +27,54 @@ export default function Updater() {
             !allTransactions[hash].blockNumberChecked || allTransactions[hash].blockNumberChecked < lastBlockNumber
         )
         .forEach(hash => {
-          library.thor.transaction(hash).get().then(tx => {
-            library.thor.transaction(hash).getReceipt().then(receipt => {
-              if (!receipt) {
-                dispatch(checkTransaction({ chainId, hash, blockNumber: lastBlockNumber }))
-              } else {
-                dispatch(
-                  finalizeTransaction({
-                    chainId,
-                    hash,
-                    receipt: {
-                      blockHash: receipt.meta.blockID,
-                      blockNumber: receipt.meta.blockNumber,
-                      from: tx.origin,
-                      status: !receipt.reverted,
-                      to: receipt.to,
-                      transactionHash: tx.id,
-                    }
-                  })
-                )
+          library.thor
+            .transaction(hash)
+            .get()
+            .then(tx => {
+              library.thor
+                .transaction(hash)
+                .getReceipt()
+                .then(receipt => {
+                  if (!receipt) {
+                    dispatch(checkTransaction({ chainId, hash, blockNumber: lastBlockNumber }))
+                  } else {
+                    dispatch(
+                      finalizeTransaction({
+                        chainId,
+                        hash,
+                        receipt: {
+                          blockHash: receipt.meta.blockID,
+                          blockNumber: receipt.meta.blockNumber,
+                          from: tx.origin,
+                          status: !receipt.reverted,
+                          to: receipt.to,
+                          transactionHash: tx.id
+                        }
+                      })
+                    )
 
-                if (!receipt.reverted) {
-                  addPopup({
-                    txn: {
-                      hash,
-                      success: true,
-                      summary: allTransactions[hash]?.summary
+                    if (!receipt.reverted) {
+                      addPopup({
+                        txn: {
+                          hash,
+                          success: true,
+                          summary: allTransactions[hash]?.summary
+                        }
+                      })
+                    } else {
+                      addPopup({
+                        txn: { hash, success: false, summary: allTransactions[hash]?.summary }
+                      })
                     }
-                  })
-                } else {
-                  addPopup({
-                    txn: { hash, success: false, summary: allTransactions[hash]?.summary }
-                  })
-                }
-              }
+                  }
+                })
+                .catch(error => {
+                  console.error(`failed to check transaction receipt: ${hash}`, error)
+                })
             })
             .catch(error => {
-              console.error(`failed to check transaction receipt: ${hash}`, error)
+              console.error(`failed to check transaction hash: ${hash}`, error)
             })
-          })
-          .catch(error => {
-            console.error(`failed to check transaction hash: ${hash}`, error)
-          })
         })
     }
   }, [chainId, library, allTransactions, lastBlockNumber, dispatch, addPopup])

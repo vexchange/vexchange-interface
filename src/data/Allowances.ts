@@ -25,7 +25,7 @@ export function useTokenAllowance(token?: Token, owner?: string, spender?: strin
       }
     }
 
-    if (token?.address && owner) {
+    if (token) {
       getTokenAllowance()
     }
   }, [token, library.thor, owner, abi, spender])

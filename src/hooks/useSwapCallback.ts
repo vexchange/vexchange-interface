@@ -155,7 +155,7 @@ export function useSwapCallback(
             value: value ? value.toString() : 0
           }
         ])
-        .comment('work')
+        .comment(`Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`)
         .request()
         .then(response => {
           if (recipient === account) {

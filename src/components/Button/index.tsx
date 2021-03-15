@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { darken, lighten } from 'polished'
 
 import { useDarkModeManager } from '../../state/user/hooks'
@@ -31,7 +31,7 @@ const Base = styled(RebassButton)<{ padding?: string; width?: string; borderRadi
   }
 `
 
-export const ButtonPrimary = styled(Base)`
+export const ButtonPrimary = styled(Base)<{ isDark?: boolean }>`
   background-color: ${({ theme }) => theme.primary4};
   color: white;
 
@@ -47,8 +47,21 @@ export const ButtonPrimary = styled(Base)`
     background-color: ${({ theme }) => darken(0.1, theme.primary1)};
   }
   &:disabled {
-    background: linear-gradient(137.29deg, rgba(255, 255, 255, 0.572361) -7.97%, rgba(119, 119, 119, 0.403655) 101.51%);
-    cursor: auto;
+    cursor: not-allowed;
+
+    ${({ isDark }) =>
+      isDark
+        ? css`
+            background: linear-gradient(
+              137.29deg,
+              rgba(255, 255, 255, 0.572361) -7.97%,
+              rgba(119, 119, 119, 0.403655) 101.51%
+            );
+          `
+        : css`
+            background: #ffffff;
+            color: black;
+          `}
     box-shadow: none;
 
     &:before {
@@ -370,10 +383,12 @@ export function ButtonConfirmed({ confirmed, ...rest }: { confirmed?: boolean } 
 }
 
 export function ButtonError({ error, ...rest }: { error?: boolean } & ButtonProps) {
+  const [isDark] = useDarkModeManager()
+
   if (error) {
     return <ButtonErrorStyle {...rest} />
   } else {
-    return <ButtonPrimary {...rest} />
+    return <ButtonPrimary {...rest} isDark={isDark} />
   }
 }
 

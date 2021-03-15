@@ -33,12 +33,16 @@ export function useApproveCallback(
     if (amountToApprove?.token?.equals(VVET[amountToApprove?.token?.chainId])) return Approval.APPROVED
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance || !amountToApprove) return Approval.UNKNOWN
-    if (pendingApproval) return Approval.PENDING
     // amountToApprove will be defined if currentAllowance is
-    return currentAllowance.lessThan(amountToApprove) ? Approval.NOT_APPROVED : Approval.APPROVED
+    return currentAllowance.lessThan(amountToApprove)
+      ? pendingApproval
+        ? Approval.PENDING
+        : Approval.NOT_APPROVED
+      : Approval.APPROVED
   }, [amountToApprove, currentAllowance, pendingApproval])
 
   const addTransaction = useTransactionAdder()
+  const abi = find(ERC20_ABI, { name: 'approve' })
 
   const approve = useCallback(async (): Promise<void> => {
     if (approval !== Approval.NOT_APPROVED) {
@@ -46,14 +50,13 @@ export function useApproveCallback(
       return
     }
 
-    const abi = find(ERC20_ABI, { name: 'approve' })
     const method = library.thor.account(amountToApprove?.token?.address).method(abi)
 
     const clause = method.asClause(addressToApprove, MaxUint256)
 
     return library.vendor
       .sign('tx', [{ ...clause }])
-      .comment('approve')
+      .comment(`Approve ${amountToApprove?.token?.symbol}`)
       .request()
       .then(response => {
         addTransaction(response, {
@@ -65,7 +68,7 @@ export function useApproveCallback(
         console.debug('Failed to approve token', error)
         throw error
       })
-  }, [addTransaction, addressToApprove, amountToApprove, approval, library.thor, library.vendor])
+  }, [addTransaction, addressToApprove, amountToApprove, approval, abi, library.thor, library.vendor])
 
   return [approval, approve]
 }

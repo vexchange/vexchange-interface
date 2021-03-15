@@ -91,7 +91,7 @@ function PopupItem({ content, popKey }: { content: PopupContent; popKey: string 
         <Row>
           <DoubleTokenLogo a0={token0?.address ?? ''} a1={token1?.address ?? ''} margin={true} />
           <Text fontSize={16} fontWeight={500}>
-            UNI {token0?.symbol} / {token1?.symbol}
+            VEX {token0?.symbol} / {token1?.symbol}
           </Text>
         </Row>
         <Link>View on Vexchange Info.</Link>

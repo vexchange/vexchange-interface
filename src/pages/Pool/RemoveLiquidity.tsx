@@ -419,7 +419,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
           label: [tokens[Field.TOKEN0]?.symbol, tokens[Field.TOKEN1]?.symbol].join('/')
         })
         setPendingConfirmation(false)
-        setTxHash(response.hash)
+        setTxHash(response.txid)
         addTransaction(response, {
           summary:
             'Remove ' +
@@ -441,7 +441,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
 
   function modalHeader() {
     return (
-      <AutoColumn gap={'md'} style={{ marginTop: '20px' }}>
+      <AutoColumn gap={'md'} style={{ marginTop: '20px', padding: '1rem' }}>
         <RowBetween align="flex-end">
           <Text fontSize={24} fontWeight={500}>
             {!!parsedAmounts[Field.TOKEN0] && parsedAmounts[Field.TOKEN0].toSignificant(6)}
@@ -555,7 +555,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
         pendingText={pendingText}
         title="You will recieve"
       />
-      <AutoColumn gap="md">
+      <AutoColumn gap="md" style={{ padding: '1rem' }}>
         <LightCard>
           <AutoColumn gap="20px">
             <RowBetween>
