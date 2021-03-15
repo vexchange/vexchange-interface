@@ -27,15 +27,6 @@ function getLibrary() {
   return connex
 }
 
-if (process.env.NODE_ENV === 'production') {
-  ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_ID)
-  ReactGA.set({
-    customBrowserType: !isMobile ? 'desktop' : 'web3' in window || 'ethereum' in window ? 'mobileWeb3' : 'mobileRegular'
-  })
-} else {
-  ReactGA.initialize('test', { testMode: true, debug: true })
-}
-
 function Updaters() {
   return (
     <>
