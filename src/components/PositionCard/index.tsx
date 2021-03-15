@@ -12,11 +12,10 @@ import Card, { GreyCard } from '../Card'
 import TokenLogo from '../TokenLogo'
 import DoubleLogo from '../DoubleLogo'
 import { Text } from 'rebass'
-import { Link } from '../../theme/components'
 import { AutoColumn } from '../Column'
 import { ChevronDown, ChevronUp } from 'react-feather'
 import { ButtonSecondary } from '../Button'
-import { RowBetween, RowFixed, AutoRow } from '../Row'
+import { RowBetween, RowFixed } from '../Row'
 import { useDarkModeManager } from '../../state/user/hooks'
 
 const FixedHeightRow = styled(RowBetween)`

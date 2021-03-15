@@ -5,7 +5,6 @@ import { isMobile } from 'react-device-detect'
 import { UnsupportedChainIdError } from '../../context'
 import { useWeb3React } from '../../hooks'
 import { useWalletModalOpen, useWalletModalToggle } from '../../state/application/hooks'
-import { useDarkModeManager } from '../../state/user/hooks'
 
 import Modal from '../Modal'
 import AccountDetails from '../AccountDetails'
@@ -15,6 +14,7 @@ import { SUPPORTED_WALLETS } from '../../constants'
 import { usePrevious } from '../../hooks'
 import { Link } from '../../theme'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
+import { useDarkModeManager } from '../../state/user/hooks'
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -128,6 +128,7 @@ export default function WalletModal({
   confirmedTransactions: string[] // hashes of confirmed
 }) {
   const { active, account, connector, activate, error } = useWeb3React()
+  const [isDark] = useDarkModeManager()
 
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
 
@@ -244,7 +245,7 @@ export default function WalletModal({
             <CloseColor />
           </CloseIcon>
           <HeaderRow>{error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error connecting'}</HeaderRow>
-          <ContentWrapper>
+          <ContentWrapper isDark={isDark}>
             {error instanceof UnsupportedChainIdError ? (
               <h5>Please connect to the appropriate VeChain network.</h5>
             ) : (
