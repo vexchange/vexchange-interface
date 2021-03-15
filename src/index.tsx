@@ -1,12 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import ReactGA from 'react-ga'
 import { Web3ReactProvider, createWeb3ReactRoot } from './context'
 import Connex from '@vechain/connex'
 import { Provider } from 'react-redux'
 
 import { NetworkContextName } from './constants'
-import { isMobile } from 'react-device-detect'
 import WalletUpdater from './state/wallet/updater'
 import App from './pages/App'
 import store from './state'
