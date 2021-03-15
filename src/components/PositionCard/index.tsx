@@ -204,10 +204,6 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
                   </Text>
                 </FixedHeightRow>
               )}
-
-              <AutoRow justify="center" marginTop={'10px'}>
-                <Link href={`https://uniswap.info/pair/${pair?.liquidityToken.address}`}>View pool information ↗</Link>
-              </AutoRow>
               <RowBetween marginTop="10px">
                 <ButtonSecondary
                   isDark={isDark}

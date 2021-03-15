@@ -128,7 +128,6 @@ export default function WalletModal({
   confirmedTransactions: string[] // hashes of confirmed
 }) {
   const { active, account, connector, activate, error } = useWeb3React()
-  const [isDark] = useDarkModeManager()
 
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
 
