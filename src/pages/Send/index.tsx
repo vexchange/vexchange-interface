@@ -137,7 +137,6 @@ export default function Send({ location: { search } }: RouteComponentProps) {
     setShowAdvanced(false)
   }
 
-  console.log('index: ', recipient)
   const swapCallback = useSwapCallback(bestTrade, allowedSlippage, deadline, recipient)
 
   function onSwap() {

@@ -96,10 +96,10 @@ const NetworkCard = styled(YellowCard)`
   padding: 8px 12px;
 `
 
-const UniIcon = styled(HistoryLink)<{ to: string }>`
+const VexIcon = styled(HistoryLink)<{ to: string }>`
   transition: transform 0.3s ease;
   :hover {
-    transform: rotate(-5deg);
+    transform: scale(1.1);
   }
 `
 
@@ -115,9 +115,9 @@ export default function Header() {
       <RowBetween padding="1rem">
         <HeaderElement>
           <Title>
-            <UniIcon id="link" to="/">
+            <VexIcon id="link" to="/">
               <img src={isDark ? LogoDark : Logo} alt="logo" />
-            </UniIcon>
+            </VexIcon>
             {!isMobile && (
               <TitleText>
                 <HistoryLink id="link" to="/">
