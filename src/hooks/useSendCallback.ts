@@ -27,6 +27,7 @@ export function useSendCallback(amount?: TokenAmount, recipient?: string): null 
 
     return async function onSend(): Promise<string> {
       if (token.equals(VVET[chainId])) {
+
         return library.vendor
           .sign('tx', [
             {
@@ -34,7 +35,7 @@ export function useSendCallback(amount?: TokenAmount, recipient?: string): null 
               value: BigNumber.from(amount.raw.toString()).toString()
             }
           ])
-          .comment('work')
+          .comment(`Send ${amount.toSignificant(3)} ${token?.symbol} to ${recipient}`)
           .request()
           .then(response => {
             addTransaction(response, {
@@ -54,7 +55,7 @@ export function useSendCallback(amount?: TokenAmount, recipient?: string): null 
 
         return library.vendor
           .sign('tx', [{ ...clause }])
-          .comment('work')
+          .comment(`Send ${amount.toSignificant(3)} ${token?.symbol} to ${recipient}`)
           .request()
           .then(response => {
             addTransaction(response, {
