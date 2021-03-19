@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useDarkModeManager } from '../../state/user/hooks'
 import { Link } from '../../theme'
 
 const InfoCard = styled.button<{ active?: boolean }>`
@@ -30,12 +31,16 @@ const OptionCardLeft = styled.div`
   height: 100%;
 `
 
-const OptionCardClickable = styled(OptionCard)<{ clickable?: boolean }>`
+const OptionCardClickable = styled(OptionCard)<{ clickable?: boolean; isDark?: boolean }>`
   margin-top: 0;
+  border: 1px solid ${({ isDark }) => (isDark ? '#f5a788' : '#da472a')};
+
   &:hover {
     cursor: ${({ clickable }) => (clickable ? 'pointer' : '')};
     border: ${({ clickable, theme }) => (clickable ? `1px solid ${theme.primary1}` : ``)};
+    border: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.14)' : 'rgba(99, 113, 142, 0.14)')};
   }
+
   opacity: ${({ disabled }) => (disabled ? '0.5' : '1')};
 `
 
@@ -110,8 +115,10 @@ export default function Option({
   active?: boolean
   id: string
 }) {
+  const [isDark] = useDarkModeManager()
+
   const content = (
-    <OptionCardClickable id={id} onClick={onClick} clickable={clickable && !active} active={active}>
+    <OptionCardClickable active={active} clickable={clickable && !active} id={id} isDark={isDark} onClick={onClick}>
       <OptionCardLeft>
         <HeaderText color={color}>
           {' '}
