@@ -1,36 +1,43 @@
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { Token, TokenAmount } from 'vexchange-sdk'
+import useSWR from 'swr'
 import { find } from 'lodash'
 import { abi as IERC20ABI } from '@uniswap/v2-core/build/IERC20.json'
 
+import { SWRKeys, useKeepSWRDataLiveAsBlocksArrive } from '.'
 import { useWeb3React } from '../hooks'
 
-export function useTotalSupply(token?: Token): TokenAmount {
-  const [amount, setAmount] = useState<TokenAmount>()
+// returns null on errors
+export function useContract(address) {
   const { library } = useWeb3React()
   const abi = find(IERC20ABI, { name: 'totalSupply' })
 
-  useEffect(() => {
-    const getTotalSupply = async () => {
-      const account = library.thor.account(token?.address)
-      const method = account.method(abi)
-
-      try {
-        const {
-          decoded: { 0: totalSupply }
-        } = await method.call()
-
-        const tokenAmount = new TokenAmount(token, totalSupply.toString())
-        setAmount(tokenAmount)
-      } catch (error) {
-        console.log(error)
-      }
+  return useMemo(() => {
+    try {
+      return library.thor.account(address).method(abi)
+    } catch {
+      return null
     }
+  }, [address, abi, library.thor])
+}
 
-    if (token?.address) {
-      getTotalSupply()
-    }
-  }, [token, abi, library.thor])
+function getTotalSupply(method, token): () => Promise<TokenAmount> {
+  return async (): Promise<TokenAmount> =>
+    method.call().then(data => {
+      return new TokenAmount(token, data.decoded[0].toString())
+    })
+}
 
-  return amount
+export function useTotalSupply(token?: Token): TokenAmount {
+  const method = useContract(token?.address)
+  const shouldFetch = !!method
+
+  const { data, mutate } = useSWR(
+    shouldFetch ? [token.address, token.chainId, SWRKeys.TotalSupply] : null,
+    getTotalSupply(method, token)
+  )
+
+  useKeepSWRDataLiveAsBlocksArrive(mutate)
+
+  return data
 }

@@ -1,34 +1,43 @@
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { Token, TokenAmount } from 'vexchange-sdk'
+import useSWR from 'swr'
 import { find } from 'lodash'
+import { SWRKeys, useKeepSWRDataLiveAsBlocksArrive } from '.'
 
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { useWeb3React } from '../hooks'
 
-export function useTokenAllowance(token?: Token, owner?: string, spender?: string): TokenAmount {
-  const [amount, setAmount] = useState<TokenAmount>()
+// returns null on errors
+export function useTokenContract(tokenAddress: string) {
   const { library } = useWeb3React()
   const abi = find(ERC20_ABI, { name: 'allowance' })
 
-  useEffect(() => {
-    const getTokenAllowance = async () => {
-      const method = library.thor.account(token.address).method(abi)
-
-      try {
-        const {
-          decoded: { 0: balance }
-        } = await method.call(owner, spender)
-        const tokenAmount = new TokenAmount(token, balance.toString())
-        setAmount(tokenAmount)
-      } catch (error) {
-        console.log(error)
-      }
+  return useMemo(() => {
+    try {
+      return library.thor.account(tokenAddress).method(abi)
+    } catch {
+      return null
     }
+  }, [tokenAddress, abi, library.thor])
+}
 
-    if (token) {
-      getTokenAllowance()
-    }
-  }, [token, library.thor, owner, abi, spender])
+function getTokenAllowance(method, token): (owner: string, spender: string) => Promise<TokenAmount> {
+  return async (owner: string, spender: string): Promise<TokenAmount> =>
+    method.call(owner, spender).then(data => {
+      return new TokenAmount(token, data.decoded[0].toString())
+    })
+}
 
-  return amount
+export function useTokenAllowance(token?: Token, owner?: string, spender?: string): TokenAmount {
+  const method = useTokenContract(token?.address)
+  const shouldFetch = !!method && typeof owner === 'string' && typeof spender === 'string'
+
+  const { data, mutate } = useSWR(
+    shouldFetch ? [owner, spender, token.address, token.chainId, SWRKeys.Allowances] : null,
+    getTokenAllowance(method, token)
+  )
+
+  useKeepSWRDataLiveAsBlocksArrive(mutate)
+
+  return data
 }
