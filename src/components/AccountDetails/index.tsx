@@ -79,7 +79,7 @@ const AccountGroupingRow = styled.div`
 const AccountSection = styled.div`
   background-color: ${({ theme }) => theme.bg1};
   padding: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 0rem 1rem 1rem 1rem;`};
+  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem;`};
 `
 
 const YourAccount = styled.div`

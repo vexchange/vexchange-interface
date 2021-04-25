@@ -8,7 +8,7 @@ import { useDarkModeManager } from '../../state/user/hooks'
 import { CursorPointer } from '../../theme'
 import { ArrowLeft } from 'react-feather'
 import { RowBetween } from '../Row'
-import QuestionHelper from '../Question'
+import QuestionHelper from '../QuestionHelper'
 
 import { useBodyKeyDown } from '../../hooks'
 
