@@ -32,6 +32,14 @@ export function useAllTransactions(): { [txHash: string]: TransactionDetails } {
   return state[chainId] ?? {}
 }
 
+export function useIsTransactionPending(transactionHash?: string): boolean {
+  const transactions = useAllTransactions()
+
+  if (!transactionHash || !transactions[transactionHash]) return false
+
+  return !transactions[transactionHash].receipt
+}
+
 // returns whether a token has a pending approval transaction
 export function useHasPendingApproval(tokenAddress: string): boolean {
   const allTransactions = useAllTransactions()

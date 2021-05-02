@@ -7,7 +7,8 @@ export enum SWRKeys {
   Allowances,
   Reserves,
   TotalSupply,
-  V1PairAddress
+  V1PairAddress,
+  TokenAddress
 }
 
 export function useKeepSWRDataLiveAsBlocksArrive(mutate: responseInterface<any, any>['mutate']) {

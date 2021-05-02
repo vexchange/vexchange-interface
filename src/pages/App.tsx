@@ -18,6 +18,8 @@ import Pool from './Pool'
 import Add from './Pool/AddLiquidity'
 import Remove from './Pool/RemoveLiquidity'
 import Find from '../components/PoolFinder'
+import MigrateV1 from './MigrateV1'
+import MigrateV1Exchange from './MigrateV1/MigrateV1Exchange'
 import Create from '../components/CreatePool'
 
 const AppWrapper = styled.div`
@@ -207,6 +209,8 @@ export default function App() {
                         }
                       }}
                     />
+                    <Route exact strict path="/migrate/v1" component={MigrateV1} />
+                    <Route exact strict path="/migrate/v1/:address" component={MigrateV1Exchange} />
                     <Redirect to="/swap" />
                   </Switch>
                 </Body>

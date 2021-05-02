@@ -1,25 +1,65 @@
-import { Contract } from '@ethersproject/contracts'
+import { useMemo } from 'react'
 import { Token, TokenAmount, Pair, Trade, ChainId, VVET, Route, TradeType, Percent } from 'vexchange-sdk'
 import useSWR from 'swr'
+import { find } from 'lodash'
 import { useWeb3React } from '../hooks'
 
 import IUniswapV1Factory from '../constants/abis/v1_factory.json'
 import { V1_FACTORY_ADDRESS } from '../constants'
-import { useContract } from '../hooks'
+import { useAllTokens } from '../hooks/Tokens'
+// import { NEVER_RELOAD, useSingleCallResult, useSingleContractMultipleData } from '../state/multicall/hooks'
 import { SWRKeys } from '.'
 import { useETHBalances, useTokenBalances } from '../state/wallet/hooks'
+import { V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../constants/v1'
 
-function getV1PairAddress(contract: Contract): (tokenAddress: string) => Promise<string> {
-  return async (tokenAddress: string): Promise<string> => contract.getExchange(tokenAddress)
+function useContract(address, abi, method) {
+  const { library } = useWeb3React()
+  const methodABI = find(abi, { name: method })
+
+  return useMemo(() => {
+    if (!address || !abi || !library) return null
+    try {
+      return library.thor.account(address).method(methodABI)
+    } catch (error) {
+      console.error('Failed to get contract', error)
+      return null
+    }
+  }, [address, abi, library, methodABI])
+}
+
+function useSingleContractMultipleData(method, args) {
+  const { library } = useWeb3React()
+  console.log(method, args)
+
+  method
+    .call('0x0000000000000000000000000000456E65726779')
+    .then(data => console.log(data))
+
+  return useMemo(() => {
+    return args.map(token => {
+      return [token.address]
+    })
+  }, [args])
+}
+
+export function useV1FactoryContract(method) {
+  const { chainId } = useWeb3React()
+  return useContract(V1_FACTORY_ADDRESSES[chainId as ChainId], V1_FACTORY_ABI, method)
+}
+
+function getV1PairAddress(method): (tokenAddress: string) => Promise<string> {
+  return async (tokenAddress: string): Promise<string> => {
+    return method.call(tokenAddress).then(({ decoded }) => decoded['0'])
+  }
 }
 
 function useV1PairAddress(tokenAddress: string) {
   const { chainId } = useWeb3React()
 
-  const contract = useContract(V1_FACTORY_ADDRESS, IUniswapV1Factory, false)
+  const method = useContract(V1_FACTORY_ADDRESS, IUniswapV1Factory, 'getExchange')
 
-  const shouldFetch = chainId === ChainId.MAINNET && typeof tokenAddress === 'string' && !!contract
-  const { data } = useSWR(shouldFetch ? [tokenAddress, SWRKeys.V1PairAddress] : null, getV1PairAddress(contract), {
+  const shouldFetch = chainId === ChainId.MAINNET && typeof tokenAddress === 'string' && !!method
+  const { data } = useSWR(shouldFetch ? [tokenAddress, SWRKeys.V1PairAddress] : null, getV1PairAddress(method), {
     // don't need to update this data
     revalidateOnFocus: false,
     revalidateOnReconnect: false
@@ -39,6 +79,28 @@ function useMockV1Pair(token?: Token) {
   return tokenBalance && ETHBalance
     ? new Pair(tokenBalance, new TokenAmount(VVET[token?.chainId], ETHBalance.toString()))
     : undefined
+}
+
+// returns all v1 exchange addresses in the user's token list
+export function useAllTokenV1Exchanges(): { [exchangeAddress: string]: Token } {
+  const allTokens = useAllTokens()
+  const factory = useV1FactoryContract('getExchange')
+  const args = useMemo(() => Object.keys(allTokens).map(tokenAddress => [tokenAddress]), [allTokens])
+
+  const data = useSingleContractMultipleData(factory, args)
+  console.log(data)
+
+  return useMemo(
+    () =>
+      data?.reduce<{ [exchangeAddress: string]: Token }>((memo, { result }, ix) => {
+        const token = allTokens[args[ix][0]]
+        if (result?.[0]) {
+          memo[result?.[0]] = token
+        }
+        return memo
+      }, {}) ?? {},
+    [allTokens, args, data]
+  )
 }
 
 export function useV1TradeLinkIfBetter(

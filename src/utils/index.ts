@@ -149,6 +149,7 @@ export async function getTokenSymbol(tokenAddress, library) {
 
 // get token decimals
 export async function getTokenDecimals(tokenAddress, library) {
+  console.log(tokenAddress, library)
   if (!isAddress(tokenAddress)) {
     throw Error(`Invalid 'tokenAddress' parameter '${tokenAddress}'.`)
   }
