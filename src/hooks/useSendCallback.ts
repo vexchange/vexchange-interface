@@ -27,7 +27,6 @@ export function useSendCallback(amount?: TokenAmount, recipient?: string): null 
 
     return async function onSend(): Promise<string> {
       if (token.equals(VVET[chainId])) {
-
         return library.vendor
           .sign('tx', [
             {

@@ -12,10 +12,10 @@ const PERSISTED_KEYS: string[] = ['user', 'transactions']
 const store = configureStore({
   reducer: {
     application,
-    user,
+    swap,
     transactions,
-    wallet,
-    swap
+    user,
+    wallet
   },
   middleware: [...getDefaultMiddleware(), save({ states: PERSISTED_KEYS })],
   preloadedState: load({ states: PERSISTED_KEYS })

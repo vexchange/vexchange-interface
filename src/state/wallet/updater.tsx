@@ -1,6 +1,7 @@
 import { BalanceMap } from '@mycrypto/eth-scan'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useEffect, useMemo } from 'react'
+import _ from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { useWeb3React } from '../../hooks'
 import { useBlockNumber } from '../application/hooks'
@@ -11,11 +12,13 @@ import { find } from 'lodash'
 import ERC20_ABI from '../../constants/abis/erc20.json'
 
 function convertBalanceMapValuesToString(balanceMap: BalanceMap): { [key: string]: string } {
-  return balanceMap && Object.keys(balanceMap).reduce<{ [key: string]: string }>((map, key) => {
-    // map[key] = balanceMap[key].toString()
-    map[key] = BigNumber.from(balanceMap[key]).toString()
-    return map
-  }, {})
+  return (
+    balanceMap &&
+    Object.keys(balanceMap).reduce<{ [key: string]: string }>((map, key) => {
+      map[key] = BigNumber.from(balanceMap[key]).toString()
+      return map
+    }, {})
+  )
 }
 
 export default function Updater() {
@@ -112,7 +115,6 @@ export default function Updater() {
         } catch(error) {
           reject(error)
         }
-
       }, {})
 
       resolve(detail)

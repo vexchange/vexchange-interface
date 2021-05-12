@@ -1,25 +1,51 @@
-import { Contract } from '@ethersproject/contracts'
+import { useMemo } from 'react'
 import { Token, TokenAmount, Pair, Trade, ChainId, VVET, Route, TradeType, Percent } from 'vexchange-sdk'
 import useSWR from 'swr'
+import { find } from 'lodash'
 import { useWeb3React } from '../hooks'
 
 import IUniswapV1Factory from '../constants/abis/v1_factory.json'
 import { V1_FACTORY_ADDRESS } from '../constants'
-import { useContract } from '../hooks'
+import { useAllTokens } from '../hooks/Tokens'
+// import { useV1FactoryContract } from '../hooks/useContract'
 import { SWRKeys } from '.'
 import { useETHBalances, useTokenBalances } from '../state/wallet/hooks'
+import { V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../constants/v1'
+// import { useTokenAddress } from '../data/TokenAddress'
 
-function getV1PairAddress(contract: Contract): (tokenAddress: string) => Promise<string> {
-  return async (tokenAddress: string): Promise<string> => contract.getExchange(tokenAddress)
+function useContract(address, abi, method) {
+  const { library } = useWeb3React()
+  const methodABI = find(abi, { name: method })
+
+  return useMemo(() => {
+    if (!address || !abi || !library) return null
+    try {
+      return library.thor.account(address).method(methodABI)
+    } catch (error) {
+      console.error('Failed to get contract', error)
+      return null
+    }
+  }, [address, abi, library, methodABI])
+}
+
+export function useV1FactoryContract(method) {
+  const { chainId } = useWeb3React()
+  return useContract(V1_FACTORY_ADDRESSES[chainId as ChainId], V1_FACTORY_ABI, method)
+}
+
+function getV1PairAddress(method): (tokenAddress: string) => Promise<string> {
+  return async (tokenAddress: string): Promise<string> => {
+    return method.call(tokenAddress).then(({ decoded }) => decoded['0'])
+  }
 }
 
 function useV1PairAddress(tokenAddress: string) {
   const { chainId } = useWeb3React()
 
-  const contract = useContract(V1_FACTORY_ADDRESS, IUniswapV1Factory, false)
+  const method = useContract(V1_FACTORY_ADDRESS, IUniswapV1Factory, 'getExchange')
 
-  const shouldFetch = chainId === ChainId.MAINNET && typeof tokenAddress === 'string' && !!contract
-  const { data } = useSWR(shouldFetch ? [tokenAddress, SWRKeys.V1PairAddress] : null, getV1PairAddress(contract), {
+  const shouldFetch = chainId === ChainId.MAINNET && typeof tokenAddress === 'string' && !!method
+  const { data } = useSWR(shouldFetch ? [tokenAddress, SWRKeys.V1PairAddress] : null, getV1PairAddress(method), {
     // don't need to update this data
     revalidateOnFocus: false,
     revalidateOnReconnect: false

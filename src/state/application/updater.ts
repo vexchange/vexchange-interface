@@ -21,7 +21,7 @@ export default function Updater() {
             setTicker(blockNumber)
             dispatch(updateBlockNumber({ networkId: chainId, blockNumber }))
           }
-        } catch(error) {
+        } catch (error) {
           if (!stale) {
             dispatch(updateBlockNumber({ networkId: chainId, blockNumber: null }))
           }

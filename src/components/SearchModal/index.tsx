@@ -34,7 +34,7 @@ import {
 } from '../../state/user/hooks'
 import { useTranslation } from 'react-i18next'
 import { useToken, useAllTokens } from '../../hooks/Tokens'
-import QuestionHelper from '../Question'
+import QuestionHelper from '../QuestionHelper'
 
 const TokenModalInfo = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
