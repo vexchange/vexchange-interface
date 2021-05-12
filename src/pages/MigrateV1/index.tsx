@@ -8,7 +8,6 @@ import { AutoColumn } from '../../components/Column'
 import { AutoRow } from '../../components/Row'
 import { SearchInput } from '../../components/SearchModal/styleds'
 import TokenLogo from '../../components/TokenLogo'
-import { useAllTokenV1Exchanges } from '../../data/V1'
 import { useWeb3React } from '../../hooks'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
 import { useWalletModalToggle } from '../../state/application/hooks'
@@ -19,6 +18,16 @@ import { BodyWrapper } from '../AppBody'
 import { EmptyState } from './EmptyState'
 
 const POOL_TOKEN_AMOUNT_MIN = new Fraction(JSBI.BigInt(1), JSBI.BigInt(1000000))
+
+const getExchanges = () => ({
+  '0x5137A57bAB88E1e9FA3162188401C76958BdA0CE': {
+    address: '0x7995Be4767bEF3DAEc7dd9C840ba72FFB30E4b50',
+    chainId: 39,
+    decimals: 18,
+    name: 'Kenneth',
+    symbol: 'KEN'
+  }
+})
 
 export function FormattedPoolTokenAmount({ tokenAmount }: { tokenAmount: TokenAmount }) {
   return (
@@ -34,7 +43,7 @@ export function FormattedPoolTokenAmount({ tokenAmount }: { tokenAmount: TokenAm
 
 export default function MigrateV1({ history }: RouteComponentProps) {
   const { account, chainId } = useWeb3React()
-  const allV1Exchanges = useAllTokenV1Exchanges()
+  const allV1Exchanges = getExchanges()
 
   const v1LiquidityTokens: Token[] = useMemo(() => {
     return Object.keys(allV1Exchanges).map(exchangeAddress => new Token(chainId, exchangeAddress, 18))

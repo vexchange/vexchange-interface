@@ -17,7 +17,7 @@
     "type": "event"
   },
   {
-    "name": "initializeFactory",
+    "name": "__init__",
     "outputs": [],
     "inputs": [
       {
@@ -27,7 +27,77 @@
     ],
     "constant": false,
     "payable": false,
-    "type": "function"
+    "type": "constructor"
+  },
+  {
+    "name": "setOwner",
+    "outputs": [],
+    "inputs": [
+      {
+        "type": "address",
+        "name": "_owner"
+      }
+    ],
+    "constant": false,
+    "payable": false,
+    "type": "function",
+    "gas": 35627
+  },
+  {
+    "name": "setPlatformFee",
+    "outputs": [],
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_default_platform_fee"
+      }
+    ],
+    "constant": false,
+    "payable": false,
+    "type": "function",
+    "gas": 35915
+  },
+  {
+    "name": "setSwapFee",
+    "outputs": [],
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_default_swap_fee"
+      }
+    ],
+    "constant": false,
+    "payable": false,
+    "type": "function",
+    "gas": 35945
+  },
+  {
+    "name": "setMaxPlatformFee",
+    "outputs": [],
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_default_max_platform_fee"
+      }
+    ],
+    "constant": false,
+    "payable": false,
+    "type": "function",
+    "gas": 36279
+  },
+  {
+    "name": "setMaxSwapFee",
+    "outputs": [],
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "_default_max_swap_fee"
+      }
+    ],
+    "constant": false,
+    "payable": false,
+    "type": "function",
+    "gas": 36309
   },
   {
     "name": "createExchange",
@@ -45,7 +115,8 @@
     ],
     "constant": false,
     "payable": false,
-    "type": "function"
+    "type": "function",
+    "gas": 189092
   },
   {
     "name": "getExchange",
@@ -63,7 +134,8 @@
     ],
     "constant": true,
     "payable": false,
-    "type": "function"
+    "type": "function",
+    "gas": 835
   },
   {
     "name": "getToken",
@@ -81,7 +153,8 @@
     ],
     "constant": true,
     "payable": false,
-    "type": "function"
+    "type": "function",
+    "gas": 865
   },
   {
     "name": "getTokenWithId",
@@ -99,7 +172,8 @@
     ],
     "constant": true,
     "payable": false,
-    "type": "function"
+    "type": "function",
+    "gas": 856
   },
   {
     "name": "exchangeTemplate",
@@ -112,7 +186,8 @@
     "inputs": [],
     "constant": true,
     "payable": false,
-    "type": "function"
+    "type": "function",
+    "gas": 753
   },
   {
     "name": "tokenCount",
@@ -125,6 +200,21 @@
     "inputs": [],
     "constant": true,
     "payable": false,
-    "type": "function"
+    "type": "function",
+    "gas": 783
+  },
+  {
+    "name": "owner",
+    "outputs": [
+      {
+        "type": "address",
+        "name": "out"
+      }
+    ],
+    "inputs": [],
+    "constant": true,
+    "payable": false,
+    "type": "function",
+    "gas": 813
   }
 ]
