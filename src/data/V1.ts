@@ -6,12 +6,9 @@ import { useWeb3React } from '../hooks'
 
 import IUniswapV1Factory from '../constants/abis/v1_factory.json'
 import { V1_FACTORY_ADDRESS } from '../constants'
-import { useAllTokens } from '../hooks/Tokens'
-// import { useV1FactoryContract } from '../hooks/useContract'
 import { SWRKeys } from '.'
 import { useETHBalances, useTokenBalances } from '../state/wallet/hooks'
 import { V1_FACTORY_ABI, V1_FACTORY_ADDRESSES } from '../constants/v1'
-// import { useTokenAddress } from '../data/TokenAddress'
 
 function useContract(address, abi, method) {
   const { library } = useWeb3React()

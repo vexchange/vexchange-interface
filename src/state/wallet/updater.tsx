@@ -1,7 +1,6 @@
 import { BalanceMap } from '@mycrypto/eth-scan'
 import { BigNumber } from '@ethersproject/bignumber'
 import { useEffect, useMemo } from 'react'
-import _ from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { useWeb3React } from '../../hooks'
 import { useBlockNumber } from '../application/hooks'
@@ -69,8 +68,8 @@ export default function Updater() {
   }, [activeTokenBalanceListeners, allBalances, chainId, lastBlockNumber])
 
   const getVETBalance = (accounts, library) => {
-    return new Promise((resolve, reject) => {
-      const detail = accounts.reduce(async(_, cur) => {
+    return new Promise(resolve => {
+      const detail = accounts.reduce(async (_, cur) => {
         const { balance } = await library.thor.account(cur).get()
 
         return {
@@ -101,18 +100,20 @@ export default function Updater() {
   const getTokenBalance = (tokenAddress, address, library) => {
     const abi = find(ERC20_ABI, { name: 'balanceOf'})
 
-    return new Promise(async(resolve, reject) => {
-      const detail = tokenAddress.reduce(async(acc, cur) => {
-        const account = library.thor.account(cur) 
+    return new Promise(async (resolve, reject) => {
+      const detail = tokenAddress.reduce(async (acc, cur) => {
+        const account = library.thor.account(cur)
 
         const method = account.method(abi)
         try {
-          let { decoded: { balance } } = await method.call(address)
+          const {
+            decoded: { balance }
+          } = await method.call(address)
 
           return {
             [cur]: balance
           }
-        } catch(error) {
+        } catch (error) {
           reject(error)
         }
       }, {})
