@@ -21,7 +21,7 @@ const POOL_TOKEN_AMOUNT_MIN = new Fraction(JSBI.BigInt(1), JSBI.BigInt(1000000))
 
 const getExchanges = () => ({
   '0x5137A57bAB88E1e9FA3162188401C76958BdA0CE': {
-    address: '0x7995Be4767bEF3DAEc7dd9C840ba72FFB30E4b50',
+    address: '0x7995be4767bef3daec7dd9c840ba72ffb30e4b50',
     chainId: 39,
     decimals: 18,
     name: 'Kenneth',
