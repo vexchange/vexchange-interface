@@ -26,7 +26,6 @@ import {
   Wrapper
 } from '../../components/swap/styleds'
 import { TransferModalHeader } from '../../components/swap/TransferModalHeader'
-import V1TradeLink from '../../components/swap/V1TradeLink'
 import TokenLogo from '../../components/TokenLogo'
 import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
 import { useWeb3React } from '../../hooks'
