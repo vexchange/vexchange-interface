@@ -3,7 +3,7 @@ import { Token, Trade, TradeType, VVET } from 'vexchange-sdk'
 import { useMemo } from 'react'
 import { find } from 'lodash'
 import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE, ROUTER_ADDRESS } from '../constants'
-import { abi as IUniswapV2Router02ABI } from '../constants/abis/IUniswapV2Router02.json'
+import { abi as IVexchangeV2Router02ABI } from '../constants/abis/IVexchangeV2Router02.json'
 import { useTokenAllowance } from '../data/Allowances'
 import { Field } from '../state/swap/actions'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -83,7 +83,7 @@ export function useSwapCallback(
 
       switch (swapType) {
         case SwapType.EXACT_TOKENS_FOR_TOKENS:
-          abi = find(IUniswapV2Router02ABI, { name: 'swapExactTokensForTokens' })
+          abi = find(IVexchangeV2Router02ABI, { name: 'swapExactTokensForTokens' })
 
           args = [
             slippageAdjustedAmounts[Field.INPUT].raw.toString(),
@@ -95,7 +95,7 @@ export function useSwapCallback(
           value = null
           break
         case SwapType.TOKENS_FOR_EXACT_TOKENS:
-          abi = find(IUniswapV2Router02ABI, { name: 'swapTokensForExactTokens' })
+          abi = find(IVexchangeV2Router02ABI, { name: 'swapTokensForExactTokens' })
 
           args = [
             slippageAdjustedAmounts[Field.OUTPUT].raw.toString(),
@@ -107,13 +107,13 @@ export function useSwapCallback(
           value = null
           break
         case SwapType.EXACT_ETH_FOR_TOKENS:
-          abi = find(IUniswapV2Router02ABI, { name: 'swapExactETHForTokens' })
+          abi = find(IVexchangeV2Router02ABI, { name: 'swapExactVETForTokens' })
 
           args = [slippageAdjustedAmounts[Field.OUTPUT].raw.toString(), path, recipient, deadlineFromNow]
           value = BigNumber.from(slippageAdjustedAmounts[Field.INPUT].raw.toString())
           break
         case SwapType.TOKENS_FOR_EXACT_ETH:
-          abi = find(IUniswapV2Router02ABI, { name: 'swapTokensForExactETH' })
+          abi = find(IVexchangeV2Router02ABI, { name: 'swapTokensForExactVET' })
 
           args = [
             slippageAdjustedAmounts[Field.OUTPUT].raw.toString(),
@@ -125,7 +125,7 @@ export function useSwapCallback(
           value = null
           break
         case SwapType.EXACT_TOKENS_FOR_ETH:
-          abi = find(IUniswapV2Router02ABI, { name: 'swapExactTokensForETH' })
+          abi = find(IVexchangeV2Router02ABI, { name: 'swapExactTokensForVET' })
 
           args = [
             slippageAdjustedAmounts[Field.INPUT].raw.toString(),
@@ -137,7 +137,7 @@ export function useSwapCallback(
           value = null
           break
         case SwapType.ETH_FOR_EXACT_TOKENS:
-          abi = find(IUniswapV2Router02ABI, { name: 'swapETHForExactTokens' })
+          abi = find(IVexchangeV2Router02ABI, { name: 'swapVETForExactTokens' })
 
           args = [slippageAdjustedAmounts[Field.OUTPUT].raw.toString(), path, recipient, deadlineFromNow]
           value = BigNumber.from(slippageAdjustedAmounts[Field.INPUT].raw.toString())

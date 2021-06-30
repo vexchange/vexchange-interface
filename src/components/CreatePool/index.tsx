@@ -55,7 +55,7 @@ function CreatePool({ history }: RouteComponentProps) {
   }
 
   return (
-    <AutoColumn gap="20px" style={{ padding: '1rem'}}>
+    <AutoColumn gap="20px" style={{ padding: '1rem' }}>
       <AutoColumn gap="24px">
         {!token0Address ? (
           <ButtonDropwdown

@@ -17449,10 +17449,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-vexchange-sdk@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vexchange-sdk/-/vexchange-sdk-1.0.0.tgz#ca90b905733bc8779ccaad48a2ea239684366575"
-  integrity sha512-+1g9Uko84P/tSwfuZMkZ49s2QZgB7knePDfK7/+3pHvpnAKM7mT0pq4SAZpO9+2O7K2W9HOzLdChC9Yf3aNS3Q==
+vexchange-sdk@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/vexchange-sdk/-/vexchange-sdk-1.0.1.tgz#1cde341d8c7357371e130abbe5b43a274e503fd5"
+  integrity sha512-3l/noeAuxKpOCthbVq8YTH5Y9YAS5hXZTmvw7qYKttq9jcIonK/8huCOOo78KpEDedhJvi+KCvHB39DUAykujQ==
   dependencies:
     "@ethersproject/address" "^5.0.0-beta.134"
     "@ethersproject/contracts" "^5.0.0-beta.143"

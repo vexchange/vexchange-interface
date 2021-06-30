@@ -38,7 +38,7 @@ function Supply({ history }: RouteComponentProps) {
   const theme = useContext(ThemeContext)
   const { account } = useWeb3React()
   const [showPoolSearch, setShowPoolSearch] = useState(false)
-  const [isDark] = useDarkModeManager();
+  const [isDark] = useDarkModeManager()
 
   // initiate listener for LP balances
   const pairs = useAllDummyPairs()

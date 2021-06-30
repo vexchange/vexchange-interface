@@ -3,7 +3,7 @@ import { injected } from '../connectors'
 
 export const V1_FACTORY_ADDRESS = '0x5a6BB37E97dB359840c6A89AFBE0B09674b74e92'
 
-export const ROUTER_ADDRESS = '0x4c2204ebc042197a728bfe1a771301177d018e32'
+export const ROUTER_ADDRESS = '0x01d6b50b31c18d7f81ede43935cadf79901b0ea0'
 
 // used for display in the default list when adding liquidity
 export const COMMON_BASES = {

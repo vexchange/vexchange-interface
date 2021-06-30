@@ -5,8 +5,8 @@ import { find } from 'lodash'
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 import { BigNumber } from '@ethersproject/bignumber'
 
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
-import { abi as IUniswapV2Router02ABI } from '../constants/abis/IUniswapV2Router02.json'
+import { abi as IVexchangeV2PairABI } from '../constants/abis/IVexchangeV2Pair.json'
+import { abi as IVexchangeV2Router02ABI } from '../constants/abis/IVexchangeV2Router02.json'
 import { ROUTER_ADDRESS } from '../constants'
 
 import ERC20_ABI from '../constants/abis/erc20.json'
@@ -103,12 +103,12 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
 
 // account is optional
 export function getRouterContract(chainId, library, account) {
-  return getContract(ROUTER_ADDRESS, IUniswapV2Router02ABI, library, account)
+  return getContract(ROUTER_ADDRESS, IVexchangeV2Router02ABI, library, account)
 }
 
 // account is optional
 export function getExchangeContract(pairAddress, library, account) {
-  return getContract(pairAddress, IUniswapV2PairABI, library, account)
+  return getContract(pairAddress, IVexchangeV2PairABI, library, account)
 }
 
 // get token name

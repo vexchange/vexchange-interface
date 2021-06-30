@@ -1,6 +1,6 @@
 import { Contract } from '@ethersproject/contracts'
 import { ChainId } from 'vexchange-sdk'
-import { abi as IUniswapV2PairABI } from '@uniswap/v2-core/build/IUniswapV2Pair.json'
+import { abi as IVexchangeV2PairABI } from '../constants/abis/IVexchangeV2Pair.json'
 import { useMemo } from 'react'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { MIGRATOR_ABI, MIGRATOR_ADDRESS } from '../constants/abis/migrator'
@@ -41,5 +41,5 @@ export function useTokenContract(tokenAddress?: string, withSignerIfPossible = t
 }
 
 export function usePairContract(pairAddress?: string, withSignerIfPossible = true): Contract | null {
-  return useContract(pairAddress, IUniswapV2PairABI, withSignerIfPossible)
+  return useContract(pairAddress, IVexchangeV2PairABI, withSignerIfPossible)
 }

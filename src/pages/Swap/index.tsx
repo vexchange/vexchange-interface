@@ -16,7 +16,6 @@ import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetai
 import FormattedPriceImpact from '../../components/swap/FormattedPriceImpact'
 import { ArrowWrapper, BottomGrouping, Dots, StyledBalanceMaxMini, Wrapper } from '../../components/swap/styleds'
 import SwapModalFooter from '../../components/swap/SwapModalFooter'
-import V1TradeLink from '../../components/swap/V1TradeLink'
 import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
 import { useWeb3React } from '../../hooks'
 import { useApproveCallbackFromTrade, Approval } from '../../hooks/useApproveCallback'
@@ -41,7 +40,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   const toggleWalletModal = useWalletModalToggle()
 
   const { independentField, typedValue } = useSwapState()
-  const { bestTrade, tokenBalances, parsedAmounts, tokens, error, v1TradeLinkIfBetter } = useDerivedSwapInfo()
+  const { bestTrade, tokenBalances, parsedAmounts, tokens, error } = useDerivedSwapInfo()
   const isValid = !error
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
@@ -308,7 +307,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
             </Text>
           </ButtonError>
         )}
-        <V1TradeLink v1TradeLinkIfBetter={v1TradeLinkIfBetter} />
       </BottomGrouping>
       {bestTrade && (
         <AdvancedSwapDetailsDropdown

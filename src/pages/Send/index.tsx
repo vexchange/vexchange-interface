@@ -65,8 +65,8 @@ export default function Send({ location: { search } }: RouteComponentProps) {
     bestTrade,
     tokenBalances,
     tokens,
-    error: swapError,
-    v1TradeLinkIfBetter
+    error: swapError
+    // v1TradeLinkIfBetter
   } = useDerivedSwapInfo()
   const isSwapValid = !swapError && !recipientError && bestTrade
 
@@ -504,7 +504,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
             </Text>
           </ButtonError>
         )}
-        <V1TradeLink v1TradeLinkIfBetter={v1TradeLinkIfBetter} />
+        {/* <V1TradeLink v1TradeLinkIfBetter={v1TradeLinkIfBetter} /> */}
       </BottomGrouping>
       {bestTrade && (
         <AdvancedSwapDetailsDropdown

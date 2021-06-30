@@ -3,7 +3,7 @@ import { ALLOWED_SLIPPAGE_HIGH, ALLOWED_SLIPPAGE_LOW, ALLOWED_SLIPPAGE_MEDIUM } 
 import { Field } from '../state/swap/actions'
 import { basisPointsToPercent } from './index'
 
-const BASE_FEE = new Percent(JSBI.BigInt(30), JSBI.BigInt(10000))
+const BASE_FEE = new Percent(JSBI.BigInt(100), JSBI.BigInt(10000))
 const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
 const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)
 // computes price breakdown for the trade
@@ -17,7 +17,7 @@ export function computeTradePriceBreakdown(
     : ONE_HUNDRED_PERCENT.subtract(
         trade.route.pairs.reduce<Fraction>(
           (currentFee: Fraction): Fraction => currentFee.multiply(INPUT_FRACTION_AFTER_FEE),
-          INPUT_FRACTION_AFTER_FEE
+          ONE_HUNDRED_PERCENT
         )
       )
 

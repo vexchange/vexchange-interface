@@ -161,13 +161,13 @@ function V1PairMigration({ liquidityTokenAmount, token }: { liquidityTokenAmount
               <RowBetween>
                 <TYPE.body>V1 Price:</TYPE.body>
                 <TYPE.black>
-                  {v1SpotPrice?.toSignificant(6)} {token.symbol}/ETH
+                  {v1SpotPrice?.toSignificant(6)} {token.symbol}/VET
                 </TYPE.black>
               </RowBetween>
               <RowBetween>
                 <TYPE.body>V2 Price:</TYPE.body>
                 <TYPE.black>
-                  {v2SpotPrice?.toSignificant(6)} {token.symbol}/ETH
+                  {v2SpotPrice?.toSignificant(6)} {token.symbol}/VET
                 </TYPE.black>
               </RowBetween>
               <RowBetween>
@@ -187,10 +187,10 @@ function V1PairMigration({ liquidityTokenAmount, token }: { liquidityTokenAmount
             <div>V1 Price</div>
             <AutoColumn>
               <div>
-                {v1SpotPrice?.invert()?.toSignificant(6)} ETH/{token.symbol}
+                {v1SpotPrice?.invert()?.toSignificant(6)} VET/{token.symbol}
               </div>
               <div>
-                {v1SpotPrice?.toSignificant(6)} {token.symbol}/ETH
+                {v1SpotPrice?.toSignificant(6)} {token.symbol}/VET
               </div>
             </AutoColumn>
           </AutoColumn>
@@ -233,7 +233,7 @@ function V1PairMigration({ liquidityTokenAmount, token }: { liquidityTokenAmount
         </div>
       </LightCard>
       <TYPE.darkGray style={{ textAlign: 'center' }}>
-        {'Your ' + token.symbol + ' liquidity will become Vexchange V2 ' + token.symbol + '/ETH liquidity.'}
+        {'Your ' + token.symbol + ' liquidity will become Vexchange V2 ' + token.symbol + '/VET liquidity.'}
       </TYPE.darkGray>
     </AutoColumn>
   )
@@ -253,7 +253,7 @@ export default function MigrateV1Exchange({
   const token = useTokenByAddressAndAutomaticallyAdd(tokenAddress)
 
   const liquidityToken: Token | undefined = useMemo(
-    () => (validated && token ? new Token(chainId, validated, 18, `UNI-V1-${token.symbol}`) : undefined),
+    () => (validated && token ? new Token(chainId, validated, 18, `VEX-V1-${token.symbol}`) : undefined),
     [chainId, token, validated]
   )
 

@@ -21,8 +21,7 @@ import { ROUTER_ADDRESS } from '../../constants'
 import { usePair } from '../../data/Reserves'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useWeb3React } from '../../hooks'
-// import { abi as IUniswapV2PairABI } from '../../constants/abis/IUniswapV2Pair.json'
-import { abi as IUniswapV2Router02ABI } from '../../constants/abis/IUniswapV2Router02.json'
+import { abi as IVexchangeV2Router02ABI } from '../../constants/abis/IVexchangeV2Router02.json'
 
 import { useToken } from '../../hooks/Tokens'
 import { useTransactionAdder } from '../../state/transactions/hooks'
@@ -377,7 +376,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
     let args, abi
     if (approval === Approval.APPROVED) {
       if (oneTokenIsETH) {
-        abi = find(IUniswapV2Router02ABI, { name: 'removeLiquidityETH' })
+        abi = find(IVexchangeV2Router02ABI, { name: 'removeLiquidityVET' })
 
         args = [
           tokens[token0IsETH ? Field.TOKEN1 : Field.TOKEN0].address,
@@ -390,7 +389,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
       }
       //removal without ETH
       else {
-        abi = find(IUniswapV2Router02ABI, { name: 'removeLiquidity' })
+        abi = find(IVexchangeV2Router02ABI, { name: 'removeLiquidity' })
 
         args = [
           tokens[Field.TOKEN0].address,

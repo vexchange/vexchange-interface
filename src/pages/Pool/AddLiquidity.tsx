@@ -8,7 +8,7 @@ import ReactGA from 'react-ga'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
-import { abi as IUniswapV2Router02ABI } from '../../constants/abis/IUniswapV2Router02.json'
+import { abi as IVexchangeV2Router02ABI } from '../../constants/abis/IVexchangeV2Router02.json'
 import { ButtonLight, ButtonPrimary } from '../../components/Button'
 import { BlueCard, GreyCard, LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
@@ -390,7 +390,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
 
     // one of the tokens is ETH
     if (tokens[Field.INPUT].equals(VVET[chainId]) || tokens[Field.OUTPUT].equals(VVET[chainId])) {
-      abi = find(IUniswapV2Router02ABI, { name: 'addLiquidityETH' })
+      abi = find(IVexchangeV2Router02ABI, { name: 'addLiquidityVET' })
 
       const outputIsETH = tokens[Field.OUTPUT].equals(VVET[chainId])
 
@@ -404,7 +404,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
       ]
       value = BigNumber.from(parsedAmounts[outputIsETH ? Field.OUTPUT : Field.INPUT].raw.toString())
     } else {
-      abi = find(IUniswapV2Router02ABI, { name: 'addLiquidity' })
+      abi = find(IVexchangeV2Router02ABI, { name: 'addLiquidity' })
 
       args = [
         tokens[Field.INPUT].address,
