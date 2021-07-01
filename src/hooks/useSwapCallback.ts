@@ -190,7 +190,6 @@ export function useSwapCallback(
         })
         .catch(error => {
           console.error(`Swap or gas estimate failed`, error)
-          throw error
         })
     }
   }, [account, allowedSlippage, addTransaction, chainId, deadline, inputAllowance, library, trade, recipient])

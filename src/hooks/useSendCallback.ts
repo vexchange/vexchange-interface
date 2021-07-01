@@ -44,7 +44,6 @@ export function useSendCallback(amount?: TokenAmount, recipient?: string): null 
           })
           .catch(error => {
             console.error('Failed to transfer VET', error)
-            throw error
           })
       } else {
         const abi = find(ERC20_ABI, { name: 'transfer' })

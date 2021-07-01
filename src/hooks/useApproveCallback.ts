@@ -66,7 +66,6 @@ export function useApproveCallback(
       })
       .catch(error => {
         console.debug('Failed to approve token', error)
-        throw error
       })
   }, [addTransaction, addressToApprove, amountToApprove, approval, abi, library.thor, library.vendor])
 
