@@ -140,7 +140,7 @@ export default function Header() {
         </Link>
         &nbsp;or&nbsp;
         <HistoryLink to="/migrate/v1">
-          <b>migrate your liquidity ↗</b>
+          <b>migrate your liquidity</b>
         </HistoryLink>
         .
       </MigrateBanner>
