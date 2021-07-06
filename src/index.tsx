@@ -1,7 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactGA from 'react-ga'
-import { isMobile } from 'react-device-detect'
 import { Web3ReactProvider, createWeb3ReactRoot } from './context'
 import Connex from '@vechain/connex'
 import { Provider } from 'react-redux'
@@ -36,10 +35,6 @@ if (typeof GOOGLE_ANALYTICS_ID === 'string') {
       storeGac: false
     }
   })
-  // ReactGA.set({
-  //   anonymizeIp: true,
-  //   customBrowserType: !isMobile ? 'desktop' : 'web3' in window || 'ethereum' in window ? 'mobileWeb3' : 'mobileRegular'
-  // })
 } else {
   ReactGA.initialize('test', { testMode: true, debug: true })
 }
