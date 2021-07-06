@@ -9,6 +9,7 @@ import Row from '../Row'
 import Menu from '../Menu'
 import Web3Status from '../Web3Status'
 
+import { Link } from '../../theme'
 import { Text } from 'rebass'
 import { WVET, ChainId } from 'vexchange-sdk'
 import { isMobile } from 'react-device-detect'
@@ -22,6 +23,7 @@ import Wordmark from '../../assets/svg/wordmark_light.svg'
 import LogoDark from '../../assets/svg/logo_white.svg'
 import WordmarkDark from '../../assets/svg/wordmark_dark.svg'
 import { RowBetween } from '../Row'
+import { AutoColumn } from '../Column'
 
 const HeaderFrame = styled.div`
   display: flex;
@@ -103,6 +105,25 @@ const VexIcon = styled(HistoryLink)<{ to: string }>`
   }
 `
 
+const MigrateBanner = styled(AutoColumn)`
+  width: 100%;
+  padding: 12px 0;
+  display: flex;
+  justify-content: center;
+  background-image: linear-gradient( 210deg, rgba(189,162,47,0.02) 0%, rgba(255,255,255,0.02) 13%, rgba(217,216,216,0.15) 38%, rgba(226,225,225,0.08) 61%, rgba(51,41,41,0) 77%, #893726 100% );
+  color: ${({ theme }) => theme.primaryText1};
+  font-weight: 400;
+  text-align: center;
+  pointer-events: auto;
+  a {
+    color: ${({ theme }) => theme.primaryText1};
+  }
+  ${({ theme }) => theme.mediaWidth.upToSmall`
+    padding: 0;
+    display: none;
+  `};
+`
+
 export default function Header() {
   const { account, chainId, active } = useWeb3React()
   const [darkMode, toggleDarkMode] = useDarkModeManager()
@@ -112,6 +133,17 @@ export default function Header() {
 
   return (
     <HeaderFrame>
+      <MigrateBanner>
+        Vexchange V2 is live! Read the&nbsp;
+        <Link href="https://uniswap.org/blog/launch-uniswap-v2/">
+          <b>blog post ↗</b>
+        </Link>
+        &nbsp;or&nbsp;
+        <HistoryLink to="/migrate/v1">
+          <b>migrate your liquidity ↗</b>
+        </HistoryLink>
+        .
+      </MigrateBanner>
       <RowBetween padding="1rem">
         <HeaderElement>
           <Title>
