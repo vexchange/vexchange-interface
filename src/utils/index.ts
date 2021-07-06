@@ -27,7 +27,7 @@ export enum ERROR_CODES {
 }
 
 const EXPLORE_PREFIXES: { [chainId in ChainId]: string } = {
-  1: 'explore-testnet.',
+  1: 'explore.',
   3: 'explore-testnet.'
 }
 
@@ -155,7 +155,7 @@ export async function getTokenDecimals(tokenAddress, library) {
 
   return method
     .call()
-    .then(({ decoded }) => decoded[0])
+    .then(({ decoded }) => Number(decoded[0]))
     .catch(error => {
       error.code = ERROR_CODES.TOKEN_DECIMALS
       throw error

@@ -5,6 +5,7 @@ import { RouteComponentProps } from 'react-router'
 import { ThemeContext } from 'styled-components'
 import { ButtonPrimary } from '../../components/Button'
 import { AutoColumn } from '../../components/Column'
+import { LightCard } from '../../components/Card'
 import { AutoRow } from '../../components/Row'
 import { SearchInput } from '../../components/SearchModal/styleds'
 import TokenLogo from '../../components/TokenLogo'
@@ -20,12 +21,69 @@ import { EmptyState } from './EmptyState'
 const POOL_TOKEN_AMOUNT_MIN = new Fraction(JSBI.BigInt(1), JSBI.BigInt(1000000))
 
 const getExchanges = () => ({
-  '0x5137A57bAB88E1e9FA3162188401C76958BdA0CE': {
-    address: '0x7995be4767bef3daec7dd9c840ba72ffb30e4b50',
-    chainId: 39,
+  // exchange address
+  '0xf9F99f982f3Ea9020f0A0afd4D4679dFEe1B63cf': {
+    address: '0x0000000000000000000000000000456E65726779',
+    chainId: 1,
     decimals: 18,
-    name: 'Kenneth',
-    symbol: 'KEN'
+    name: 'VeThor',
+    symbol: 'VTHO'
+  },
+  '0xDC391a5dbB89a3F768c41Cfa0e85dcaAF3A91f91': {
+    address: '0x0ce6661b4ba86a0ea7ca2bd86a0de87b0b860f14',
+    chainId: 1,
+    decimals: 18,
+    name: 'OceanEx',
+    symbol: 'OCE'
+  },
+  '0x18C2385481cDf28779aC271272398dD61cc8CF3E': {
+    address: '0x1b8ec6c2a45cca481da6f243df0d7a5744afc1f8',
+    chainId: 1,
+    decimals: 18,
+    name: 'Decent.bet',
+    symbol: 'DBET'
+  },
+  '0x274e368395Fe268772d532A5a8E364C93FEE330C': {
+    address: '0xacc280010b2ee0efc770bce34774376656d8ce14',
+    chainId: 1,
+    decimals: 18,
+    name: 'HackenAI',
+    symbol: 'HAI'
+  },
+  '0xC19cf5Dfb71374b920F786078D37b5225CFcF30E': {
+    address: '0x5db3c8a942333f6468176a870db36eef120a34dc',
+    chainId: 1,
+    decimals: 18,
+    name: 'Safe Haven',
+    symbol: 'SHA'
+  },
+  '0xD293f479254D5F6494c66A4982C7cA514A53D7C4': {
+    address: '0x89827f7bb951fd8a56f8ef13c5bfee38522f2e1f',
+    chainId: 1,
+    decimals: 18,
+    name: 'Plair',
+    symbol: 'PLA'
+  },
+  '0x6D08D19Dff533050f93EaAa0a009e2771D3598bC': {
+    address: '0xf8e1fAa0367298b55F57Ed17F7a2FF3F5F1D1628',
+    chainId: 1,
+    decimals: 18,
+    name: 'Eight Hours Token',
+    symbol: 'EHrT'
+  },
+  '0xfECA5a0C2ffD0C894b986f93B492B572236a347a': {
+    address: '0x46209D5e5a49C1D403F4Ee3a0A88c3a27E29e58D',
+    chainId: 1,
+    decimals: 18,
+    name: 'Jur',
+    symbol: 'JUR'
+  },
+  '0x6bC4d17c76Fc48ab6c99288D57edd65d0371C87E': {
+    address: '0x67fD63f6068962937EC81AB3Ae3bF9871E524FC9',
+    chainId: 1,
+    decimals: 18,
+    name: 'VEED',
+    symbol: 'VEED'
   }
 })
 
@@ -75,8 +133,6 @@ export default function MigrateV1({ history }: RouteComponentProps) {
     [allV1Exchanges, searchedToken, v1LiquidityBalances]
   )
 
-  const theme = useContext(ThemeContext)
-
   const toggleWalletModal = useWalletModalToggle()
 
   const handleBackClick = useCallback(() => {
@@ -112,10 +168,7 @@ export default function MigrateV1({ history }: RouteComponentProps) {
         </AutoRow>
 
         {unmigratedLiquidityExchangeAddresses.map(poolTokenAmount => (
-          <div
-            key={poolTokenAmount.token.address}
-            style={{ borderRadius: '20px', padding: 16, backgroundColor: theme.bg2 }}
-          >
+          <LightCard key={poolTokenAmount.token.address}>
             <AutoRow style={{ justifyContent: 'space-between' }}>
               <AutoRow style={{ justifyContent: 'flex-start', width: 'fit-content' }}>
                 <TokenLogo size="32px" address={allV1Exchanges[poolTokenAmount.token.address].address} />{' '}
@@ -139,7 +192,7 @@ export default function MigrateV1({ history }: RouteComponentProps) {
                 </ButtonPrimary>
               </div>
             </AutoRow>
-          </div>
+          </LightCard>
         ))}
 
         {account && unmigratedLiquidityExchangeAddresses.length === 0 ? (

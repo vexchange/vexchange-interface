@@ -5,6 +5,8 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useAllTokens } from '../../hooks/Tokens'
 import { getTokenDecimals, getTokenName, getTokenSymbol } from '../../utils'
 import { AppDispatch, AppState } from '../index'
+import { flatMap } from 'lodash'
+
 import {
   addSerializedPair,
   addSerializedToken,
@@ -19,7 +21,7 @@ function serializeToken(token: Token): SerializedToken {
   return {
     chainId: token.chainId,
     address: token.address,
-    decimals: token.decimals,
+    decimals: Number(token.decimals),
     symbol: token.symbol,
     name: token.name
   }
@@ -162,7 +164,7 @@ export function useAllDummyPairs(): Pair[] {
               .filter(base => base.chainId === chainId)
               // to construct pairs of the given token with each base
               .map(base => {
-                if (base.equals(token)) {
+                if (base.address === token.address) {
                   return null
                 } else {
                   return new Pair(new TokenAmount(base, ZERO), new TokenAmount(token, ZERO))

@@ -409,7 +409,11 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
 
     library.vendor
       .sign('tx', [{ ...clause }])
-      .comment('work')
+      .comment(
+        `Remove ${parsedAmounts[Field.TOKEN0]?.toSignificant(3)} + 
+        ${tokens[Field.TOKEN0]?.symbol} and 
+        ${parsedAmounts[Field.TOKEN1]?.toSignificant(3)} ${tokens[Field.TOKEN1]?.symbol}`
+      )
       .request()
       .then(response => {
         ReactGA.event({

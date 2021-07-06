@@ -64,6 +64,7 @@ function V1PairMigration({ liquidityTokenAmount, token }: { liquidityTokenAmount
 
   const [confirmingMigration, setConfirmingMigration] = useState<boolean>(false)
   const [pendingMigrationHash, setPendingMigrationHash] = useState<string | null>(null)
+  const [isSuccessfullyMigrated, setIsSuccessfullyMigrated] = useState<boolean>(false)
 
   const shareFraction: Fraction = totalSupply ? new Percent(liquidityTokenAmount.raw, totalSupply.raw) : ZERO_FRACTION
 
@@ -136,6 +137,7 @@ function V1PairMigration({ liquidityTokenAmount, token }: { liquidityTokenAmount
           summary: `Migrate ${token.symbol} liquidity to V2`
         })
         setPendingMigrationHash(response.hash)
+        setIsSuccessfullyMigrated(true)
       })
       .catch(() => {
         setConfirmingMigration(false)
@@ -145,8 +147,6 @@ function V1PairMigration({ liquidityTokenAmount, token }: { liquidityTokenAmount
   const noLiquidityTokens = liquidityTokenAmount && liquidityTokenAmount.equalTo(ZERO)
 
   const largePriceDifference = Boolean(priceDifferenceAbs && !priceDifferenceAbs.lessThan(JSBI.BigInt(5)))
-
-  const isSuccessfullyMigrated = Boolean(noLiquidityTokens && pendingMigrationHash)
 
   return (
     <AutoColumn gap="20px">

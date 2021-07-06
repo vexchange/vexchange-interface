@@ -1,5 +1,6 @@
 import { Token, WVET } from 'vexchange-sdk'
 import { useEffect, useMemo } from 'react'
+import { findKey } from 'lodash'
 import { useAddUserToken, useFetchTokenByAddress, useUserAddedTokens } from '../state/user/hooks'
 
 import { useWeb3React } from './index'
@@ -70,5 +71,8 @@ export function useTokenByAddressAndAutomaticallyAdd(tokenAddress?: string): Tok
     }
   }, [tokenAddress, allTokens, fetchTokenByAddress, addToken])
 
-  return useMemo(() => allTokens?.[tokenAddress], [allTokens, tokenAddress])
+  return useMemo(() => {
+    const token = findKey(allTokens, token => token.address?.toLowerCase() === tokenAddress?.toLowerCase())
+    return allTokens?.[token]
+  }, [allTokens, tokenAddress])
 }
