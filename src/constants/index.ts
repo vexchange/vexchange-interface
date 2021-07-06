@@ -1,17 +1,14 @@
-import { ChainId, VVET, JSBI, Percent } from 'vexchange-sdk'
+import { ChainId, WVET, JSBI, Percent } from 'vexchange-sdk'
 import { injected } from '../connectors'
 
-export const V1_FACTORY_ADDRESS = '0x5a6BB37E97dB359840c6A89AFBE0B09674b74e92'
+export const V1_FACTORY_ADDRESS = '0x6A662F91E14312a11a2E35b359427AEf798fD928'
 
-export const ROUTER_ADDRESS = '0x01d6b50b31c18d7f81ede43935cadf79901b0ea0'
+export const ROUTER_ADDRESS = '0x6c0a6e1d922e0e63901301573370b932ae20dadb'
 
 // used for display in the default list when adding liquidity
 export const COMMON_BASES = {
-  [ChainId.MAINNET]: [VVET[ChainId.MAINNET]],
-  [ChainId.ROPSTEN]: [VVET[ChainId.ROPSTEN]],
-  [ChainId.RINKEBY]: [VVET[ChainId.RINKEBY]],
-  [ChainId.GÖRLI]: [VVET[ChainId.GÖRLI]],
-  [ChainId.KOVAN]: [VVET[ChainId.KOVAN]]
+  [ChainId.MAINNET]: [WVET[ChainId.MAINNET]],
+  [ChainId.TESTNET]: [WVET[ChainId.TESTNET]]
 }
 
 const MAINNET_WALLETS = {
