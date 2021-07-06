@@ -1,5 +1,5 @@
 import { parseUnits } from '@ethersproject/units'
-import { JSBI, Percent, Route, Token, TokenAmount, VVET } from 'vexchange-sdk'
+import { JSBI, Percent, Route, Token, TokenAmount, WVET } from 'vexchange-sdk'
 import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { ArrowDown, Plus } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -370,8 +370,8 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
   async function onRemove() {
     setAttemptedRemoval(true)
 
-    const token0IsETH = tokens[Field.TOKEN0].equals(VVET[chainId])
-    const oneTokenIsETH = token0IsETH || tokens[Field.TOKEN1].equals(VVET[chainId])
+    const token0IsETH = tokens[Field.TOKEN0].equals(WVET[chainId])
+    const oneTokenIsETH = token0IsETH || tokens[Field.TOKEN1].equals(WVET[chainId])
 
     let args, abi
     if (approval === Approval.APPROVED) {

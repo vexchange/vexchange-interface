@@ -1,4 +1,4 @@
-import { Token, VVET } from 'vexchange-sdk'
+import { Token, WVET } from 'vexchange-sdk'
 import { useEffect, useMemo } from 'react'
 import { useAddUserToken, useFetchTokenByAddress, useUserAddedTokens } from '../state/user/hooks'
 
@@ -6,14 +6,14 @@ import { useWeb3React } from './index'
 import MAINNET_TOKENS from '../constants/tokens/mainnet'
 
 export const ALL_TOKENS = [
-  // VVET on all chains
-  ...Object.values(VVET),
+  // WVET on all chains
+  ...Object.values(WVET),
   // chain-specific tokens
   ...MAINNET_TOKENS
 ]
-  // remap VVET to VET
+  // remap WVET to VET
   .map(token => {
-    if (token.equals(VVET[token.chainId])) {
+    if (token.equals(WVET[token.chainId])) {
       ;(token as any).symbol = 'VET'
       ;(token as any).name = 'VeChain'
     }

@@ -1,5 +1,5 @@
 import { MaxUint256 } from '@ethersproject/constants'
-import { Trade, VVET, TokenAmount } from 'vexchange-sdk'
+import { Trade, WVET, TokenAmount } from 'vexchange-sdk'
 import { find } from 'lodash'
 import { useCallback, useMemo } from 'react'
 import { ROUTER_ADDRESS } from '../constants'
@@ -29,8 +29,8 @@ export function useApproveCallback(
 
   // check the current approval status
   const approval = useMemo(() => {
-    // we treat VVET as VET which requires no approvals
-    if (amountToApprove?.token?.equals(VVET[amountToApprove?.token?.chainId])) return Approval.APPROVED
+    // we treat WVET as VET which requires no approvals
+    if (amountToApprove?.token?.equals(WVET[amountToApprove?.token?.chainId])) return Approval.APPROVED
     // we might not have enough data to know whether or not we need to approve
     if (!currentAllowance) return Approval.UNKNOWN
     // amountToApprove will be defined if currentAllowance is

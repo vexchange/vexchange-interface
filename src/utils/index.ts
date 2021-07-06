@@ -28,10 +28,7 @@ export enum ERROR_CODES {
 
 const EXPLORE_PREFIXES: { [chainId in ChainId]: string } = {
   1: 'explore-testnet.',
-  3: 'explore-testnet.',
-  4: 'rinkeby.',
-  5: 'goerli.',
-  42: 'kovan.'
+  3: 'explore-testnet.'
 }
 
 export function getExploreLink(chainId: ChainId, data: string, type: 'transaction' | 'address'): string {

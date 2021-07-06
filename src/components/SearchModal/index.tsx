@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect, useContext } from 'react'
 import '@reach/tooltip/styles.css'
 import styled, { ThemeContext } from 'styled-components'
-import { JSBI, Token, VVET } from 'vexchange-sdk'
+import { JSBI, Token, WVET } from 'vexchange-sdk'
 import { isMobile } from 'react-device-detect'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { COMMON_BASES } from '../../constants'
@@ -257,8 +257,8 @@ function SearchModal({
         // sort ETH first
         const a = allTokens[tokenAddressA]
         const b = allTokens[tokenAddressB]
-        if (a.equals(VVET[chainId])) return -1
-        if (b.equals(VVET[chainId])) return 1
+        if (a.equals(WVET[chainId])) return -1
+        if (b.equals(WVET[chainId])) return 1
 
         // sort by balances
         const balanceA = allBalances[account]?.[tokenAddressA]
@@ -376,7 +376,7 @@ function SearchModal({
     const searchQueryIsAddress = !!isAddress(searchQuery)
     return sortedPairList.filter(pair => {
       // if there's no search query, hide non-ETH pairs
-      if (searchQuery === '') return pair.token0.equals(VVET[chainId]) || pair.token1.equals(VVET[chainId])
+      if (searchQuery === '') return pair.token0.equals(WVET[chainId]) || pair.token1.equals(WVET[chainId])
 
       const token0 = pair.token0
       const token1 = pair.token1

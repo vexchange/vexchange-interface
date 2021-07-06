@@ -10,7 +10,7 @@ import Menu from '../Menu'
 import Web3Status from '../Web3Status'
 
 import { Text } from 'rebass'
-import { VVET, ChainId } from 'vexchange-sdk'
+import { WVET, ChainId } from 'vexchange-sdk'
 import { isMobile } from 'react-device-detect'
 import { YellowCard } from '../Card'
 import { useWeb3React } from '../../hooks'
@@ -107,7 +107,7 @@ export default function Header() {
   const { account, chainId, active } = useWeb3React()
   const [darkMode, toggleDarkMode] = useDarkModeManager()
 
-  const userEthBalance = useTokenBalanceTreatingWETHasETH(account, VVET[chainId])
+  const userEthBalance = useTokenBalanceTreatingWETHasETH(account, WVET[chainId])
   const [isDark] = useDarkModeManager()
 
   return (
@@ -133,10 +133,7 @@ export default function Header() {
         </HeaderElement>
         <HeaderElement>
           <TestnetWrapper>
-            {!isMobile && chainId === ChainId.ROPSTEN && <NetworkCard>Ropsten</NetworkCard>}
-            {!isMobile && chainId === ChainId.RINKEBY && <NetworkCard>Rinkeby</NetworkCard>}
-            {!isMobile && chainId === ChainId.GÖRLI && <NetworkCard>Görli</NetworkCard>}
-            {!isMobile && chainId === ChainId.KOVAN && <NetworkCard>Kovan</NetworkCard>}
+            {!isMobile && chainId === ChainId.TESTNET && <NetworkCard>Ropsten</NetworkCard>}
           </TestnetWrapper>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (

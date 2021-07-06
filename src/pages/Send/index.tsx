@@ -1,4 +1,4 @@
-import { JSBI, TokenAmount, VVET } from 'vexchange-sdk'
+import { JSBI, TokenAmount, WVET } from 'vexchange-sdk'
 import React, { useContext, useEffect, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -114,12 +114,12 @@ export default function Send({ location: { search } }: RouteComponentProps) {
   const maxAmountInput: TokenAmount =
     !!tokenBalances[Field.INPUT] &&
     !!tokens[Field.INPUT] &&
-    !!VVET[chainId] &&
+    !!WVET[chainId] &&
     tokenBalances[Field.INPUT].greaterThan(
-      new TokenAmount(tokens[Field.INPUT], tokens[Field.INPUT].equals(VVET[chainId]) ? MIN_ETH : '0')
+      new TokenAmount(tokens[Field.INPUT], tokens[Field.INPUT].equals(WVET[chainId]) ? MIN_ETH : '0')
     )
-      ? tokens[Field.INPUT].equals(VVET[chainId])
-        ? tokenBalances[Field.INPUT].subtract(new TokenAmount(VVET[chainId], MIN_ETH))
+      ? tokens[Field.INPUT].equals(WVET[chainId])
+        ? tokenBalances[Field.INPUT].subtract(new TokenAmount(WVET[chainId], MIN_ETH))
         : tokenBalances[Field.INPUT]
       : undefined
   const atMaxAmountInput: boolean =

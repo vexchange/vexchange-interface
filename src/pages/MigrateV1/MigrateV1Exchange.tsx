@@ -1,5 +1,5 @@
 import { TransactionResponse } from '@ethersproject/abstract-provider'
-import { ChainId, Fraction, JSBI, Percent, Token, TokenAmount, VVET } from 'vexchange-sdk'
+import { ChainId, Fraction, JSBI, Percent, Token, TokenAmount, WVET } from 'vexchange-sdk'
 import React, { useCallback, useMemo, useState } from 'react'
 import { ArrowLeft } from 'react-feather'
 import { find } from 'lodash'
@@ -57,10 +57,10 @@ function V1PairMigration({ liquidityTokenAmount, token }: { liquidityTokenAmount
   const exchangeETHBalance = useETHBalances([liquidityTokenAmount.token.address])?.[liquidityTokenAmount.token.address]
   const exchangeTokenBalance = useTokenBalance(liquidityTokenAmount.token.address, token)
 
-  const v2Pair = usePair(VVET[chainId as ChainId], token)
+  const v2Pair = usePair(WVET[chainId as ChainId], token)
   const isFirstLiquidityProvider: boolean = v2Pair === null
 
-  const v2SpotPrice = v2Pair?.reserveOf(token)?.divide(v2Pair?.reserveOf(VVET[chainId as ChainId]))
+  const v2SpotPrice = v2Pair?.reserveOf(token)?.divide(v2Pair?.reserveOf(WVET[chainId as ChainId]))
 
   const [confirmingMigration, setConfirmingMigration] = useState<boolean>(false)
   const [pendingMigrationHash, setPendingMigrationHash] = useState<string | null>(null)

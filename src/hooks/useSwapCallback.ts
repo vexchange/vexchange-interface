@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Token, Trade, TradeType, VVET } from 'vexchange-sdk'
+import { Token, Trade, TradeType, WVET } from 'vexchange-sdk'
 import { useMemo } from 'react'
 import { find } from 'lodash'
 import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE, ROUTER_ADDRESS } from '../constants'
@@ -22,17 +22,17 @@ enum SwapType {
 
 function getSwapType(tokens: { [field in Field]?: Token }, isExactIn: boolean, chainId: number): SwapType {
   if (isExactIn) {
-    if (tokens[Field.INPUT]?.equals(VVET[chainId])) {
+    if (tokens[Field.INPUT]?.equals(WVET[chainId])) {
       return SwapType.EXACT_ETH_FOR_TOKENS
-    } else if (tokens[Field.OUTPUT]?.equals(VVET[chainId])) {
+    } else if (tokens[Field.OUTPUT]?.equals(WVET[chainId])) {
       return SwapType.EXACT_TOKENS_FOR_ETH
     } else {
       return SwapType.EXACT_TOKENS_FOR_TOKENS
     }
   } else {
-    if (tokens[Field.INPUT]?.equals(VVET[chainId])) {
+    if (tokens[Field.INPUT]?.equals(WVET[chainId])) {
       return SwapType.ETH_FOR_EXACT_TOKENS
-    } else if (tokens[Field.OUTPUT]?.equals(VVET[chainId])) {
+    } else if (tokens[Field.OUTPUT]?.equals(WVET[chainId])) {
       return SwapType.TOKENS_FOR_EXACT_ETH
     } else {
       return SwapType.TOKENS_FOR_EXACT_TOKENS
@@ -62,7 +62,7 @@ export function useSwapCallback(
 
     // no allowance
     if (
-      !trade.inputAmount.token.equals(VVET[chainId]) &&
+      !trade.inputAmount.token.equals(WVET[chainId]) &&
       (!inputAllowance || slippageAdjustedAmounts[Field.INPUT].greaterThan(inputAllowance))
     ) {
       return null

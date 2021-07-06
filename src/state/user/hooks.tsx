@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Pair, Token, TokenAmount, VVET } from 'vexchange-sdk'
+import { ChainId, JSBI, Pair, Token, TokenAmount, WVET } from 'vexchange-sdk'
 import { useWeb3React } from '../../hooks'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
@@ -141,7 +141,7 @@ export function usePairAdder(): (pair: Pair) => void {
 }
 
 const bases = [
-  ...Object.values(VVET),
+  ...Object.values(WVET),
   new Token(ChainId.MAINNET, '0x0000000000000000000000000000456E65726779', 18, 'VTHO', 'VeThor')
 ]
 

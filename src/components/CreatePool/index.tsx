@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { Token, VVET } from 'vexchange-sdk'
+import { Token, WVET } from 'vexchange-sdk'
 
 import Row, { AutoRow } from '../Row'
 import TokenLogo from '../TokenLogo'
@@ -32,7 +32,7 @@ function CreatePool({ history }: RouteComponentProps) {
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [activeField, setActiveField] = useState<number>(Fields.TOKEN0)
 
-  const [token0Address, setToken0Address] = useState<string>(VVET[chainId].address)
+  const [token0Address, setToken0Address] = useState<string>(WVET[chainId].address)
   const [token1Address, setToken1Address] = useState<string>()
 
   const token0: Token = useToken(token0Address)

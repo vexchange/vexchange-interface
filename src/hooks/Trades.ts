@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { VVET, Token, TokenAmount, Trade, ChainId, Pair } from 'vexchange-sdk'
+import { WVET, Token, TokenAmount, Trade, ChainId, Pair } from 'vexchange-sdk'
 import { useWeb3React } from './index'
 import { usePair } from '../data/Reserves'
 
@@ -11,16 +11,16 @@ function useAllCommonPairs(tokenA?: Token, tokenB?: Token): Pair[] {
   // check for direct pair between tokens
   const pairBetween = usePair(tokenA, tokenB)
 
-  // get token<->VVET pairs
-  const aToETH = usePair(tokenA, VVET[chainId])
-  const bToETH = usePair(tokenB, VVET[chainId])
+  // get token<->WVET pairs
+  const aToETH = usePair(tokenA, WVET[chainId])
+  const bToETH = usePair(tokenB, WVET[chainId])
 
   // get token<->VTHO pairs
   const aToVTHO = usePair(tokenA, chainId === ChainId.MAINNET ? VTHO : undefined)
   const bToVTHO = usePair(tokenB, chainId === ChainId.MAINNET ? VTHO : undefined)
 
   // get connecting pairs
-  const VTHOToETH = usePair(chainId === ChainId.MAINNET ? VTHO : undefined, VVET[chainId])
+  const VTHOToETH = usePair(chainId === ChainId.MAINNET ? VTHO : undefined, WVET[chainId])
 
   // only pass along valid pairs, non-duplicated pairs
   return useMemo(

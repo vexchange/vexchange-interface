@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Token, TokenAmount, Pair, Trade, ChainId, VVET, Route, TradeType, Percent } from 'vexchange-sdk'
+import { Token, TokenAmount, Pair, Trade, ChainId, WVET, Route, TradeType, Percent } from 'vexchange-sdk'
 import useSWR from 'swr'
 import { find } from 'lodash'
 import { useWeb3React } from '../hooks'
@@ -52,15 +52,15 @@ function useV1PairAddress(tokenAddress: string) {
 }
 
 function useMockV1Pair(token?: Token) {
-  const isWETH = token?.equals(VVET[token?.chainId])
+  const isWETH = token?.equals(WVET[token?.chainId])
 
-  // will only return an address on mainnet, and not for VVET
+  // will only return an address on mainnet, and not for WVET
   const v1PairAddress = useV1PairAddress(isWETH ? undefined : token?.address)
   const tokenBalance = useTokenBalances(v1PairAddress, [token])[token?.address]
   const ETHBalance = useETHBalances([v1PairAddress])[v1PairAddress]
 
   return tokenBalance && ETHBalance
-    ? new Pair(tokenBalance, new TokenAmount(VVET[token?.chainId], ETHBalance.toString()))
+    ? new Pair(tokenBalance, new TokenAmount(WVET[token?.chainId], ETHBalance.toString()))
     : undefined
 }
 
@@ -82,8 +82,8 @@ export function useV1TradeLinkIfBetter(
   const inputPair = useMockV1Pair(input)
   const outputPair = useMockV1Pair(output)
 
-  const inputIsWETH = mainnet && input?.equals(VVET[ChainId.MAINNET])
-  const outputIsWETH = mainnet && output?.equals(VVET[ChainId.MAINNET])
+  const inputIsWETH = mainnet && input?.equals(WVET[ChainId.MAINNET])
+  const outputIsWETH = mainnet && output?.equals(WVET[ChainId.MAINNET])
 
   // construct a direct or through ETH v1 route
   let pairs: Pair[]
@@ -92,7 +92,7 @@ export function useV1TradeLinkIfBetter(
   } else if (outputIsWETH && inputPair) {
     pairs = [inputPair]
   }
-  // if neither are VVET, it's token-to-token (if they both exist)
+  // if neither are WVET, it's token-to-token (if they both exist)
   else if (inputPair && outputPair) {
     pairs = [inputPair, outputPair]
   }

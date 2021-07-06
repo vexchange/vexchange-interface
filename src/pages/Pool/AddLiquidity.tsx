@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { find } from 'lodash'
 import { parseEther, parseUnits } from '@ethersproject/units'
-import { JSBI, Percent, Price, Route, Token, TokenAmount, VVET } from 'vexchange-sdk'
+import { JSBI, Percent, Price, Route, Token, TokenAmount, WVET } from 'vexchange-sdk'
 import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -292,7 +292,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     })
   }, [])
 
-  const MIN_ETHER: TokenAmount = new TokenAmount(VVET[chainId], JSBI.BigInt(parseEther('.01')))
+  const MIN_ETHER: TokenAmount = new TokenAmount(WVET[chainId], JSBI.BigInt(parseEther('.01')))
 
   // get the max amounts user can add
   const [maxAmountInput, maxAmountOutput]: TokenAmount[] = [Field.INPUT, Field.OUTPUT].map(index => {
@@ -300,9 +300,9 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     return !!userBalances[Field[field]] &&
       JSBI.greaterThan(
         userBalances[Field[field]].raw,
-        tokens[Field[field]]?.equals(VVET[chainId]) ? MIN_ETHER.raw : JSBI.BigInt(0)
+        tokens[Field[field]]?.equals(WVET[chainId]) ? MIN_ETHER.raw : JSBI.BigInt(0)
       )
-      ? tokens[Field[field]]?.equals(VVET[chainId])
+      ? tokens[Field[field]]?.equals(WVET[chainId])
         ? userBalances[Field[field]].subtract(MIN_ETHER)
         : userBalances[Field[field]]
       : undefined
@@ -389,10 +389,10 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     let args, value, abi
 
     // one of the tokens is ETH
-    if (tokens[Field.INPUT].equals(VVET[chainId]) || tokens[Field.OUTPUT].equals(VVET[chainId])) {
+    if (tokens[Field.INPUT].equals(WVET[chainId]) || tokens[Field.OUTPUT].equals(WVET[chainId])) {
       abi = find(IVexchangeV2Router02ABI, { name: 'addLiquidityVET' })
 
-      const outputIsETH = tokens[Field.OUTPUT].equals(VVET[chainId])
+      const outputIsETH = tokens[Field.OUTPUT].equals(WVET[chainId])
 
       args = [
         tokens[outputIsETH ? Field.INPUT : Field.OUTPUT].address, // token
