@@ -5,7 +5,6 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useAllTokens } from '../../hooks/Tokens'
 import { getTokenDecimals, getTokenName, getTokenSymbol } from '../../utils'
 import { AppDispatch, AppState } from '../index'
-import { flatMap } from 'lodash'
 
 import {
   addSerializedPair,
