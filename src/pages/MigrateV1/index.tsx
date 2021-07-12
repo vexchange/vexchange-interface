@@ -21,7 +21,7 @@ const POOL_TOKEN_AMOUNT_MIN = new Fraction(JSBI.BigInt(1), JSBI.BigInt(1000000))
 
 const getExchanges = () => ({
   // exchange address
-  '0xf9F99f982f3Ea9020f0A0afd4D4679dFEe1B63cf': {
+  '0xf9f99f982f3ea9020f0a0afd4d4679dfee1b63cf': {
     address: '0x0000000000000000000000000000456E65726779',
     chainId: 1,
     decimals: 18,
@@ -45,7 +45,7 @@ const getExchanges = () => ({
   '0x274e368395Fe268772d532A5a8E364C93FEE330C': {
     address: '0xacc280010b2ee0efc770bce34774376656d8ce14',
     chainId: 1,
-    decimals: 18,
+    decimals: 8,
     name: 'HackenAI',
     symbol: 'HAI'
   },
