@@ -136,13 +136,16 @@ export default function Header() {
       <MigrateBanner>
         Vexchange V2 is live! Read the&nbsp;
         <Link href="https://uniswap.org/blog/launch-uniswap-v2/">
-          <b>blog post ↗</b>
+          <b>blog post ↗</b>,
         </Link>
-        &nbsp;or&nbsp;
+        &nbsp;
         <HistoryLink to="/migrate/v1">
           <b>migrate your liquidity</b>
         </HistoryLink>
-        .
+        &nbsp;or&nbsp;
+        <Link href="https://v1.vexchange.io">
+          <b>return to Vexchange v1 ↗</b>
+        </Link>
       </MigrateBanner>
       <RowBetween padding="1rem">
         <HeaderElement>
