@@ -135,7 +135,7 @@ export default function Header() {
     <HeaderFrame>
       <MigrateBanner>
         Vexchange V2 is live! Read the&nbsp;
-        <Link href="https://uniswap.org/blog/launch-uniswap-v2/">
+        <Link href="https://medium.com/@raleigh_ca/introducing-vexchange-2-6153a9369c1">
           <b>blog post ↗</b>,
         </Link>
         &nbsp;
