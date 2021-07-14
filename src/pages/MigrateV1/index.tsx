@@ -127,7 +127,7 @@ export default function MigrateV1({ history }: RouteComponentProps) {
             if (allV1Exchanges[a1.token.address].address === searchedToken.address) return -1
             if (allV1Exchanges[a2.token.address].address === searchedToken.address) return 1
           }
-          return a1.token.address < a2.token.address ? -1 : 1
+          return a1.token.address.toLowerCase() < a2.token.address.toLowerCase() ? -1 : 1
         }),
     [allV1Exchanges, searchedToken, v1LiquidityBalances]
   )
@@ -138,6 +138,7 @@ export default function MigrateV1({ history }: RouteComponentProps) {
     history.push('/pool')
   }, [history])
 
+  console.log(allV1Exchanges, unmigratedLiquidityExchangeAddresses)
   return (
     <BodyWrapper>
       <AutoColumn gap="24px">
@@ -170,13 +171,13 @@ export default function MigrateV1({ history }: RouteComponentProps) {
           <LightCard key={poolTokenAmount.token.address}>
             <AutoRow style={{ justifyContent: 'space-between' }}>
               <AutoRow style={{ justifyContent: 'flex-start', width: 'fit-content' }}>
-                <TokenLogo size="32px" address={allV1Exchanges[poolTokenAmount.token.address].address} />{' '}
+                <TokenLogo size="32px" address={allV1Exchanges[poolTokenAmount.token.address.toLowerCase()]?.address} />{' '}
                 <div style={{ marginLeft: '.75rem' }}>
                   <TYPE.main fontWeight={600}>
                     <FormattedPoolTokenAmount tokenAmount={poolTokenAmount} />
                   </TYPE.main>
                   <TYPE.main fontWeight={500}>
-                    {allV1Exchanges[poolTokenAmount.token.address].symbol} Pool Tokens
+                    {allV1Exchanges[poolTokenAmount.token.address.toLowerCase()]?.symbol} Pool Tokens
                   </TYPE.main>
                 </div>
               </AutoRow>

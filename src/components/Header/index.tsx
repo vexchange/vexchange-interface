@@ -110,7 +110,15 @@ const MigrateBanner = styled(AutoColumn)`
   padding: 12px 0;
   display: flex;
   justify-content: center;
-  background-image: linear-gradient( 210deg, rgba(189,162,47,0.02) 0%, rgba(255,255,255,0.02) 13%, rgba(217,216,216,0.15) 38%, rgba(226,225,225,0.08) 61%, rgba(51,41,41,0) 77%, #893726 100% );
+  background-image: linear-gradient(
+    210deg,
+    rgba(189, 162, 47, 0.02) 0%,
+    rgba(255, 255, 255, 0.02) 13%,
+    rgba(217, 216, 216, 0.15) 38%,
+    rgba(226, 225, 225, 0.08) 61%,
+    rgba(51, 41, 41, 0) 77%,
+    #893726 100%
+  );
   color: ${({ theme }) => theme.primaryText1};
   font-weight: 400;
   text-align: center;
