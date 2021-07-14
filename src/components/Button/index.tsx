@@ -346,6 +346,7 @@ export const ButtonWhite = styled(Base)`
 const ButtonConfirmedStyle = styled(Base)`
   background-color: ${({ theme }) => lighten(0.5, theme.green1)};
   border: 1px solid ${({ theme }) => theme.green1};
+  color: #065C14;
 
   &:disabled {
     opacity: 50%;
