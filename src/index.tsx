@@ -18,7 +18,7 @@ import './i18n'
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 
 function getLibrary() {
-  const connex = new Connex({ node: 'https://mainnet.veblocks.net' })
+  const connex = new Connex({ node: 'https://mainnet.veblocks.net', noV1Compat: true })
 
   return connex
 }

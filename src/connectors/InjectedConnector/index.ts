@@ -3,7 +3,7 @@ import { AbstractConnectorArguments, ConnectorUpdate } from '../types'
 import { AbstractConnector } from '../AbstractConnector'
 import warning from 'tiny-warning'
 
-const connex = new Connex({ node: 'https://mainnet.veblocks.net/' })
+const connex = new Connex({ node: 'https://mainnet.veblocks.net', noV1Compat: true })
 
 const msg = {
   purpose: 'identification',
