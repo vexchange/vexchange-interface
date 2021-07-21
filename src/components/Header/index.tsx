@@ -49,6 +49,13 @@ const HeaderElement = styled.div`
   align-items: center;
 `
 
+const VexIcon = styled(HistoryLink)<{ to: string }>`
+  transition: transform 0.3s ease;
+  :hover {
+    transform: scale(1.1);
+  }
+`
+
 const Title = styled.div`
   display: flex;
   align-items: center;
@@ -56,6 +63,12 @@ const Title = styled.div`
 
   :hover {
     cursor: pointer;
+  }
+
+  @media (max-width: 500px) {
+    ${VexIcon} {
+      display: none;
+    }
   }
 `
 
@@ -96,13 +109,6 @@ const NetworkCard = styled(YellowCard)`
   margin-right: 10px;
   border-radius: 12px;
   padding: 8px 12px;
-`
-
-const VexIcon = styled(HistoryLink)<{ to: string }>`
-  transition: transform 0.3s ease;
-  :hover {
-    transform: scale(1.1);
-  }
 `
 
 const MigrateBanner = styled(AutoColumn)`
