@@ -2,7 +2,7 @@ import React from 'react'
 import { Link as HistoryLink } from 'react-router-dom'
 import { Sun, Moon } from 'react-feather'
 
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
 
 import Row from '../Row'
@@ -111,20 +111,11 @@ const NetworkCard = styled(YellowCard)`
   padding: 8px 12px;
 `
 
-const MigrateBanner = styled(AutoColumn)`
+const MigrateBanner = styled(AutoColumn)<{ isDark?: boolean }>`
   width: 100%;
   padding: 12px 0;
   display: flex;
   justify-content: center;
-  background-image: linear-gradient(
-    210deg,
-    rgba(189, 162, 47, 0.02) 0%,
-    rgba(255, 255, 255, 0.02) 13%,
-    rgba(217, 216, 216, 0.15) 38%,
-    rgba(226, 225, 225, 0.08) 61%,
-    rgba(51, 41, 41, 0) 77%,
-    #893726 100%
-  );
   color: ${({ theme }) => theme.primaryText1};
   font-weight: 400;
   text-align: center;
@@ -136,6 +127,31 @@ const MigrateBanner = styled(AutoColumn)`
     padding: 0;
     display: none;
   `};
+  ${({ isDark }) =>
+    isDark
+      ? css`
+          background-image: linear-gradient(
+            210deg,
+            rgba(189, 162, 47, 0.02) 0%,
+            rgba(255, 255, 255, 0.02) 13%,
+            rgba(217, 216, 216, 0.15) 38%,
+            rgba(226, 225, 225, 0.08) 61%,
+            rgba(51, 41, 41, 0) 77%,
+            #893726 100%
+          );
+        `
+      : css`
+          background-image: linear-gradient(
+              210deg,
+              rgba(189, 162, 47, 0.02) 0%,
+              rgba(255, 255, 255, 0.02) 13%,
+              rgba(217, 216, 216, 0.15) 38%,
+              rgba(226, 225, 225, 0.08) 61%,
+              rgba(51, 41, 41, 0) 77%,
+              #efa29a 100%
+            );
+          );
+        `}
 `
 
 export default function Header() {
@@ -147,7 +163,7 @@ export default function Header() {
 
   return (
     <HeaderFrame>
-      <MigrateBanner>
+      <MigrateBanner isDark={isDark}>
         Vexchange V2 is live! Read the&nbsp;
         <Link href="https://medium.com/@raleigh_ca/introducing-vexchange-2-6153a9369c1">
           <b>blog post ↗</b>,
