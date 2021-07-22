@@ -203,7 +203,7 @@ export default function Web3Status({ account, active }) {
     } else {
       return (
         <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
-          <Text>{t('Connect to a Wallet')}</Text>
+          <Text>{t('Connect to a wallet')}</Text>
         </Web3StatusConnect>
       )
     }

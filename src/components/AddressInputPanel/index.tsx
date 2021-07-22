@@ -95,6 +95,52 @@ export default function AddressInputPanel({
 
   // run parser on debounced input
   useEffect(() => {
+    let stale = false
+    // if the input is an address, try to look up its name
+    if (isAddress(debouncedInput)) {
+      library.thor
+        .account(debouncedInput)
+        .get()
+        .then(() => {
+          if (stale) return
+          // if an ENS name exists, set it as the destination
+          setData({ address: debouncedInput, name: '' })
+          setError(null)
+        })
+        .catch(() => {
+          if (stale) return
+          setData({ address: debouncedInput, name: '' })
+          setError(null)
+        })
+    }
+    // otherwise try to look up the address of the input, treated as an ENS name
+    else {
+      if (debouncedInput !== '') {
+        library.thor
+          .account(debouncedInput)
+          .get()
+          .then(() => {
+            if (stale) return
+            // if the debounced input name resolves to an address
+            setData({ address: debouncedInput, name: debouncedInput })
+            setError(null)
+          })
+          .catch(() => {
+            if (stale) return
+            setError(true)
+          })
+      } else if (debouncedInput === '') {
+        setError(true)
+      }
+    }
+
+    return () => {
+      stale = true
+    }
+  }, [debouncedInput, library])
+
+  // run parser on debounced input
+  useEffect(() => {
     // if the input is an address, try to look up its name
     if (isAddress(debouncedInput)) {
       setData({ address: debouncedInput, name: '' })
@@ -120,10 +166,7 @@ export default function AddressInputPanel({
                 Recipient
               </TYPE.black>
               {data.address && (
-                <Link
-                  href={getExploreLink(chainId, data.name || data.address, 'address')}
-                  style={{ fontSize: '14px' }}
-                >
+                <Link href={getExploreLink(chainId, data.name || data.address, 'address')} style={{ fontSize: '14px' }}>
                   (View on Explore)
                 </Link>
               )}

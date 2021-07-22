@@ -53,7 +53,7 @@ const ContentWrapper = styled.div<{ isDark?: boolean }>`
   ${({ isDark }) =>
     isDark
       ? css`
-          background-image: linear-gradient(210deg, #3F6A80 0%, #244150 100%);
+          background-image: linear-gradient(210deg, #3f6a80 0%, #244150 100%);
         `
       : css`
           background-image: none;
@@ -283,7 +283,7 @@ export default function WalletModal({
           </HeaderRow>
         ) : (
           <HeaderRow>
-            <HoverText>Connect To A Wallet</HoverText>
+            <HoverText>Connect To a wallet</HoverText>
           </HeaderRow>
         )}
         <ContentWrapper>

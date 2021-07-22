@@ -68,7 +68,6 @@ export function useDerivedSwapInfo(): {
   parsedAmounts: { [field in Field]?: TokenAmount }
   bestTrade: Trade | null
   error?: string
-  // v1TradeLinkIfBetter?: string
 } {
   const { account } = useWeb3React()
 
@@ -107,16 +106,6 @@ export function useDerivedSwapInfo(): {
     [Field.OUTPUT]: tokenOut
   }
 
-  // get link to trade on v1, if a better rate exists
-  // const v1TradeLinkIfBetter = useV1TradeLinkIfBetter(
-  //   isExactIn,
-  //   tokens[Field.INPUT],
-  //   tokens[Field.OUTPUT],
-  //   isExactIn ? parsedAmounts[Field.INPUT] : parsedAmounts[Field.OUTPUT],
-  //   bestTrade ?? undefined,
-  //   V1_TRADE_LINK_THRESHOLD
-  // )
-
   let error: string | undefined
   if (!account) {
     error = 'Connect Wallet'
@@ -143,8 +132,7 @@ export function useDerivedSwapInfo(): {
     tokenBalances,
     parsedAmounts,
     bestTrade,
-    error,
-    // v1TradeLinkIfBetter
+    error
   }
 }
 
