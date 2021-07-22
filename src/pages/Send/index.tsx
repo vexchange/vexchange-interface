@@ -489,7 +489,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
             error={sendingWithSwap && isSwapValid && severity > 2}
           >
             <Text fontSize={20} fontWeight={500}>
-              {(sendingWithSwap ? swapError : null) || swapError.includes('Insufficient')
+              {(sendingWithSwap ? swapError : null) || swapError?.includes('Insufficient')
                 ? swapError
                 : sendAmountError || recipientError || `Send${severity > 2 ? ' Anyway' : ''}`}
             </Text>
