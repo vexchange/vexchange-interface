@@ -1,5 +1,6 @@
 import { ChainId, JSBI, Pair, Token, TokenAmount, WVET } from 'vexchange-sdk'
 import { useWeb3React } from '../../hooks'
+import flatMap from 'array.prototype.flatmap'
 import { useCallback, useMemo } from 'react'
 import { shallowEqual, useDispatch, useSelector } from 'react-redux'
 import { useAllTokens } from '../../hooks/Tokens'
@@ -15,6 +16,9 @@ import {
   SerializedToken,
   updateUserDarkMode
 } from './actions'
+
+delete Array.prototype.flatMap
+flatMap.shim()
 
 function serializeToken(token: Token): SerializedToken {
   return {
