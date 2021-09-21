@@ -10,5 +10,6 @@ export default [
 	new Token(ChainId.MAINNET, '0x89827f7bb951fd8a56f8ef13c5bfee38522f2e1f', 18, 'PLA', 'Plair'),
 	new Token(ChainId.MAINNET, '0xf8e1faa0367298b55f57ed17f7a2ff3f5f1d1628', 18, 'EHrT', 'Eight Hours Token'),
 	new Token(ChainId.MAINNET, '0x46209d5e5a49c1d403f4ee3a0a88c3a27e29e58d', 18, 'JUR', 'Jur'),
-	new Token(ChainId.MAINNET, '0x67fD63f6068962937EC81AB3Ae3bF9871E524FC9', 18, 'VEED', 'VEED')
+	new Token(ChainId.MAINNET, '0x67fD63f6068962937EC81AB3Ae3bF9871E524FC9', 18, 'VEED', 'VEED'),
+	new Token(ChainId.MAINNET, '0x170F4BA8e7ACF6510f55dB26047C83D13498AF8A', 18, 'WoV', 'WorldOfV')
 ]
