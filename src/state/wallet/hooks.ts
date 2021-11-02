@@ -65,18 +65,32 @@ export function useTokenBalances(
   const dispatch = useDispatch<AppDispatch>()
   const { chainId } = useWeb3React()
 
-  const validTokens: Token[] = useMemo(() => tokens?.filter(t => isAddress(t?.address)) ?? [], [tokens])
-  const tokenAddresses: string[] = useMemo(() => validTokens.map(t => t.address).sort(), [validTokens])
-
+  const validTokens: Token[] = useMemo(
+    () => tokens?.filter((t?: Token): t is Token => isAddress(t?.address) !== false) ?? [],
+    [tokens]
+  )
+  // used so that we do a deep comparison in `useEffect`
+  const serializedCombos: string = useMemo(() => {
+    return JSON.stringify(
+      !address || validTokens.length === 0
+        ? []
+        : validTokens
+            .map(t => t.address)
+            .sort()
+            .map(tokenAddress => ({ address, tokenAddress }))
+    )
+  }, [address, validTokens])
+  // const tokenAddresses: string[] = useMemo(() => validTokens.map(t => t.address).sort(), [validTokens])
   // keep the listeners up to date
   useEffect(() => {
-    if (!address) return
-    if (tokenAddresses.length === 0) return
+    const combos: TokenBalanceListenerKey[] = JSON.parse(serializedCombos)
+    if (combos.length === 0) return
 
-    const combos: TokenBalanceListenerKey[] = tokenAddresses.map(tokenAddress => ({ address, tokenAddress }))
     dispatch(startListeningForTokenBalances(combos))
-    return () => dispatch(stopListeningForTokenBalances(combos))
-  }, [address, tokenAddresses, dispatch])
+    return () => {
+      dispatch(stopListeningForTokenBalances(combos))
+    }
+  }, [address, serializedCombos, dispatch])
 
   const rawBalanceMap = useSelector<AppState>(({ wallet: { balances } }) => balances)
 

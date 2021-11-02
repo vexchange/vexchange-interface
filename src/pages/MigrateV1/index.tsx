@@ -138,7 +138,6 @@ export default function MigrateV1({ history }: RouteComponentProps) {
     history.push('/pool')
   }, [history])
 
-  console.log(allV1Exchanges, unmigratedLiquidityExchangeAddresses)
   return (
     <BodyWrapper>
       <AutoColumn gap="24px">
