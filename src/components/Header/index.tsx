@@ -164,17 +164,9 @@ export default function Header() {
   return (
     <HeaderFrame>
       <MigrateBanner isDark={isDark}>
-        Vexchange V2 is live! Read the&nbsp;
-        <Link href="https://medium.com/@raleigh_ca/introducing-vexchange-2-6153a9369c1">
-          <b>blog post ↗</b>,
-        </Link>
-        &nbsp;
-        <HistoryLink to="/migrate/v1">
-          <b>migrate your liquidity</b>
-        </HistoryLink>
-        &nbsp;or&nbsp;
-        <Link href="https://v1.vexchange.io">
-          <b>return to Vexchange v1 ↗</b>
+        $VEX is coming! Read the&nbsp;
+        <Link href="https://medium.com/@vexchange/introducing-vex-7be80d27b1de">
+          <b>blog post ↗</b>
         </Link>
       </MigrateBanner>
       <RowBetween padding="1rem">
