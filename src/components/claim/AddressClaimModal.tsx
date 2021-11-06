@@ -64,17 +64,21 @@ export default function AddressClaimModal() {
   const [balance, setBalance] = useState(0)
 
   useEffect(() => {
-    const getBalance = async () => {
+    const init = async () => {
       const tokenBalance = await getTokenBalance(VEX[chainId].address, account, library)
 
       if (tokenBalance > 0) {
         setBalance(tokenBalance)
         setOpenModal(true)
+        localStorage.setItem(account, JSON.stringify({ seen: true }))
       }
     }
 
     if (account && balance === 0) {
-      getBalance()
+      const { seen } = JSON.parse(localStorage.getItem(account))
+      if (seen) return
+
+      init()
     }
   }, [account, chainId, library, balance])
 
