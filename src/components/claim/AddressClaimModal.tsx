@@ -75,7 +75,7 @@ export default function AddressClaimModal() {
     }
 
     if (account && balance === 0) {
-      const { seen } = JSON.parse(localStorage.getItem(account))
+      const { seen } = JSON.parse(localStorage.getItem(account)) || {}
       if (seen) return
 
       init()
