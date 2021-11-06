@@ -2,18 +2,17 @@ import React, { useEffect, useState } from 'react'
 import Confetti from 'react-confetti'
 import Typist from 'react-typist'
 import styled from 'styled-components'
-import { find } from 'lodash'
 import { utils } from 'ethers'
-
-import Modal from '../Modal'
 
 import { TYPE } from '../../theme'
 import { useDarkModeManager } from '../../state/user/hooks'
 import Logo from '../../assets/svg/logo.svg'
 import LogoDark from '../../assets/svg/logo_white.svg'
-import { VEX } from '../../constants/index'
-import ERC20_ABI from '../../constants/abis/erc20.json'
 import { useWeb3React } from '../../hooks'
+
+import Modal from '../Modal'
+
+import Rewards from './rewards.json'
 
 const StyledType = styled(Typist)`
   font-size: 2em;
@@ -38,25 +37,6 @@ const VexIcon = styled.div`
   margin-bottom: 10px;
 `
 
-const getTokenBalance = (tokenAddress, address, library): Promise<number> => {
-  const abi = find(ERC20_ABI, { name: 'balanceOf' })
-
-  return new Promise(async (resolve, reject) => {
-    const account = library.thor.account(tokenAddress)
-    const method = account.method(abi)
-
-    try {
-      const {
-        decoded: { balance }
-      } = await method.call(address)
-
-      resolve(parseFloat(utils.formatEther(balance)))
-    } catch (error) {
-      reject(error)
-    }
-  })
-}
-
 export default function AddressClaimModal() {
   const { chainId, account, library } = useWeb3React()
   const [isDark] = useDarkModeManager()
@@ -64,11 +44,11 @@ export default function AddressClaimModal() {
   const [balance, setBalance] = useState(0)
 
   useEffect(() => {
-    const init = async () => {
-      const tokenBalance = await getTokenBalance(VEX[chainId].address, account, library)
+    const init = () => {
+      const balance = Rewards[utils.getAddress(account)]
 
-      if (tokenBalance > 0) {
-        setBalance(tokenBalance)
+      if (balance > 0) {
+        setBalance(balance)
         setOpenModal(true)
         localStorage.setItem(account, JSON.stringify({ seen: true }))
       }
