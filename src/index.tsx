@@ -4,6 +4,7 @@ import ReactGA from 'react-ga'
 import { Web3ReactProvider, createWeb3ReactRoot } from './context'
 import Connex from '@vechain/connex'
 import { Provider } from 'react-redux'
+import WebFont from 'webfontloader'
 
 import { NetworkContextName } from './constants'
 import WalletUpdater from './state/wallet/updater'
@@ -16,6 +17,12 @@ import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from './theme'
 import './i18n'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
+
+WebFont.load({
+  google: {
+    families: ['Pacifico']
+  }
+})
 
 function getLibrary() {
   const connex = new Connex({ node: 'https://mainnet.veblocks.net' })

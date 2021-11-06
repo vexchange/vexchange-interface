@@ -98,7 +98,7 @@ export default function Updater() {
   }, [library, ethBalancesNeedUpdate, dispatch, lastBlockNumber, chainId])
 
   const getTokenBalance = (tokenAddress, address, library) => {
-    const abi = find(ERC20_ABI, { name: 'balanceOf'})
+    const abi = find(ERC20_ABI, { name: 'balanceOf' })
 
     return new Promise(async (resolve, reject) => {
       const detail = tokenAddress.reduce(async (acc, cur) => {
@@ -119,7 +119,7 @@ export default function Updater() {
       }, {})
 
       resolve(detail)
-    });
+    })
   }
   useEffect(() => {
     if (!library) return

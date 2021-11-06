@@ -7,6 +7,7 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import NavigationTabs from '../components/NavigationTabs'
 import Web3ReactManager from '../components/Web3ReactManager'
+import AddressClaimModal from '../components/claim/AddressClaimModal'
 import { useDarkModeManager } from '../state/user/hooks'
 
 import Popups from '../components/Popups'
@@ -164,6 +165,7 @@ export default function App() {
             <HeaderWrapper>
               <Header />
             </HeaderWrapper>
+            <AddressClaimModal />
             <BodyWrapper>
               <Popups />
               <Web3ReactManager>

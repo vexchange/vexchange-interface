@@ -1,4 +1,4 @@
-import { ChainId, WVET, JSBI, Percent } from 'vexchange-sdk'
+import { ChainId, WVET, JSBI, Percent, Token } from 'vexchange-sdk'
 import { injected } from '../connectors'
 
 export const V1_FACTORY_ADDRESS = '0x6A662F91E14312a11a2E35b359427AEf798fD928'
@@ -20,6 +20,12 @@ const MAINNET_WALLETS = {
     href: null,
     color: '#E8831D'
   }
+}
+
+const VEX_ADDRESS = '0x0BD802635eb9cEB3fCBe60470D2857B86841aab6'
+export const VEX: { [chainId in ChainId]: Token } = {
+  [ChainId.MAINNET]: new Token(ChainId.MAINNET, VEX_ADDRESS, 18, 'VEX', 'Vexchange'),
+  [ChainId.TESTNET]: new Token(ChainId.TESTNET, VEX_ADDRESS, 18, 'VEX', 'Vexchange')
 }
 
 export const SUPPORTED_WALLETS =
