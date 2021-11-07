@@ -166,9 +166,9 @@ export default function Header() {
       <MigrateBanner isDark={isDark}>
         $VEX is here!&nbsp;
         <HistoryLink to="add/0xD8CCDD85abDbF68DFEc95f06c973e87B1b5A9997-0x0BD802635eb9cEB3fCBe60470D2857B86841aab6">
-          <b>Add Liquidity&nbsp;</b>
+          <b>Add Liquidity</b>
         </HistoryLink>
-        then&nbsp;
+        &nbsp;then&nbsp;
         <Link href="https://stake.vexchange.io">
           <b>Stake your LP Tokens</b>
         </Link>
