@@ -165,12 +165,16 @@ export default function Header() {
     <HeaderFrame>
       <MigrateBanner isDark={isDark}>
         $VEX is here!&nbsp;
+        <Link href="https://stake.vexchange.io">
+          <b>Read about it here ↗</b>
+        </Link>
+        &nbsp;or&nbsp;
         <HistoryLink to="add/0xD8CCDD85abDbF68DFEc95f06c973e87B1b5A9997-0x0BD802635eb9cEB3fCBe60470D2857B86841aab6">
           <b>Add Liquidity</b>
         </HistoryLink>
         &nbsp;then&nbsp;
         <Link href="https://stake.vexchange.io">
-          <b>Stake your LP Tokens</b>
+          <b>Stake your LP Tokens ↗</b>
         </Link>
       </MigrateBanner>
       <RowBetween padding="1rem">
