@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link as HistoryLink } from 'react-router-dom'
 import { Sun, Moon } from 'react-feather'
+import { find } from 'lodash'
+import { utils } from 'ethers'
 
 import styled, { css } from 'styled-components'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
@@ -18,6 +20,8 @@ import { useWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { ButtonSecondary } from '../Button'
 
+import { VEX } from '../../constants/index'
+import ERC20_ABI from '../../constants/abis/erc20.json'
 import Logo from '../../assets/svg/logo.svg'
 import Wordmark from '../../assets/svg/wordmark_light.svg'
 import LogoDark from '../../assets/svg/logo_white.svg'
@@ -92,6 +96,21 @@ const AccountElement = styled.div<{ active: boolean }>`
   :focus {
     border: 1px solid blue;
   }
+
+  > div:first-of-type {
+    position: relative;
+
+    &:after {
+      content: "";
+      display: block;
+      background: rgba(0, 0, 0, 0.1);
+      height: 100%;
+      width: 2px;
+      right: -2px;
+      top: 0;
+      position: absolute;
+    }
+  }
 `
 
 const TestnetWrapper = styled.div`
@@ -154,12 +173,44 @@ const MigrateBanner = styled(AutoColumn)<{ isDark?: boolean }>`
         `}
 `
 
+const getTokenBalance = (tokenAddress, address, library): Promise<number> => {
+  const abi = find(ERC20_ABI, { name: 'balanceOf' })
+
+  return new Promise(async (resolve, reject) => {
+    const account = library.thor.account(tokenAddress)
+    const method = account.method(abi)
+
+    try {
+      const {
+        decoded: { balance }
+      } = await method.call(address)
+
+      resolve(parseFloat(utils.formatEther(balance)))
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
 export default function Header() {
-  const { account, chainId, active } = useWeb3React()
+  const { account, chainId, active, library } = useWeb3React()
   const [darkMode, toggleDarkMode] = useDarkModeManager()
+  const [userVexBalance, setUserVexBalance] = useState(0)
 
   const userEthBalance = useTokenBalanceTreatingWETHasETH(account, WVET[chainId])
   const [isDark] = useDarkModeManager()
+
+  useEffect(() => {
+    const getUserVexBalance = async () => {
+      const tokenBalance = await getTokenBalance(VEX[chainId].address, account, library)
+
+      setUserVexBalance(tokenBalance)
+    }
+
+    if (account && userVexBalance === 0) {
+      getUserVexBalance()
+    }
+  }, [account, userVexBalance, chainId, library])
 
   return (
     <HeaderFrame>
@@ -202,9 +253,14 @@ export default function Header() {
           </TestnetWrapper>
           <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
-              <Text style={{ flexShrink: 0 }} px="0.5rem" fontWeight={500}>
-                {userEthBalance?.toSignificant(4)} VET
-              </Text>
+              <>
+                <Text style={{ flexShrink: 0 }} px="0.5rem" fontSize="0.85rem" fontWeight={500}>
+                  {userVexBalance} VEX
+                </Text>
+                <Text style={{ flexShrink: 0 }} px="0.5rem" fontSize="0.85rem" fontWeight={500}>
+                  {userEthBalance?.toSignificant(4)} VET
+                </Text>
+              </>
             ) : null}
             <Web3Status account={account} active={active} />
           </AccountElement>
