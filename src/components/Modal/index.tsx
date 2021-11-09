@@ -161,7 +161,7 @@ export default function Modal({
                 style={props}
                 onDismiss={onDismiss}
                 initialFocusRef={initialFocusRef}
-                mobile={isMobile}
+                mobile={isMobile.toString()}
               >
                 <Spring // animation for entrance and exit
                   from={{

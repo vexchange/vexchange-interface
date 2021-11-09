@@ -80,7 +80,7 @@ export function useTokenBalances(
             .map(tokenAddress => ({ address, tokenAddress }))
     )
   }, [address, validTokens])
-  // const tokenAddresses: string[] = useMemo(() => validTokens.map(t => t.address).sort(), [validTokens])
+
   // keep the listeners up to date
   useEffect(() => {
     const combos: TokenBalanceListenerKey[] = JSON.parse(serializedCombos)

@@ -2,7 +2,6 @@ import { useMemo } from 'react'
 import { Token, TokenAmount, Pair } from 'vexchange-sdk'
 import useSWR from 'swr'
 import { find } from 'lodash'
-// import { abi as IVexchangeV2PairABI } from '@uniswap/v2-core/build/IVexchangeV2Pair.json'
 import { abi as IVexchangeV2PairABI } from '../constants/abis/IVexchangeV2Pair.json'
 
 import { SWRKeys, useKeepSWRDataLiveAsBlocksArrive } from '.'
