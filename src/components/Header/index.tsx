@@ -216,7 +216,7 @@ export default function Header() {
     <HeaderFrame>
       <MigrateBanner isDark={isDark}>
         $VEX is here!&nbsp;
-        <Link href="https://stake.vexchange.io">
+        <Link href="https://medium.com/@vexchange/vex-launch-information-9e14b9da4b64">
           <b>Read about it here ↗</b>
         </Link>
         &nbsp;or&nbsp;
@@ -224,7 +224,7 @@ export default function Header() {
           <b>Add Liquidity</b>
         </HistoryLink>
         &nbsp;then&nbsp;
-        <Link href="https://stake.vexchange.io">
+        <Link href="https://farm.vexchange.io">
           <b>Stake your LP Tokens ↗</b>
         </Link>
       </MigrateBanner>
