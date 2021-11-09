@@ -268,7 +268,7 @@ export default function Header() {
         </MigrateBanner>
       ) : (
         <MobileBanner isDark={isDark}>
-          <Link href="https://farm.vexchange.io">Farm $VEX now</Link>
+          <Link href="https://farm.vexchange.io">Farm $VEX Now</Link>
         </MobileBanner>
       )}
 
