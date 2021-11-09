@@ -204,7 +204,7 @@ export default function Header() {
     const getUserVexBalance = async () => {
       const tokenBalance = await getTokenBalance(VEX[chainId].address, account, library)
 
-      setUserVexBalance(Number(tokenBalance).toFixed(2))
+      setUserVexBalance(tokenBalance)
     }
 
     if (account && userVexBalance === 0) {
@@ -255,7 +255,7 @@ export default function Header() {
             {account && userEthBalance ? (
               <>
                 <Text style={{ flexShrink: 0 }} px="0.5rem" fontSize="0.85rem" fontWeight={500}>
-                  {userVexBalance} VEX
+                  {userVexBalance.toFixed(2)} VEX
                 </Text>
                 <Text style={{ flexShrink: 0 }} px="0.5rem" fontSize="0.85rem" fontWeight={500}>
                   {userEthBalance?.toSignificant(4)} VET
