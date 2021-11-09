@@ -137,7 +137,7 @@ const AccountControl = styled.div`
   align-items: center;
   min-width: 0;
 
-  font-weight:  500;
+  font-weight: 500;
   font-size: 1rem;
 
   a:hover {

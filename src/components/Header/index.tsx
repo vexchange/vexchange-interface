@@ -3,6 +3,7 @@ import { Link as HistoryLink } from 'react-router-dom'
 import { Sun, Moon } from 'react-feather'
 import { find } from 'lodash'
 import { utils } from 'ethers'
+import { isMobile } from 'react-device-detect'
 
 import styled, { css } from 'styled-components'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
@@ -14,7 +15,6 @@ import Web3Status from '../Web3Status'
 import { Link } from '../../theme'
 import { Text } from 'rebass'
 import { WVET, ChainId } from 'vexchange-sdk'
-import { isMobile } from 'react-device-detect'
 import { YellowCard } from '../Card'
 import { useWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
@@ -146,6 +146,43 @@ const MigrateBanner = styled(AutoColumn)<{ isDark?: boolean }>`
     padding: 0;
     display: none;
   `};
+
+  ${({ isDark }) =>
+    isDark
+      ? css`
+          background-image: linear-gradient(
+            210deg,
+            rgba(189, 162, 47, 0.02) 0%,
+            rgba(255, 255, 255, 0.02) 13%,
+            rgba(217, 216, 216, 0.15) 38%,
+            rgba(226, 225, 225, 0.08) 61%,
+            rgba(51, 41, 41, 0) 77%,
+            #893726 100%
+          );
+        `
+      : css`
+          background-image: linear-gradient(
+              210deg,
+              rgba(189, 162, 47, 0.02) 0%,
+              rgba(255, 255, 255, 0.02) 13%,
+              rgba(217, 216, 216, 0.15) 38%,
+              rgba(226, 225, 225, 0.08) 61%,
+              rgba(51, 41, 41, 0) 77%,
+              #efa29a 100%
+            );
+          );
+        `}
+`
+
+const MobileBanner = styled.div<{ isDark?: boolean }>`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 0;
+  pointer-events: auto;
+  justify-content: center;
+  padding: 12px 0;
+
   ${({ isDark }) =>
     isDark
       ? css`
@@ -214,20 +251,27 @@ export default function Header() {
 
   return (
     <HeaderFrame>
-      <MigrateBanner isDark={isDark}>
-        $VEX is here!&nbsp;
-        <Link href="https://medium.com/@vexchange/vex-launch-information-9e14b9da4b64">
-          <b>Read about it here ↗</b>
-        </Link>
-        &nbsp;or&nbsp;
-        <HistoryLink to="add/0xD8CCDD85abDbF68DFEc95f06c973e87B1b5A9997-0x0BD802635eb9cEB3fCBe60470D2857B86841aab6">
-          <b>Add Liquidity</b>
-        </HistoryLink>
-        &nbsp;then&nbsp;
-        <Link href="https://farm.vexchange.io">
-          <b>Stake your LP Tokens ↗</b>
-        </Link>
-      </MigrateBanner>
+      {!isMobile ? (
+        <MigrateBanner isDark={isDark}>
+          $VEX is here!&nbsp;
+          <Link href="https://medium.com/@vexchange/vex-launch-information-9e14b9da4b64">
+            <b>Read about it here ↗</b>
+          </Link>
+          &nbsp;or&nbsp;
+          <HistoryLink to="add/0xD8CCDD85abDbF68DFEc95f06c973e87B1b5A9997-0x0BD802635eb9cEB3fCBe60470D2857B86841aab6">
+            <b>Add Liquidity</b>
+          </HistoryLink>
+          &nbsp;then&nbsp;
+          <Link href="https://farm.vexchange.io">
+            <b>Stake your LP Tokens ↗</b>
+          </Link>
+        </MigrateBanner>
+      ) : (
+        <MobileBanner isDark={isDark}>
+          <Link href="https://farm.vexchange.io">Farm $VEX now</Link>
+        </MobileBanner>
+      )}
+
       <RowBetween padding="1rem">
         <HeaderElement>
           <Title>
