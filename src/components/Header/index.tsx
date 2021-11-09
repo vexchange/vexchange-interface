@@ -204,7 +204,7 @@ export default function Header() {
     const getUserVexBalance = async () => {
       const tokenBalance = await getTokenBalance(VEX[chainId].address, account, library)
 
-      setUserVexBalance(tokenBalance)
+      setUserVexBalance(Number(tokenBalance).toFixed(2))
     }
 
     if (account && userVexBalance === 0) {
