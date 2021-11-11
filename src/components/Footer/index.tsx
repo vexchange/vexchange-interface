@@ -18,11 +18,11 @@ const FooterFrame = styled.div`
 `
 
 export default function Footer() {
-  const [isDark] = useDarkModeManager();
+  const [isDark] = useDarkModeManager()
 
   return (
     <FooterFrame>
-      <form action="https://t.me/vexchange" target="_blank">
+      <form action="https://discord.gg/bzvUNqTENp" target="_blank">
         <ButtonSecondary isDark={isDark} p="8px 12px">
           <Send size={16} style={{ marginRight: '8px' }} /> Feedback
         </ButtonSecondary>
