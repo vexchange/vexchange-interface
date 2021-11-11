@@ -712,17 +712,17 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
           ) : approvalA === Approval.NOT_APPROVED || approvalA === Approval.PENDING ? (
             <ButtonLight onClick={approveACallback} disabled={approvalA === Approval.PENDING}>
               {approvalA === Approval.PENDING ? (
-                <Dots>Approving {tokens[Field.INPUT]?.symbol}</Dots>
+                <Dots>Unlocking {tokens[Field.INPUT]?.symbol}</Dots>
               ) : (
-                'Approve ' + tokens[Field.INPUT]?.symbol
+                'Unlock ' + tokens[Field.INPUT]?.symbol
               )}
             </ButtonLight>
           ) : approvalB === Approval.NOT_APPROVED || approvalB === Approval.PENDING ? (
             <ButtonLight onClick={approveBCallback} disabled={approvalB === Approval.PENDING}>
               {approvalB === Approval.PENDING ? (
-                <Dots>Approving {tokens[Field.OUTPUT]?.symbol}</Dots>
+                <Dots>Unlocking {tokens[Field.OUTPUT]?.symbol}</Dots>
               ) : (
-                'Approve ' + tokens[Field.OUTPUT]?.symbol
+                'Unlock ' + tokens[Field.OUTPUT]?.symbol
               )}
             </ButtonLight>
           ) : (

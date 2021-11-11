@@ -56,11 +56,11 @@ export function useApproveCallback(
 
     return library.vendor
       .sign('tx', [{ ...clause }])
-      .comment(`Approve ${amountToApprove?.token?.symbol}`)
+      .comment(`Unlock ${amountToApprove?.token?.symbol}`)
       .request()
       .then(response => {
         addTransaction(response, {
-          summary: 'Approve ' + amountToApprove?.token?.symbol,
+          summary: 'Unlock ' + amountToApprove?.token?.symbol,
           approvalOfToken: amountToApprove?.token?.address
         })
       })

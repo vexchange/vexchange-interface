@@ -474,9 +474,9 @@ export default function Send({ location: { search } }: RouteComponentProps) {
         ) : approval === Approval.NOT_APPROVED || approval === Approval.PENDING ? (
           <ButtonLight onClick={approveCallback} disabled={approval === Approval.PENDING}>
             {approval === Approval.PENDING ? (
-              <Dots>Approving {tokens[Field.INPUT]?.symbol}</Dots>
+              <Dots>Unlocking {tokens[Field.INPUT]?.symbol}</Dots>
             ) : (
-              'Approve ' + tokens[Field.INPUT]?.symbol
+              'Unlock ' + tokens[Field.INPUT]?.symbol
             )}
           </ButtonLight>
         ) : (

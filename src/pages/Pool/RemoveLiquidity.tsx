@@ -520,11 +520,11 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
             fontSize={20}
           >
             {approval === Approval.PENDING ? (
-              <Dots>Approving</Dots>
+              <Dots>Unlocking</Dots>
             ) : approval === Approval.APPROVED ? (
-              'Approved'
+              'Unlocked'
             ) : (
-              'Approve'
+              'Unlock'
             )}
           </ButtonConfirmed>
 

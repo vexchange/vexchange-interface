@@ -136,9 +136,6 @@ export default function Menu() {
           <MenuItem id="link" href="https://docs.vexchange.io">
             Docs
           </MenuItem>
-          <MenuItem id="link" href={CODE_LINK}>
-            Code
-          </MenuItem>
         </MenuFlyout>
       ) : (
         ''

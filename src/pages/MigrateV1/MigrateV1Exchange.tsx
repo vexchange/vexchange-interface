@@ -212,7 +212,7 @@ function V1PairMigration({ liquidityTokenAmount, token }: { liquidityTokenAmount
               disabled={approval !== Approval.NOT_APPROVED}
               onClick={approve}
             >
-              {approval === Approval.PENDING ? 'Approving...' : approval === Approval.APPROVED ? 'Approved' : 'Approve'}
+              {approval === Approval.PENDING ? 'Approving...' : approval === Approval.APPROVED ? 'Unlocked' : 'Unlock'}
             </ButtonConfirmed>
           </AutoColumn>
           <AutoColumn gap="12px" style={{ flex: '1' }}>
