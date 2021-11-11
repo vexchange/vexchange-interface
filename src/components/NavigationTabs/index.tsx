@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
 import { withRouter, NavLink, Link as HistoryLink, RouteComponentProps } from 'react-router-dom'
+import * as isExternal from 'is-url-external'
 
 import { useDarkModeManager } from '../../state/user/hooks'
 import { CursorPointer } from '../../theme'
@@ -27,6 +28,10 @@ const tabOrder = [
     path: '/pool',
     textKey: 'pool',
     regex: /\/pool/
+  },
+  {
+    path: 'https://farm.vexchange.io/',
+    textKey: 'farm'
   }
 ]
 
@@ -85,6 +90,26 @@ const StyledNavLink = styled(({ ...props }) => <NavLink {...props} />).attrs({
             background-color: #ffffff;
           `}
   }
+
+  :hover,
+  :focus {
+    color: ${({ theme }) => darken(0.1, theme.text1)};
+  }
+`
+
+const StyledLink = styled.a<{ isdark?: boolean }>`
+  ${({ theme }) => theme.flexRowNoWrap}
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  flex: 1 0 auto;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: ${({ theme }) => theme.text3};
+  font-size: 20px;
+  box-sizing: border-box;
+  padding: 1rem;
 
   :hover,
   :focus {
@@ -168,15 +193,22 @@ function NavigationTabs({ location: { pathname }, history }: RouteComponentProps
       ) : (
         <Tabs isDark={isDark}>
           {tabOrder.map(({ path, textKey, regex }) => (
-            <StyledNavLink
-              isdark={isDark ? 1 : 0}
-              id={`${textKey}-nav-link`}
-              key={path}
-              to={path}
-              isActive={(_, { pathname }) => !!pathname.match(regex)}
-            >
-              {t(textKey)}
-            </StyledNavLink>
+            <React.Fragment key={path}>
+              {isExternal(path) ? (
+                <StyledLink id={`${textKey}-nav-link`} href={path} target="_blank">
+                  Farm
+                </StyledLink>
+              ) : (
+                <StyledNavLink
+                  isdark={isDark ? 1 : 0}
+                  id={`${textKey}-nav-link`}
+                  to={path}
+                  isActive={(_, { pathname }) => !!pathname.match(regex)}
+                >
+                  {t(textKey)}
+                </StyledNavLink>
+              )}
+            </React.Fragment>
           ))}
         </Tabs>
       )}
