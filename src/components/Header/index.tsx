@@ -174,42 +174,6 @@ const MigrateBanner = styled(AutoColumn)<{ isDark?: boolean }>`
         `}
 `
 
-const MobileBanner = styled.div<{ isDark?: boolean }>`
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-top: 0;
-  pointer-events: auto;
-  justify-content: center;
-  padding: 12px 0;
-
-  ${({ isDark }) =>
-    isDark
-      ? css`
-          background-image: linear-gradient(
-            210deg,
-            rgba(189, 162, 47, 0.02) 0%,
-            rgba(255, 255, 255, 0.02) 13%,
-            rgba(217, 216, 216, 0.15) 38%,
-            rgba(226, 225, 225, 0.08) 61%,
-            rgba(51, 41, 41, 0) 77%,
-            #893726 100%
-          );
-        `
-      : css`
-          background-image: linear-gradient(
-              210deg,
-              rgba(189, 162, 47, 0.02) 0%,
-              rgba(255, 255, 255, 0.02) 13%,
-              rgba(217, 216, 216, 0.15) 38%,
-              rgba(226, 225, 225, 0.08) 61%,
-              rgba(51, 41, 41, 0) 77%,
-              #efa29a 100%
-            );
-          );
-        `}
-`
-
 const getTokenBalance = (tokenAddress, address, library): Promise<number> => {
   const abi = find(ERC20_ABI, { name: 'balanceOf' })
 
@@ -251,26 +215,20 @@ export default function Header() {
 
   return (
     <HeaderFrame>
-      {!isMobile ? (
-        <MigrateBanner isDark={isDark}>
-          $VEX is here!&nbsp;
-          <Link href="https://medium.com/@vexchange/vex-launch-information-9e14b9da4b64">
-            <b>Read about it here ↗</b>
-          </Link>
-          &nbsp;or&nbsp;
-          <HistoryLink to="add/0xD8CCDD85abDbF68DFEc95f06c973e87B1b5A9997-0x0BD802635eb9cEB3fCBe60470D2857B86841aab6">
-            <b>Add Liquidity</b>
-          </HistoryLink>
-          &nbsp;then&nbsp;
-          <Link href="https://farm.vexchange.io">
-            <b>Stake your LP Tokens ↗</b>
-          </Link>
-        </MigrateBanner>
-      ) : (
-        <MobileBanner isDark={isDark}>
-          <Link href="https://farm.vexchange.io">Farm $VEX Now</Link>
-        </MobileBanner>
-      )}
+      <MigrateBanner isDark={isDark}>
+        $VEX is here!&nbsp;
+        <Link href="https://medium.com/@vexchange/vex-launch-information-9e14b9da4b64">
+          <b>Read about it here ↗</b>
+        </Link>
+        &nbsp;or&nbsp;
+        <HistoryLink to="add/0xD8CCDD85abDbF68DFEc95f06c973e87B1b5A9997-0x0BD802635eb9cEB3fCBe60470D2857B86841aab6">
+          <b>Add Liquidity</b>
+        </HistoryLink>
+        &nbsp;then&nbsp;
+        <Link href="https://farm.vexchange.io">
+          <b>Stake your LP Tokens ↗</b>
+        </Link>
+      </MigrateBanner>
 
       <RowBetween padding="1rem">
         <HeaderElement>

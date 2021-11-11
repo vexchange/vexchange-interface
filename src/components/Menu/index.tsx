@@ -97,8 +97,6 @@ const MenuItem = styled(Link)`
   }
 `
 
-const CODE_LINK = 'https://github.com/vexchange/vexchange-interface'
-
 export default function Menu() {
   const node = useRef<HTMLDivElement>()
   const [open, toggle] = useToggle(false)
