@@ -1,12 +1,12 @@
 import { parseUnits } from '@ethersproject/units'
-import { JSBI, Token, TokenAmount, Trade } from 'vexchange-sdk'
+import { JSBI, Token, TokenAmount, Trade, ChainId } from 'vexchange-sdk'
 import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useWeb3React } from '../../hooks'
 import { useTokenByAddressAndAutomaticallyAdd } from '../../hooks/Tokens'
 import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
 import { AppDispatch, AppState } from '../index'
-import { useTokenBalancesTreatWETHAsETH } from '../wallet/hooks'
+import { useTokenBalancesTreatWETHAsETH, useTokenBalances } from '../wallet/hooks'
 import { Field, selectToken, setDefaultsFromURL, switchTokens, typeInput } from './actions'
 
 export function useSwapState(): AppState['swap'] {
@@ -61,6 +61,8 @@ function tryParseAmount(value?: string, token?: Token): TokenAmount | undefined 
   }
 }
 
+const VTHO = new Token(ChainId.MAINNET, '0x0000000000000000000000000000456E65726779', 18, 'VTHO', 'VeThor')
+
 // from the current swap inputs, compute the best trade and return it.
 export function useDerivedSwapInfo(): {
   tokens: { [field in Field]?: Token }
@@ -70,6 +72,7 @@ export function useDerivedSwapInfo(): {
   error?: string
 } {
   const { account } = useWeb3React()
+  const vthoBalance = useTokenBalances(account, [VTHO]) ?? {}
 
   const {
     independentField,
@@ -125,6 +128,10 @@ export function useDerivedSwapInfo(): {
     tokenBalances[Field.INPUT].lessThan(parsedAmounts[Field.INPUT])
   ) {
     error = 'Insufficient ' + tokens[Field.INPUT]?.symbol + ' balance'
+  }
+
+  if (vthoBalance[Object.keys(vthoBalance)[0]]?.equalTo(JSBI.BigInt(0))) {
+    error = 'Insufficient VTHO'
   }
 
   return {
