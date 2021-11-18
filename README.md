@@ -1,63 +1,69 @@
-# Uniswap Frontend
+# Vexchange Frontend
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/fa110555-b3c7-4eeb-b840-88a835009c62/deploy-status)](https://app.netlify.com/sites/uniswap/deploys)
-[![Tests](https://github.com/Uniswap/uniswap-frontend/workflows/Tests/badge.svg?branch=v2)](https://github.com/Uniswap/uniswap-frontend/actions?query=workflow%3ATests)
-[![Styled With Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/0cdf2f88-ae39-4bbd-9ce5-1052fb348835/deploy-status)](https://app.netlify.com/sites/zen-curie-18ebca/deploys)
 
-An open source interface for Uniswap -- a protocol for decentralized exchange of Ethereum tokens.
+An open source interface for Vexchange -- a protocol for decentralized exchange of Ethereum tokens.
 
-- Website: [uniswap.org](https://uniswap.org/)
-- Docs: [uniswap.org/docs/](https://uniswap.org/docs/)
-- Twitter: [@UniswapProtocol](https://twitter.com/UniswapProtocol)
-- Reddit: [/r/Uniswap](https://www.reddit.com/r/Uniswap/)
-- Email: [contact@uniswap.org](mailto:contact@uniswap.org)
-- Discord: [Uniswap](https://discord.gg/Y7TF6QA)
-- Whitepaper: [Link](https://hackmd.io/C-DvwDSfSxuh-Gd4WKE_ig)
-  
-## Run Uniswap Locally
- 
-1. Download and unzip the `build.zip` file from the latest release in the [Releases tab](https://github.com/Uniswap/uniswap-frontend/releases/latest).
-2. Serve the `build/` folder locally, and access the application via a browser.
+- Website: [vexchange.io](https://vexchange.io/)
+- Docs: [docs.vexchange.io](https://docs.vexchange.io)
+- Twitter: [@VexchangeIO](https://twitter.com/VexchangeIO)
+- Discord: [Vexchange](https://discord.gg/nuHJRyS5mY)
 
-For more information on running a local server see
- [https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/set_up_a_local_testing_server). 
+# Development
 
-This simple approach has one downside: refreshing the page will give a `404` because of how React handles client-side routing.
-To fix this issue, consider running `serve -s` courtesy of the [serve](https://github.com/zeit/serve) package.
-  
-## Develop Uniswap Locally
+## Running the interface locally
 
-### Install Dependencies
+1. `yarn install`
+1. `yarn start`
 
-```bash
-yarn
-```
+## Creating a production build
 
-### Configure Environment (optional)
+1. `yarn install`
+1. `yarn build`
 
-Copy `.env` to `.env.local` and change the appropriate variables.
+## Engineering standards
 
-### Run
+Code merged into the `main` branch of this repository should adhere to high standards of correctness and maintainability. 
+Use your best judgment when applying these standards.  If code is in the critical path, will be frequently visited, or 
+makes large architectural changes, consider following all the standards.
 
-```bash
-yarn start
-```
+- Have at least one engineer approve of large code refactorings
+- At least manually test small code changes, prefer automated tests
+- Thoroughly unit test when code is not obviously correct
+- If something breaks, add automated tests so it doesn't break again
+- Add integration tests for new pages or flows
+- Verify that all CI checks pass before merging
+- Have at least one product manager or designer approve of significant UX changes
 
-To have the frontend default to a different network, make a copy of `.env` named `.env.local`, 
-change `REACT_APP_NETWORK_ID` to `"{yourNetworkId}"`, and change `REACT_APP_NETWORK_URL` to e.g. 
-`"https://{yourNetwork}.infura.io/v3/{yourKey}"`. 
+## Guidelines
 
-Note that the front end only works properly on testnets where both 
-[Uniswap V2](https://uniswap.org/docs/v2/smart-contracts/factory/) and 
-[eth-scan](https://github.com/MyCryptoHQ/eth-scan) are deployed.
-The frontend is not expected to work with local testnets.
+The following points should help guide your development:
 
-### Deployment
+- Security: the interface is safe to use
+  - Avoid adding unnecessary dependencies due to [supply chain risk](https://github.com/LavaMoat/lavamoat#further-reading-on-software-supplychain-security)
+- Reproducibility: anyone can build the interface
+  - Avoid adding steps to the development/build processes
+  - The build must be deterministic, i.e. a particular commit hash always produces the same build
+- Decentralization: anyone can run the interface
+  - An Ethereum node should be the only critical dependency 
+  - All other external dependencies should only enhance the UX ([graceful degradation](https://developer.mozilla.org/en-US/docs/Glossary/Graceful_degradation))
+- Accessibility: anyone can use the interface
+  - The interface should be responsive, small and run well on low performance devices (majority of swaps on mobile!)
 
-As a single page application, all routes that do not match an asset must be redirect to `/index.html`.
-See [create-react-app documentation.](https://create-react-app.dev/docs/deployment#notes-on-client-side-routing).
+## Release process
+
+Releases are cut automatically from the `main` branch.
+
+Fix pull requests should be merged whenever ready and tested. 
+
+Features should not be merged into `main` until they are ready for users.
+When building larger features or collaborating with other developers, create a new branch from `main` to track its development.
+Use the automatic Vercel preview for sharing the feature to collect feedback.  
+When the feature is ready for review, create a new pull request from the feature branch into `main` and request reviews from 
+the appropriate UX reviewers (PMs or designers).
+
 
 ## Contributions
 
-**Please open all pull requests against the `v2` branch.** 
+**Please open all pull requests against the `main` branch.** 
 CI checks will run against all PRs. 
