@@ -11,6 +11,7 @@ import { ROUTER_ADDRESS } from '../constants'
 
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { ChainId, JSBI, Percent, TokenAmount } from 'vexchange-sdk'
+import { normalizeAccount } from '../context/normalizers'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -29,6 +30,20 @@ export enum ERROR_CODES {
 const EXPLORE_PREFIXES: { [chainId in ChainId]: string } = {
   1: 'explore.',
   3: 'explore-testnet.'
+}
+
+export const userAccount = {
+  get: (account: string) => {
+    const savedAccount = localStorage.getItem('wallet')
+    return savedAccount ? normalizeAccount(savedAccount) : account
+  },
+  set: (account: string) => {
+    localStorage.setItem('wallet', account)
+  },
+  remove: () => {
+    localStorage.removeItem('wallet')
+    window.location.href = '/'
+  }
 }
 
 export function getExploreLink(chainId: ChainId, data: string, type: 'transaction' | 'address'): string {
