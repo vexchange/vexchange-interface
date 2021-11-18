@@ -11,7 +11,7 @@ import Transaction from './Transaction'
 
 import { SUPPORTED_WALLETS } from '../../constants'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
-import { getExploreLink } from '../../utils'
+import { getExploreLink, userAccount } from '../../utils'
 import { injected } from '../../connectors'
 import Identicon from '../Identicon'
 
@@ -253,7 +253,7 @@ export default function AccountDetails({
   }
 
   function getStatusIcon() {
-    if (connector === injected) {
+    if (account) {
       return (
         <IconWrapper size={16}>
           <Identicon /> {formatConnectorName()}
@@ -283,11 +283,9 @@ export default function AccountDetails({
               <AccountGroupingRow>
                 {getStatusIcon()}
                 <div>
-                  {connector !== injected && (
+                  {account && (
                     <WalletAction
-                      onClick={() => {
-                        ;(connector as any).close()
-                      }}
+                      onClick={userAccount.remove}
                     >
                       Disconnect
                     </WalletAction>

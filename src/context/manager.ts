@@ -2,6 +2,7 @@ import { useReducer, useEffect, useCallback, useRef } from 'react'
 import { ConnectorUpdate, ConnectorEvent } from '../connectors/types'
 import { AbstractConnector } from '../connectors/AbstractConnector'
 import warning from 'tiny-warning'
+import { userAccount } from '../utils'
 
 import { Web3ReactManagerReturn } from './types'
 import { normalizeChainId, normalizeAccount } from './normalizers'
@@ -107,9 +108,8 @@ async function augmentConnectorUpdate(
   if (!!connector.supportedChainIds && !connector.supportedChainIds.includes(chainId)) {
     throw new UnsupportedChainIdError(chainId, connector.supportedChainIds)
   }
-  const account = _account === null ? _account : normalizeAccount(_account)
 
-  return { provider, chainId, account }
+  return { provider, chainId, account: userAccount.get(_account) }
 }
 
 export function useWeb3ReactManager(): Web3ReactManagerReturn {

@@ -2,8 +2,10 @@ import Connex from '@vechain/connex'
 import { AbstractConnectorArguments, ConnectorUpdate } from '../types'
 import { AbstractConnector } from '../AbstractConnector'
 import warning from 'tiny-warning'
+import { userAccount } from '../../utils'
 
 const connex = new Connex({ node: 'https://mainnet.veblocks.net' })
+// const connex = new Connex({ node: 'https://testnet.veblocks.net', network: 'test' })
 
 const msg = {
   purpose: 'identification',
@@ -68,6 +70,7 @@ export class InjectedConnector extends AbstractConnector {
     try {
       const { annex } = await sign.request()
       account = annex.signer
+      userAccount.set(account)
     } catch (error) {
       if ((error as any).code === 4001) {
         throw new UserRejectedRequestError()
