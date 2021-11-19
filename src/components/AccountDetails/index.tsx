@@ -311,21 +311,6 @@ export default function AccountDetails({
               </AccountGroupingRow>
             </InfoCard>
           </YourAccount>
-
-          {!(isMobile && (window.web3 || window.ethereum)) && (
-            <ConnectButtonRow>
-              <ButtonEmpty
-                style={{ fontWeight: 400 }}
-                padding={'12px'}
-                width={'260px'}
-                onClick={() => {
-                  openOptions()
-                }}
-              >
-                Connect to a different wallet
-              </ButtonEmpty>
-            </ConnectButtonRow>
-          )}
         </AccountSection>
       </UpperSection>
       {!!pendingTransactions.length || !!confirmedTransactions.length ? (
