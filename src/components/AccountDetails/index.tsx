@@ -151,13 +151,6 @@ const AccountControl = styled.div`
   }
 `
 
-const ConnectButtonRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  justify-content: center;
-  margin: 10px 0;
-`
-
 const StyledLink = styled(Link)`
   color: ${({ theme }) => theme.primary1};
 `
