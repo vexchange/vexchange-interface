@@ -2,7 +2,6 @@ import React, { useCallback, useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import styled, { ThemeContext } from 'styled-components'
 import { useWeb3React } from '../../hooks'
-import { isMobile } from 'react-device-detect'
 import { AppDispatch } from '../../state'
 import { clearAllTransactions } from '../../state/transactions/actions'
 import { AutoRow } from '../Row'
@@ -15,7 +14,6 @@ import { getExploreLink, userAccount } from '../../utils'
 import { injected } from '../../connectors'
 import Identicon from '../Identicon'
 
-import { ButtonEmpty } from '../Button'
 
 import { Link, TYPE } from '../../theme'
 
