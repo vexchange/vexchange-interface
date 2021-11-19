@@ -2,7 +2,6 @@ import React, { useCallback, useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import styled, { ThemeContext } from 'styled-components'
 import { useWeb3React } from '../../hooks'
-import { isMobile } from 'react-device-detect'
 import { AppDispatch } from '../../state'
 import { clearAllTransactions } from '../../state/transactions/actions'
 import { AutoRow } from '../Row'
@@ -15,7 +14,6 @@ import { getExploreLink, userAccount } from '../../utils'
 import { injected } from '../../connectors'
 import Identicon from '../Identicon'
 
-import { ButtonEmpty } from '../Button'
 
 import { Link, TYPE } from '../../theme'
 
@@ -151,13 +149,6 @@ const AccountControl = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-`
-
-const ConnectButtonRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  justify-content: center;
-  margin: 10px 0;
 `
 
 const StyledLink = styled(Link)`
@@ -311,21 +302,6 @@ export default function AccountDetails({
               </AccountGroupingRow>
             </InfoCard>
           </YourAccount>
-
-          {!(isMobile && (window.web3 || window.ethereum)) && (
-            <ConnectButtonRow>
-              <ButtonEmpty
-                style={{ fontWeight: 400 }}
-                padding={'12px'}
-                width={'260px'}
-                onClick={() => {
-                  openOptions()
-                }}
-              >
-                Connect to a different wallet
-              </ButtonEmpty>
-            </ConnectButtonRow>
-          )}
         </AccountSection>
       </UpperSection>
       {!!pendingTransactions.length || !!confirmedTransactions.length ? (
