@@ -134,6 +134,9 @@ export default function Menu() {
           <MenuItem id="link" href="https://docs.vexchange.io">
             Docs
           </MenuItem>
+          <MenuItem id="link" href="https://coinmarketcap.com/exchanges/vexchange/">
+            CoinMarketCap
+          </MenuItem>
         </MenuFlyout>
       ) : (
         ''
