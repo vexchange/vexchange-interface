@@ -2,16 +2,35 @@ import { Fraction, JSBI, Percent, TokenAmount, Trade } from 'vexchange-sdk'
 import { ALLOWED_SLIPPAGE_HIGH, ALLOWED_SLIPPAGE_LOW, ALLOWED_SLIPPAGE_MEDIUM } from '../constants'
 import { Field } from '../state/swap/actions'
 import { basisPointsToPercent } from './index'
+import { abi as IVexchangeV2PairABI } from '../constants/abis/IVexchangeV2Pair.json'
+import { find } from 'lodash'
 
-const BASE_FEE = new Percent(JSBI.BigInt(100), JSBI.BigInt(10000))
 const ONE_HUNDRED_PERCENT = new Percent(JSBI.BigInt(10000), JSBI.BigInt(10000))
-const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(BASE_FEE)
+
+export async function FetchSwapFee(pairAddress?: string, library?: any): Promise<Percent> {
+  const abi = find(IVexchangeV2PairABI, { name: 'swapFee' })
+
+  return new Promise(async (resolve, reject) => {
+    const account = library.thor.account(pairAddress)
+    const method = account.method(abi)
+
+    try {
+      const res = await method.call()
+      resolve(basisPointsToPercent(res.decoded[0]))
+    } catch (error) {
+      reject(error)
+    }
+  })
+}
+
 // computes price breakdown for the trade
 export function computeTradePriceBreakdown(
-  trade?: Trade
+  trade?: Trade,
+  baseFee?: Percent
 ): { priceImpactWithoutFee?: Percent; realizedLPFee?: TokenAmount } {
   // for each hop in our trade, take away the x*y=k price impact from 0.3% fees
   // e.g. for 3 tokens/2 hops: 1 - ((1 - .03) * (1-.03))
+  const INPUT_FRACTION_AFTER_FEE = ONE_HUNDRED_PERCENT.subtract(baseFee)
   const realizedLPFee = !trade
     ? undefined
     : ONE_HUNDRED_PERCENT.subtract(

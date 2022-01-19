@@ -1,5 +1,5 @@
 import { JSBI, TokenAmount, WVET } from 'vexchange-sdk'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
@@ -25,14 +25,15 @@ import { Field } from '../../state/swap/actions'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useDefaultsFromURL, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
 import { CursorPointer, TYPE } from '../../theme'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningServerity } from '../../utils/prices'
+import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, FetchSwapFee, warningServerity } from '../../utils/prices'
 import SwapModalHeader from '../../components/swap/SwapModalHeader'
+import { basisPointsToPercent } from '../../utils'
 
 export default function Swap({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURL(search)
   // text translation
   // const { t } = useTranslation()
-  const { chainId, account } = useWeb3React()
+  const { chainId, account, library } = useWeb3React()
   const theme = useContext(ThemeContext)
   const [isDark] = useDarkModeManager()
 
@@ -119,8 +120,24 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
 
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
+  const [swapFee, setSwapFee] = useState(basisPointsToPercent(30))
+  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(bestTrade, swapFee)
 
-  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(bestTrade)
+  useMemo(() => {
+    const getSwapFee = async () => {
+      try {
+        const pairAddress = bestTrade.route.pairs[0].liquidityToken.address
+        const swapFee = await FetchSwapFee(pairAddress, library)
+        setSwapFee(swapFee)
+      } catch (err) {
+        console.error('Failed to get swap fee', err)
+      }
+    }
+
+    if (bestTrade) {
+      getSwapFee()
+    }
+  }, [userHasSpecifiedInputOutput])
 
   // warnings on slippage
   const priceImpactSeverity = warningServerity(priceImpactWithoutFee)
@@ -145,6 +162,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         severity={priceImpactSeverity}
         setShowInverted={setShowInverted}
         onSwap={onSwap}
+        swapFee={swapFee}
         realizedLPFee={realizedLPFee}
         parsedAmounts={parsedAmounts}
         priceImpactWithoutFee={priceImpactWithoutFee}
@@ -313,6 +331,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           trade={bestTrade}
           rawSlippage={allowedSlippage}
           deadline={deadline}
+          swapFee={swapFee}
           showAdvanced={showAdvanced}
           setShowAdvanced={setShowAdvanced}
           priceImpactWithoutFee={priceImpactWithoutFee}

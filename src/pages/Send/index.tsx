@@ -1,5 +1,5 @@
 import { JSBI, TokenAmount, WVET } from 'vexchange-sdk'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
@@ -37,8 +37,9 @@ import { Field } from '../../state/swap/actions'
 import { useDefaultsFromURL, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
 import { useAllTokenBalancesTreatingWETHasETH } from '../../state/wallet/hooks'
 import { CursorPointer, TYPE } from '../../theme'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, warningServerity } from '../../utils/prices'
+import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, FetchSwapFee, warningServerity } from '../../utils/prices'
 import { useDarkModeManager } from '../../state/user/hooks'
+import { basisPointsToPercent } from '../../utils'
 
 export default function Send({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURL(search)
@@ -46,7 +47,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
 
   // text translation
   // const { t } = useTranslation()
-  const { chainId, account } = useWeb3React()
+  const { chainId, account, library } = useWeb3React()
   const theme = useContext(ThemeContext)
 
   // toggle wallet when disconnected
@@ -93,7 +94,23 @@ export default function Send({ location: { search } }: RouteComponentProps) {
 
   const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(bestTrade, allowedSlippage)
 
-  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(bestTrade)
+  const [swapFee, setSwapFee] = useState(basisPointsToPercent(30))
+  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(bestTrade, swapFee)
+  useMemo(() => {
+    const getSwapFee = async () => {
+      try {
+        const pairAddress = bestTrade.route.pairs[0].liquidityToken.address
+        const swapFee = await FetchSwapFee(pairAddress, library)
+        setSwapFee(swapFee)
+      } catch (err) {
+        console.error('Failed to get swap fee', err)
+      }
+    }
+
+    if (bestTrade) {
+      getSwapFee()
+    }
+  }, [userHasSpecifiedInputOutput])
 
   const { onSwitchTokens, onTokenSelection, onUserInput } = useSwapActionHandlers()
 
@@ -219,6 +236,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
           setShowInverted={setShowInverted}
           severity={severity}
           showInverted={showInverted}
+          swapFee={swapFee}
           slippageAdjustedAmounts={slippageAdjustedAmounts}
           priceImpactWithoutFee={priceImpactWithoutFee}
           parsedAmounts={parsedAmounts}
@@ -499,6 +517,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
       {bestTrade && (
         <AdvancedSwapDetailsDropdown
           trade={bestTrade}
+          swapFee={swapFee}
           rawSlippage={allowedSlippage}
           deadline={deadline}
           showAdvanced={showAdvanced}
