@@ -1,4 +1,4 @@
-import { Trade, TradeType } from 'vexchange-sdk'
+import { Trade, TradeType, Percent } from 'vexchange-sdk'
 import React, { useContext } from 'react'
 import { ChevronUp } from 'react-feather'
 import { Text } from 'rebass'
@@ -14,12 +14,13 @@ import SlippageTabs, { SlippageTabsProps } from '../SlippageTabs'
 import FormattedPriceImpact from './FormattedPriceImpact'
 
 export interface AdvancedSwapDetailsProps extends SlippageTabsProps {
-  trade: Trade
+  trade: Trade,
+  swapFee: Percent,
   onDismiss: () => void
 }
 
-export function AdvancedSwapDetails({ trade, onDismiss, ...slippageTabProps }: AdvancedSwapDetailsProps) {
-  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade)
+export function AdvancedSwapDetails({ trade, swapFee, onDismiss, ...slippageTabProps }: AdvancedSwapDetailsProps) {
+  const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(trade, swapFee)
   const theme = useContext(ThemeContext)
   const isExactIn = trade.tradeType === TradeType.EXACT_INPUT
   const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, slippageTabProps.rawSlippage)
@@ -71,7 +72,11 @@ export function AdvancedSwapDetails({ trade, onDismiss, ...slippageTabProps }: A
             <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
               Liquidity Provider Fee
             </TYPE.black>
-            <QuestionHelper text="A portion of each trade (0.30%) goes to liquidity providers as a protocol incentive." />
+            <QuestionHelper
+              text={`A portion of each trade (${swapFee.toSignificant(
+                4
+              )}%) goes to liquidity providers as a protocol incentive.`}
+            />
           </RowFixed>
           <TYPE.black fontSize={14} color={theme.text1}>
             {realizedLPFee ? `${realizedLPFee.toSignificant(4)} ${trade.inputAmount.token.symbol}` : '-'}
