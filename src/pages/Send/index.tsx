@@ -110,6 +110,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
     if (bestTrade) {
       getSwapFee()
     }
+  // eslint-disable-next-line
   }, [userHasSpecifiedInputOutput])
 
   const { onSwitchTokens, onTokenSelection, onUserInput } = useSwapActionHandlers()

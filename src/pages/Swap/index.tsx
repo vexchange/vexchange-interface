@@ -137,6 +137,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     if (bestTrade) {
       getSwapFee()
     }
+  // eslint-disable-next-line
   }, [userHasSpecifiedInputOutput])
 
   // warnings on slippage
