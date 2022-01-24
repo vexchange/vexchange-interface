@@ -120,7 +120,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
 
   // errors
   const [showInverted, setShowInverted] = useState<boolean>(false)
-  const [swapFee, setSwapFee] = useState(basisPointsToPercent(30))
+  const [swapFee, setSwapFee] = useState(basisPointsToPercent(100))
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(bestTrade, swapFee)
 
   useMemo(() => {

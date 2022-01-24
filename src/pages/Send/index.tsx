@@ -94,7 +94,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
 
   const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(bestTrade, allowedSlippage)
 
-  const [swapFee, setSwapFee] = useState(basisPointsToPercent(30))
+  const [swapFee, setSwapFee] = useState(basisPointsToPercent(100))
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(bestTrade, swapFee)
   useMemo(() => {
     const getSwapFee = async () => {
