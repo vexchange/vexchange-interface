@@ -113,26 +113,6 @@ export default function AddressInputPanel({
           setError(null)
         })
     }
-    // otherwise try to look up the address of the input, treated as an ENS name
-    else {
-      if (debouncedInput !== '') {
-        library.thor
-          .account(debouncedInput)
-          .get()
-          .then(() => {
-            if (stale) return
-            // if the debounced input name resolves to an address
-            setData({ address: debouncedInput, name: debouncedInput })
-            setError(null)
-          })
-          .catch(() => {
-            if (stale) return
-            setError(true)
-          })
-      } else if (debouncedInput === '') {
-        setError(true)
-      }
-    }
 
     return () => {
       stale = true
