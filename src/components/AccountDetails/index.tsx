@@ -296,7 +296,7 @@ export default function AccountDetails({
               <AccountGroupingRow>
                 <AccountControl>
                   <StyledLink href={getExploreLink(chainId, account, 'address')}>
-                    View on Explore ↗
+                    View on VeChain Stats ↗
                   </StyledLink>
                 </AccountControl>
               </AccountGroupingRow>
