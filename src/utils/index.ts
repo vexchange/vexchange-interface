@@ -28,7 +28,7 @@ export enum ERROR_CODES {
 }
 
 const EXPLORE_PREFIXES: { [chainId in ChainId]: string } = {
-  1: 'explore.',
+  1: 'vechainstats',
   3: 'explore-testnet.'
 }
 
@@ -47,11 +47,11 @@ export const userAccount = {
 }
 
 export function getExploreLink(chainId: ChainId, data: string, type: 'transaction' | 'address'): string {
-  const prefix = `https://${EXPLORE_PREFIXES[chainId] || EXPLORE_PREFIXES[1]}vechain.org`
+  const prefix = `https://${EXPLORE_PREFIXES[chainId] || EXPLORE_PREFIXES[1]}.com`
 
   switch (type) {
     case 'transaction': {
-      return `${prefix}/transactions/${data}`
+      return `${prefix}/transaction/${data}`
     }
     case 'address':
     default: {

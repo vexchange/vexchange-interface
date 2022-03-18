@@ -174,7 +174,7 @@ export default function WarningCard({ onDismiss, urlAddedTokens, currency }: War
         <TokenLogo address={currency} />
         <div style={{ fontWeight: 500 }}>{inputName && inputSymbol ? inputName + ' (' + inputSymbol + ')' : ''}</div>
         <Link style={{ fontWeight: 400 }} href={getExploreLink(chainId, currency, 'address')}>
-          (View on Explore)
+          (View on VeChain Stats)
         </Link>
       </Row>
       <Row style={{ fontSize: '12px', fontStyle: 'italic' }}>

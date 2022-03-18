@@ -108,7 +108,7 @@ function ConfirmationModal({
                 <>
                   <Link href={getExploreLink(chainId, hash, 'transaction')}>
                     <Text fontWeight={500} fontSize={14} color={theme.primary1}>
-                      View on Explore
+                      View on VeChain Stats
                     </Text>
                   </Link>
                   <ButtonPrimary onClick={dismissAndReturn} style={{ margin: '20px 0 0 0' }}>

@@ -62,7 +62,7 @@ export default function TxnPopup({
         <TYPE.body fontWeight={500}>
           {summary ? summary : 'Hash: ' + hash.slice(0, 8) + '...' + hash.slice(58, 65)}
         </TYPE.body>
-        <Link href={getExploreLink(chainId, hash, 'transaction')}>View on Explore</Link>
+        <Link href={getExploreLink(chainId, hash, 'transaction')}>View on VeChain Stats</Link>
       </AutoColumn>
       <Fader count={count} />
     </AutoRow>
