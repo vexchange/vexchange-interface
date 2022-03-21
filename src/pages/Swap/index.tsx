@@ -25,7 +25,12 @@ import { Field } from '../../state/swap/actions'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useDefaultsFromURL, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
 import { CursorPointer, TYPE } from '../../theme'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, FetchSwapFee, warningServerity } from '../../utils/prices'
+import {
+  computeSlippageAdjustedAmounts,
+  computeTradePriceBreakdown,
+  FetchSwapFee,
+  warningServerity
+} from '../../utils/prices'
 import SwapModalHeader from '../../components/swap/SwapModalHeader'
 import { basisPointsToPercent } from '../../utils'
 
@@ -137,7 +142,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     if (bestTrade) {
       getSwapFee()
     }
-  // eslint-disable-next-line
   }, [userHasSpecifiedInputOutput])
 
   // warnings on slippage

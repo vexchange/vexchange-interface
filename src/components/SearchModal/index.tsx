@@ -4,7 +4,7 @@ import styled, { ThemeContext } from 'styled-components'
 import { JSBI, Token, WVET } from 'vexchange-sdk'
 import { isMobile } from 'react-device-detect'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { COMMON_BASES } from '../../constants'
+import { COMMON_BASES, DUMMY_VET } from '../../constants'
 import { useAllTokenBalancesTreatingWETHasETH } from '../../state/wallet/hooks'
 import { Link as StyledLink } from '../../theme/components'
 
@@ -257,8 +257,8 @@ function SearchModal({
         // sort ETH first
         const a = allTokens[tokenAddressA]
         const b = allTokens[tokenAddressB]
-        if (a.equals(WVET[chainId])) return -1
-        if (b.equals(WVET[chainId])) return 1
+        if (a.equals(DUMMY_VET[chainId])) return -1
+        if (b.equals(DUMMY_VET[chainId])) return 1
 
         // sort by balances
         const balanceA = allBalances[account]?.[tokenAddressA]

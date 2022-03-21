@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { isAddress } from '../../utils'
 import { useWeb3React } from '../../hooks'
 import { WVET } from 'vexchange-sdk'
+import { DUMMY_VET } from '../../constants'
 
 import { ReactComponent as VeChainLogo } from '../../assets/images/vet-logo.svg'
 
@@ -53,8 +54,8 @@ export default function TokenLogo({
   }
 
   let path = ''
-  // hard code to show VET instead of WVET in UI
-  if (address === WVET[chainId].address) {
+  // TODO: Either add WVET to token registry or select different icon for WVET
+  if (address === WVET[chainId].address || address === DUMMY_VET[chainId].address) {
     return <StyledEthereumLogo size={size} {...rest} />
   } else if (!error && !BAD_IMAGES[address] && isAddress(address)) {
     path = TOKEN_ICON_API(address.toLowerCase())
