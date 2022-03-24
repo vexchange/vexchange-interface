@@ -37,7 +37,12 @@ import { Field } from '../../state/swap/actions'
 import { useDefaultsFromURL, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
 import { useAllTokenBalancesTreatingWETHasETH } from '../../state/wallet/hooks'
 import { CursorPointer, TYPE } from '../../theme'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, FetchSwapFee, warningServerity } from '../../utils/prices'
+import {
+  computeSlippageAdjustedAmounts,
+  computeTradePriceBreakdown,
+  FetchSwapFee,
+  warningServerity
+} from '../../utils/prices'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { basisPointsToPercent } from '../../utils'
 
@@ -110,7 +115,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
     if (bestTrade) {
       getSwapFee()
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [userHasSpecifiedInputOutput])
 
   const { onSwitchTokens, onTokenSelection, onUserInput } = useSwapActionHandlers()
@@ -148,6 +153,8 @@ export default function Send({ location: { search } }: RouteComponentProps) {
   }
 
   const swapCallback = useSwapCallback(bestTrade, allowedSlippage, deadline, recipient)
+
+  console.log('swap callback', useSwapCallback)
 
   function onSwap() {
     setAttemptingTxn(true)

@@ -1,5 +1,5 @@
 import { parseUnits } from '@ethersproject/units'
-import { JSBI, Token, TokenAmount, Trade, ChainId, WVET } from 'vexchange-sdk'
+import { JSBI, Token, TokenAmount, Trade, ChainId } from 'vexchange-sdk'
 import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useWeb3React } from '../../hooks'
@@ -8,7 +8,6 @@ import { useTradeExactIn, useTradeExactOut } from '../../hooks/Trades'
 import { AppDispatch, AppState } from '../index'
 import { useTokenBalancesTreatWETHAsETH, useTokenBalances } from '../wallet/hooks'
 import { Field, selectToken, setDefaultsFromURL, switchTokens, typeInput } from './actions'
-import { DUMMY_VET } from '../../constants'
 
 export function useSwapState(): AppState['swap'] {
   return useSelector<AppState, AppState['swap']>(state => state.swap)
@@ -72,7 +71,7 @@ export function useDerivedSwapInfo(): {
   bestTrade: Trade | null
   error?: string
 } {
-  const { account, chainId } = useWeb3React()
+  const { account } = useWeb3React()
   const vthoBalance = useTokenBalances(account, [VTHO]) ?? {}
 
   const {
@@ -89,23 +88,10 @@ export function useDerivedSwapInfo(): {
 
   const isExactIn: boolean = independentField === Field.INPUT
 
-  //Handle VET as WVET
-  let newTokenOut
-  let newTokenIn
-  if (tokenOut?.address === DUMMY_VET[chainId].address) {
-    newTokenOut = WVET[chainId]
-  } else {
-    newTokenOut = tokenOut
-  }
-  if (tokenIn?.address === DUMMY_VET[chainId].address) {
-    newTokenIn = WVET[chainId]
-  } else {
-    newTokenIn = tokenIn
-  }
-  const amount = tryParseAmount(typedValue, isExactIn ? newTokenIn : newTokenOut)
+  const amount = tryParseAmount(typedValue, isExactIn ? tokenIn : tokenOut)
 
-  const bestTradeExactIn = useTradeExactIn(isExactIn ? amount : null, newTokenOut)
-  const bestTradeExactOut = useTradeExactOut(newTokenIn, !isExactIn ? amount : null)
+  const bestTradeExactIn = useTradeExactIn(isExactIn ? amount : null, tokenOut)
+  const bestTradeExactOut = useTradeExactOut(tokenIn, !isExactIn ? amount : null)
 
   const bestTrade = isExactIn ? bestTradeExactIn : bestTradeExactOut
 

@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Token, Trade, TradeType, WVET } from 'vexchange-sdk'
+import { Token, Trade, TradeType } from 'vexchange-sdk'
 import { useMemo } from 'react'
 import { find } from 'lodash'
 import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, ROUTER_ADDRESS } from '../constants'
@@ -63,7 +63,7 @@ export function useSwapCallback(
 
     // no allowance
     if (
-      !trade.inputAmount.token.equals(WVET[chainId]) &&
+      !trade.inputAmount.token.equals(DUMMY_VET[chainId]) &&
       (!inputAllowance || slippageAdjustedAmounts[Field.INPUT].greaterThan(inputAllowance))
     ) {
       return null

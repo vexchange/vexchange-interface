@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { WVET, Token, TokenAmount, Trade, ChainId, Pair } from 'vexchange-sdk'
 import { useWeb3React } from './index'
 import { usePair } from '../data/Reserves'
+import { DUMMY_VET } from '../constants'
 
 const VTHO = new Token(ChainId.MAINNET, '0x0000000000000000000000000000456E65726779', 18, 'VTHO', 'VeThor')
 
@@ -43,16 +44,35 @@ export function useTradeExactIn(amountIn?: TokenAmount, tokenOut?: Token): Trade
   const inputToken = amountIn?.token
   const outputToken = tokenOut
 
+  const tokenOutVet = tokenOut?.equals(DUMMY_VET[1])
+  const tokenInVet = inputToken?.equals(DUMMY_VET[1])
+
   const allowedPairs = useAllCommonPairs(inputToken, outputToken)
 
   return useMemo(() => {
     if (amountIn && tokenOut && allowedPairs.length > 0) {
-      return (
-        Trade.bestTradeExactIn(allowedPairs, amountIn, tokenOut, {
-          maxHops: 1,
-          maxNumResults: 1
-        })[0] ?? null
-      )
+      if (tokenInVet && !tokenOutVet) {
+        amountIn.token = WVET[1]
+        const trade =
+          Trade.bestTradeExactIn(allowedPairs, amountIn, tokenOut, {
+            maxHops: 1,
+            maxNumResults: 1
+          })[0] ?? null
+        if (trade) {
+          trade.inputAmount.token = DUMMY_VET[1]
+          console.log('got trade', trade)
+          return trade
+        } else {
+          return null
+        }
+      } else {
+        return (
+          Trade.bestTradeExactIn(allowedPairs, amountIn, tokenOut, {
+            maxHops: 1,
+            maxNumResults: 1
+          })[0] ?? null
+        )
+      }
     }
     return null
   }, [allowedPairs, amountIn, tokenOut])
@@ -66,6 +86,8 @@ export function useTradeExactOut(tokenIn?: Token, amountOut?: TokenAmount): Trad
   const outputToken = amountOut?.token
 
   const allowedPairs = useAllCommonPairs(inputToken, outputToken)
+  // const tokenOutVet = outputToken?.equals(DUMMY_VET[1])
+  // const tokenInVet = inputToken?.equals(DUMMY_VET[1])
 
   return useMemo(() => {
     if (tokenIn && amountOut && allowedPairs.length > 0) {
