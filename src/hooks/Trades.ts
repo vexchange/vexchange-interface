@@ -60,7 +60,18 @@ export function useTradeExactIn(amountIn?: TokenAmount, tokenOut?: Token): Trade
           })[0] ?? null
         if (trade) {
           trade.inputAmount.token = DUMMY_VET[1]
-          console.log('got trade', trade)
+          return trade
+        } else {
+          return null
+        }
+      } else if (!tokenInVet && tokenOutVet) {
+        tokenOut = WVET[1]
+        const trade =
+          Trade.bestTradeExactIn(allowedPairs, amountIn, tokenOut, {
+            maxHops: 1,
+            maxNumResults: 1
+          })[0] ?? null
+        if (trade) {
           return trade
         } else {
           return null
