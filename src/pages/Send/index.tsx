@@ -154,8 +154,6 @@ export default function Send({ location: { search } }: RouteComponentProps) {
 
   const swapCallback = useSwapCallback(bestTrade, allowedSlippage, deadline, recipient)
 
-  console.log('swap callback', useSwapCallback)
-
   function onSwap() {
     setAttemptingTxn(true)
     swapCallback().then(hash => {

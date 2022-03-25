@@ -44,11 +44,11 @@ export function useTradeExactIn(amountIn?: TokenAmount, tokenOut?: Token): Trade
   const inputToken = amountIn?.token
   const outputToken = tokenOut
 
-  const tokenOutVet = tokenOut?.equals(DUMMY_VET[1])
-  const tokenInVet = inputToken?.equals(DUMMY_VET[1])
+  const tokenOutVet = tokenOut?.equals(DUMMY_VET[outputToken.chainId])
+  const tokenInVet = inputToken?.equals(DUMMY_VET[inputToken.chainId])
 
-  const tokenOutWvet = tokenOut?.equals(WVET[1])
-  const tokenInWet = inputToken?.equals(WVET[1])
+  const tokenOutWvet = tokenOut?.equals(WVET[outputToken.chainId])
+  const tokenInWet = inputToken?.equals(WVET[inputToken.chainId])
 
   const allowedPairs = useAllCommonPairs(inputToken, outputToken)
 
@@ -62,20 +62,20 @@ export function useTradeExactIn(amountIn?: TokenAmount, tokenOut?: Token): Trade
             maxNumResults: 1
           })[0] ?? null
         if (trade) {
-          trade.inputAmount.token = DUMMY_VET[1]
+          trade.inputAmount.token = DUMMY_VET[inputToken.chainId]
           return trade
         } else {
           return null
         }
       } else if (!tokenInVet && !tokenInWet && tokenOutVet) {
-        tokenOut = WVET[1]
+        tokenOut = WVET[outputToken.chainId]
         const trade =
           Trade.bestTradeExactIn(allowedPairs, amountIn, tokenOut, {
             maxHops: 1,
             maxNumResults: 1
           })[0] ?? null
         if (trade) {
-          trade.outputAmount.token = DUMMY_VET[1]
+          trade.outputAmount.token = DUMMY_VET[outputToken.chainId]
           return trade
         } else {
           return null

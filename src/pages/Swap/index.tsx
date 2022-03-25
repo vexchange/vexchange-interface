@@ -1,4 +1,4 @@
-import { JSBI, TokenAmount } from 'vexchange-sdk'
+import { JSBI, TokenAmount, WVET } from 'vexchange-sdk'
 import React, { useContext, useMemo, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -72,9 +72,15 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(bestTrade, allowedSlippage)
 
+  //we don't need to approve for WVET -> VET unwrapping
+  const isUnwrap = tokens[Field.INPUT]?.equals(WVET[chainId]) && tokens[Field.OUTPUT]?.equals(DUMMY_VET[chainId])
+  const isWrap = tokens[Field.INPUT]?.equals(DUMMY_VET[chainId]) && tokens[Field.OUTPUT]?.equals(WVET[chainId])
+
+  const decimals = isUnwrap || isWrap ? 100 : 6
+
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: parsedAmounts[dependentField] ? parsedAmounts[dependentField].toSignificant(6) : ''
+    [dependentField]: parsedAmounts[dependentField] ? parsedAmounts[dependentField].toSignificant(decimals) : ''
   }
 
   const { onSwitchTokens, onTokenSelection, onUserInput } = useSwapActionHandlers()
@@ -250,7 +256,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           />
         </>
 
-        {!noRoute && tokens[Field.OUTPUT] && tokens[Field.INPUT] && (
+        {!noRoute && tokens[Field.OUTPUT] && tokens[Field.INPUT] && !isWrap && !isUnwrap && (
           <Card padding={'0.75rem 0.75rem 0.75rem 1rem'} borderRadius={'20px'}>
             <AutoColumn gap="4px">
               <RowBetween align="center">
@@ -280,7 +286,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
                 </Text>
               </RowBetween>
 
-              {bestTrade && priceImpactSeverity > 1 && (
+              {bestTrade && priceImpactSeverity > 1 && !isWrap && !isUnwrap && (
                 <RowBetween>
                   <TYPE.main style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }} fontSize={14}>
                     Price Impact
@@ -308,7 +314,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           <GreyCard style={{ textAlign: 'center' }}>
             <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
           </GreyCard>
-        ) : approval === Approval.NOT_APPROVED || approval === Approval.PENDING ? (
+        ) : (approval === Approval.NOT_APPROVED || approval === Approval.PENDING) && !isUnwrap ? (
           <ButtonLight onClick={approveCallback} disabled={approval === Approval.PENDING}>
             {approval === Approval.PENDING ? (
               <Dots>Unlocking {tokens[Field.INPUT]?.symbol}</Dots>
@@ -316,6 +322,12 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
               'Unlock ' + tokens[Field.INPUT]?.symbol
             )}
           </ButtonLight>
+        ) : isWrap || isUnwrap ? (
+          <ButtonError onClick={onSwap} id="swap-button">
+            <Text fontSize={20} fontWeight={500}>
+              {isWrap ? 'Wrap' : 'Unwrap'}
+            </Text>
+          </ButtonError>
         ) : (
           <ButtonError
             onClick={() => {
@@ -331,7 +343,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           </ButtonError>
         )}
       </BottomGrouping>
-      {bestTrade && (
+      {bestTrade && !isWrap && !isUnwrap && (
         <AdvancedSwapDetailsDropdown
           trade={bestTrade}
           rawSlippage={allowedSlippage}

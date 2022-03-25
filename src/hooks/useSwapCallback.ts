@@ -23,7 +23,6 @@ enum SwapType {
   UNWRAP_WVET
 }
 
-//TODO: Add additional swap types for wrapping/unwrapping VET
 function getSwapType(tokens: { [field in Field]?: Token }, isExactIn: boolean, chainId: number): SwapType {
   if (isExactIn) {
     if (tokens[Field.INPUT]?.equals(DUMMY_VET[chainId])) {
@@ -74,10 +73,14 @@ export function useSwapCallback(
     // will always be defined
     const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
 
+    const isUnwrap =
+      trade.inputAmount.token.equals(WVET[chainId]) && trade.outputAmount.token.equals(DUMMY_VET[chainId])
+
     // no allowance
     if (
       !trade.inputAmount.token.equals(DUMMY_VET[chainId]) &&
-      (!inputAllowance || slippageAdjustedAmounts[Field.INPUT].greaterThan(inputAllowance))
+      (!inputAllowance || slippageAdjustedAmounts[Field.INPUT].greaterThan(inputAllowance)) &&
+      !isUnwrap
     ) {
       return null
     }
@@ -175,6 +178,13 @@ export function useSwapCallback(
 
       const clause = method.asClause(...args)
 
+      let comment = `Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`
+      if (swapType === SwapType.UNWRAP_WVET) {
+        comment = 'Unwrap WVET into VET'
+      } else if (swapType === SwapType.WRAP_VET) {
+        comment = 'Wrap VET into WVET'
+      }
+
       return library.vendor
         .sign('tx', [
           {
@@ -182,7 +192,7 @@ export function useSwapCallback(
             value: value ? value.toString() : 0
           }
         ])
-        .comment(`Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`)
+        .comment(comment)
         .request()
         .then(response => {
           if (recipient === account) {
