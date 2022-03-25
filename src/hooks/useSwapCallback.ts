@@ -42,9 +42,17 @@ function getSwapType(tokens: { [field in Field]?: Token }, isExactIn: boolean, c
     }
   } else {
     if (tokens[Field.INPUT]?.equals(DUMMY_VET[chainId])) {
-      return SwapType.ETH_FOR_EXACT_TOKENS
+      if (tokens[Field.OUTPUT]?.equals(WVET[chainId])) {
+        return SwapType.WRAP_VET
+      } else {
+        return SwapType.ETH_FOR_EXACT_TOKENS
+      }
     } else if (tokens[Field.OUTPUT]?.equals(DUMMY_VET[chainId])) {
-      return SwapType.TOKENS_FOR_EXACT_ETH
+      if (tokens[Field.INPUT]?.equals(WVET[chainId])) {
+        return SwapType.UNWRAP_WVET
+      } else {
+        return SwapType.TOKENS_FOR_EXACT_ETH
+      }
     } else {
       return SwapType.TOKENS_FOR_EXACT_TOKENS
     }
@@ -63,8 +71,6 @@ export function useSwapCallback(
   const inputAllowance = useTokenAllowance(trade?.inputAmount?.token, account, ROUTER_ADDRESS)
   const addTransaction = useTransactionAdder()
   const recipient = to ? isAddress(to) : account
-
-  console.log('all', inputAllowance)
 
   return useMemo(() => {
     if (!trade) return null
@@ -165,7 +171,6 @@ export function useSwapCallback(
           value = BigNumber.from(slippageAdjustedAmounts[Field.INPUT].raw.toString())
           break
         case SwapType.UNWRAP_WVET:
-          debugger
           args = [slippageAdjustedAmounts[Field.INPUT].raw.toString()]
           abi = find(WVETABI, { name: 'withdraw' })
           value = null
