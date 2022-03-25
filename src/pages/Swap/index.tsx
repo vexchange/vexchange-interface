@@ -1,4 +1,4 @@
-import { JSBI, TokenAmount, WVET } from 'vexchange-sdk'
+import { JSBI, TokenAmount } from 'vexchange-sdk'
 import React, { useContext, useMemo, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -16,7 +16,7 @@ import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetai
 import FormattedPriceImpact from '../../components/swap/FormattedPriceImpact'
 import { ArrowWrapper, BottomGrouping, Dots, StyledBalanceMaxMini, Wrapper } from '../../components/swap/styleds'
 import SwapModalFooter from '../../components/swap/SwapModalFooter'
-import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
+import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
 import { useWeb3React } from '../../hooks'
 import { useApproveCallbackFromTrade, Approval } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
@@ -82,12 +82,12 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   const maxAmountInput: TokenAmount =
     !!tokenBalances[Field.INPUT] &&
     !!tokens[Field.INPUT] &&
-    !!WVET[chainId] &&
+    !!DUMMY_VET[chainId] &&
     tokenBalances[Field.INPUT].greaterThan(
-      new TokenAmount(tokens[Field.INPUT], tokens[Field.INPUT].equals(WVET[chainId]) ? MIN_ETH : '0')
+      new TokenAmount(tokens[Field.INPUT], tokens[Field.INPUT].equals(DUMMY_VET[chainId]) ? MIN_ETH : '0')
     )
-      ? tokens[Field.INPUT].equals(WVET[chainId])
-        ? tokenBalances[Field.INPUT].subtract(new TokenAmount(WVET[chainId], MIN_ETH))
+      ? tokens[Field.INPUT].equals(DUMMY_VET[chainId])
+        ? tokenBalances[Field.INPUT].subtract(new TokenAmount(DUMMY_VET[chainId], MIN_ETH))
         : tokenBalances[Field.INPUT]
       : undefined
   const atMaxAmountInput: boolean =
