@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { WVET, Token, TokenAmount, Trade, ChainId, Pair } from 'vexchange-sdk'
+import { WVET, Token, TokenAmount, Trade, ChainId, Pair, Route, TradeType } from 'vexchange-sdk'
 import { useWeb3React } from './index'
 import { usePair } from '../data/Reserves'
 import { DUMMY_VET } from '../constants'
@@ -47,11 +47,14 @@ export function useTradeExactIn(amountIn?: TokenAmount, tokenOut?: Token): Trade
   const tokenOutVet = tokenOut?.equals(DUMMY_VET[1])
   const tokenInVet = inputToken?.equals(DUMMY_VET[1])
 
+  const tokenOutWvet = tokenOut?.equals(WVET[1])
+  const tokenInWet = inputToken?.equals(WVET[1])
+
   const allowedPairs = useAllCommonPairs(inputToken, outputToken)
 
   return useMemo(() => {
     if (amountIn && tokenOut && allowedPairs.length > 0) {
-      if (tokenInVet && !tokenOutVet) {
+      if (tokenInVet && !tokenOutVet && !tokenOutWvet) {
         amountIn.token = WVET[1]
         const trade =
           Trade.bestTradeExactIn(allowedPairs, amountIn, tokenOut, {
@@ -64,7 +67,7 @@ export function useTradeExactIn(amountIn?: TokenAmount, tokenOut?: Token): Trade
         } else {
           return null
         }
-      } else if (!tokenInVet && tokenOutVet) {
+      } else if (!tokenInVet && !tokenInWet && tokenOutVet) {
         tokenOut = WVET[1]
         const trade =
           Trade.bestTradeExactIn(allowedPairs, amountIn, tokenOut, {
@@ -72,10 +75,17 @@ export function useTradeExactIn(amountIn?: TokenAmount, tokenOut?: Token): Trade
             maxNumResults: 1
           })[0] ?? null
         if (trade) {
+          trade.outputAmount.token = DUMMY_VET[1]
           return trade
         } else {
           return null
         }
+      } else if ((tokenInVet && tokenOutWvet) || (tokenInWet && tokenOutVet)) {
+        const amountOut = new TokenAmount(tokenOut, amountIn.raw)
+        const route = new Route([new Pair(amountIn, amountOut)], inputToken)
+        const trade = new Trade(route, amountIn, TradeType.EXACT_INPUT)
+        trade.outputAmount = amountOut
+        return trade
       } else {
         return (
           Trade.bestTradeExactIn(allowedPairs, amountIn, tokenOut, {

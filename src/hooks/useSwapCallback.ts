@@ -1,9 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Token, Trade, TradeType } from 'vexchange-sdk'
+import { Token, Trade, TradeType, WVET } from 'vexchange-sdk'
 import { useMemo } from 'react'
 import { find } from 'lodash'
 import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, ROUTER_ADDRESS } from '../constants'
 import { abi as IVexchangeV2Router02ABI } from '../constants/abis/IVexchangeV2Router02.json'
+import { abi as WVETABI } from '../constants/abis/WVET.json'
 import { useTokenAllowance } from '../data/Allowances'
 import { Field } from '../state/swap/actions'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -17,16 +18,26 @@ enum SwapType {
   EXACT_ETH_FOR_TOKENS,
   TOKENS_FOR_EXACT_TOKENS,
   TOKENS_FOR_EXACT_ETH,
-  ETH_FOR_EXACT_TOKENS
+  ETH_FOR_EXACT_TOKENS,
+  WRAP_VET,
+  UNWRAP_WVET
 }
 
 //TODO: Add additional swap types for wrapping/unwrapping VET
 function getSwapType(tokens: { [field in Field]?: Token }, isExactIn: boolean, chainId: number): SwapType {
   if (isExactIn) {
     if (tokens[Field.INPUT]?.equals(DUMMY_VET[chainId])) {
-      return SwapType.EXACT_ETH_FOR_TOKENS
+      if (tokens[Field.OUTPUT]?.equals(WVET[chainId])) {
+        return SwapType.WRAP_VET
+      } else {
+        return SwapType.EXACT_ETH_FOR_TOKENS
+      }
     } else if (tokens[Field.OUTPUT]?.equals(DUMMY_VET[chainId])) {
-      return SwapType.EXACT_TOKENS_FOR_ETH
+      if (tokens[Field.INPUT]?.equals(WVET[chainId])) {
+        return SwapType.UNWRAP_WVET
+      } else {
+        return SwapType.EXACT_TOKENS_FOR_ETH
+      }
     } else {
       return SwapType.EXACT_TOKENS_FOR_TOKENS
     }
@@ -53,6 +64,8 @@ export function useSwapCallback(
   const inputAllowance = useTokenAllowance(trade?.inputAmount?.token, account, ROUTER_ADDRESS)
   const addTransaction = useTransactionAdder()
   const recipient = to ? isAddress(to) : account
+
+  console.log('all', inputAllowance)
 
   return useMemo(() => {
     if (!trade) return null
@@ -143,9 +156,22 @@ export function useSwapCallback(
           args = [slippageAdjustedAmounts[Field.OUTPUT].raw.toString(), path, recipient, deadlineFromNow]
           value = BigNumber.from(slippageAdjustedAmounts[Field.INPUT].raw.toString())
           break
+        case SwapType.WRAP_VET:
+          args = []
+          abi = find(WVETABI, { name: 'deposit' })
+          value = BigNumber.from(slippageAdjustedAmounts[Field.INPUT].raw.toString())
+          break
+        case SwapType.UNWRAP_WVET:
+          debugger
+          args = [slippageAdjustedAmounts[Field.INPUT].raw.toString()]
+          abi = find(WVETABI, { name: 'withdraw' })
+          value = null
+          break
       }
 
-      const method = library.thor.account(ROUTER_ADDRESS).method(abi)
+      const contractAddress =
+        swapType === SwapType.UNWRAP_WVET || swapType === SwapType.WRAP_VET ? WVET[chainId].address : ROUTER_ADDRESS
+      const method = library.thor.account(contractAddress).method(abi)
 
       const clause = method.asClause(...args)
 
