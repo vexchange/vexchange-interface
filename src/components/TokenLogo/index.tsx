@@ -6,6 +6,7 @@ import { WVET } from 'vexchange-sdk'
 import { DUMMY_VET } from '../../constants'
 
 import { ReactComponent as VeChainLogo } from '../../assets/images/vet-logo.svg'
+import WvetIcon from '../../assets/images/wvet-logo.png'
 
 const TOKEN_ICON_API = address =>
   `https://raw.githubusercontent.com/vechain/token-registry/master/tokens/main/${address}/token.png`
@@ -54,9 +55,10 @@ export default function TokenLogo({
   }
 
   let path = ''
-  // TODO: Either add WVET to token registry or select different icon for WVET
-  if (address === WVET[chainId].address || address === DUMMY_VET[chainId].address) {
+  if (address === DUMMY_VET[chainId].address) {
     return <StyledEthereumLogo size={size} {...rest} />
+  } else if (address === WVET[chainId].address) {
+    path = WvetIcon
   } else if (!error && !BAD_IMAGES[address] && isAddress(address)) {
     path = TOKEN_ICON_API(address.toLowerCase())
   } else {
