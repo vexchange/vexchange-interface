@@ -199,5 +199,5 @@ export function useSwapCallback(
           console.error(`Swap or gas estimate failed`, error)
         })
     }
-  }, [account, allowedSlippage, addTransaction, chainId, deadline, inputAllowance, library, trade, recipient])
+  }, [account, allowedSlippage, addTransaction, chainId, deadline, inputAllowance, library, trade, recipient, userFreeSwapInfo])
 }
