@@ -24,7 +24,7 @@ WebFont.load({
   }
 })
 
-function getLibrary() {
+export function getLibrary() {
   const connex = new Connex({ node: 'https://mainnet.veblocks.net' })
 
   return connex
