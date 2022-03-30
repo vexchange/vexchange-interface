@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Fetcher, Token, TokenAmount, Pair } from 'vexchange-sdk'
+import { Fetcher, Token, Pair } from 'vexchange-sdk'
 import useSWR from 'swr'
 import { getLibrary } from '../index'
 import { find } from 'lodash'
@@ -23,7 +23,7 @@ export function useContract(address) {
   }, [address, abi, library.thor])
 }
 
-function getPair(method, tokenA: Token, tokenB: Token): () => Promise<Pair | null> {
+function getPair(tokenA: Token, tokenB: Token): () => Promise<Pair | null> {
   const connex = getLibrary()
 
   return async (): Promise<Pair | null> => {
@@ -48,7 +48,7 @@ export function usePair(tokenA?: Token, tokenB?: Token): undefined | Pair | null
 
   const { data, mutate } = useSWR(
     shouldFetch ? [pairAddress, tokenA.chainId, SWRKeys.Reserves] : null,
-    getPair(method, tokenA, tokenB)
+    getPair(tokenA, tokenB)
   )
 
   useKeepSWRDataLiveAsBlocksArrive(mutate)
