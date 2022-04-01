@@ -111,6 +111,8 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
     throw Error(`Invalid 'address' parameter '${address}'.`)
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+  // @ts-ignore
   return new Contract(address, ABI, getProviderOrSigner(library, account))
 }
 
