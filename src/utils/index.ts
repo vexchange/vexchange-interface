@@ -2,7 +2,8 @@ import { Contract } from '@ethersproject/contracts'
 import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { find } from 'lodash'
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { JsonRpcSigner, Provider, Web3Provider } from '@ethersproject/providers'
+import { Signer } from '@ethersproject/abstract-signer'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { abi as IVexchangeV2PairABI } from '../constants/abis/IVexchangeV2Pair.json'
@@ -110,9 +111,7 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
     throw Error(`Invalid 'address' parameter '${address}'.`)
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-  // @ts-ignore
-  return new Contract(address, ABI, getProviderOrSigner(library, account))
+  return new Contract(address, ABI, getProviderOrSigner(library, account) as Provider | Signer)
 }
 
 // account is optional
