@@ -400,7 +400,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     if (inputIsVET || outputIsVET) {
       abi = find(IVexchangeV2Router02ABI, { name: 'addLiquidityVET' })
 
-      const outputIsETH = tokens[Field.OUTPUT].equals(WVET[chainId])
+      const outputIsETH = tokens[Field.OUTPUT].equals(DUMMY_VET[chainId])
 
       args = [
         tokens[outputIsETH ? Field.INPUT : Field.OUTPUT].address, // token
