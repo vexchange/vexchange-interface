@@ -154,7 +154,11 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
 
   // input state
-  const [state, dispatch] = useReducer(reducer, initializeAddState(token0, token1))
+  //initialize with VET instead of WVET
+  const initialToken0 = token0 === WVET[chainId].address ? DUMMY_VET[chainId].address : token0
+  const initialToken1 = token1 === WVET[chainId].address ? DUMMY_VET[chainId].address : token1
+
+  const [state, dispatch] = useReducer(reducer, initializeAddState(initialToken0, initialToken1))
   const { independentField, typedValue, ...fieldData } = state
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
@@ -182,8 +186,8 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
 
   // get user-pecific and token-specific lookup data
   const userBalances: { [field in Field]: TokenAmount } = {
-    [Field.INPUT]: useTokenBalanceTreatingWETHasETH(account, tokensAdjusted[Field.INPUT]),
-    [Field.OUTPUT]: useTokenBalanceTreatingWETHasETH(account, tokensAdjusted[Field.OUTPUT])
+    [Field.INPUT]: useTokenBalanceTreatingWETHasETH(account, tokens[Field.INPUT]),
+    [Field.OUTPUT]: useTokenBalanceTreatingWETHasETH(account, tokens[Field.OUTPUT])
   }
 
   // track non relational amounts if first person to add liquidity
