@@ -17,7 +17,7 @@ import Row, { RowBetween, RowFixed } from '../../components/Row'
 
 import Slider from '../../components/Slider'
 import TokenLogo from '../../components/TokenLogo'
-import { ROUTER_ADDRESS } from '../../constants'
+import { DUMMY_VET, ROUTER_ADDRESS } from '../../constants'
 import { usePair } from '../../data/Reserves'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useWeb3React } from '../../hooks'
@@ -121,6 +121,14 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
   const tokens: { [field in Field]?: Token } = {
     [Field.TOKEN0]: inputToken,
     [Field.TOKEN1]: outputToken
+  }
+
+  const token0IsWVET = tokens[Field.TOKEN0].equals(WVET[chainId])
+  const token1IsWVET = tokens[Field.TOKEN1].equals(WVET[chainId])
+
+  const tokensAdjusted: { [field in Field]?: Token } = {
+    [Field.TOKEN0]: token0IsWVET ? DUMMY_VET[chainId] : tokens[Field.TOKEN0],
+    [Field.TOKEN1]: token1IsWVET ? DUMMY_VET[chainId] : tokens[Field.TOKEN1]
   }
 
   const pair = usePair(inputToken, outputToken)
@@ -411,8 +419,8 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
       .sign('tx', [{ ...clause }])
       .comment(
         `Remove ${parsedAmounts[Field.TOKEN0]?.toSignificant(3)} + 
-        ${tokens[Field.TOKEN0]?.symbol} and 
-        ${parsedAmounts[Field.TOKEN1]?.toSignificant(3)} ${tokens[Field.TOKEN1]?.symbol}`
+        ${tokensAdjusted[Field.TOKEN0]?.symbol} and 
+        ${parsedAmounts[Field.TOKEN1]?.toSignificant(3)} ${tokensAdjusted[Field.TOKEN1]?.symbol}`
       )
       .request()
       .then(response => {
@@ -450,9 +458,9 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
             {!!parsedAmounts[Field.TOKEN0] && parsedAmounts[Field.TOKEN0].toSignificant(6)}
           </Text>
           <RowFixed gap="4px">
-            <TokenLogo address={tokens[Field.TOKEN0]?.address} size={'24px'} />
+            <TokenLogo address={tokensAdjusted[Field.TOKEN0]?.address} size={'24px'} />
             <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
-              {tokens[Field.TOKEN0]?.symbol || ''}
+              {tokensAdjusted[Field.TOKEN0]?.symbol || ''}
             </Text>
           </RowFixed>
         </RowBetween>
@@ -464,18 +472,18 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
             {!!parsedAmounts[Field.TOKEN1] && parsedAmounts[Field.TOKEN1].toSignificant(6)}
           </Text>
           <RowFixed gap="4px">
-            <TokenLogo address={tokens[Field.TOKEN1]?.address} size={'24px'} />
+            <TokenLogo address={tokensAdjusted[Field.TOKEN1]?.address} size={'24px'} />
             <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
-              {tokens[Field.TOKEN1]?.symbol || ''}
+              {tokensAdjusted[Field.TOKEN1]?.symbol || ''}
             </Text>
           </RowFixed>
         </RowBetween>
 
         <TYPE.italic fontSize={12} color={theme.text2} textAlign="left" padding={'12px 0 0 0'}>
           {`Output is estimated. You will receive at least ${parsedAmounts[Field.TOKEN0]?.toSignificant(6)} ${
-            tokens[Field.TOKEN0]?.symbol
+            tokensAdjusted[Field.TOKEN0]?.symbol
           } and at least ${parsedAmounts[Field.TOKEN1]?.toSignificant(6)} ${
-            tokens[Field.TOKEN1]?.symbol
+            tokensAdjusted[Field.TOKEN1]?.symbol
           } or the transaction will revert.`}
         </TYPE.italic>
       </AutoColumn>
@@ -505,9 +513,8 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
             Price
           </Text>
           <Text fontWeight={500} fontSize={16} color={theme.text1}>
-            {`1 ${tokens[Field.TOKEN0]?.symbol} = ${route?.midPrice && route.midPrice.adjusted.toSignificant(6)} ${
-              tokens[Field.TOKEN1]?.symbol
-            }`}
+            {`1 ${tokensAdjusted[Field.TOKEN0]?.symbol} = ${route?.midPrice &&
+              route.midPrice.adjusted.toSignificant(6)} ${tokensAdjusted[Field.TOKEN1]?.symbol}`}
           </Text>
         </RowBetween>
         <RowBetween mt="1rem">
@@ -614,9 +621,9 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
                     {formattedAmounts[Field.TOKEN0] ? formattedAmounts[Field.TOKEN0] : '-'}
                   </Text>
                   <RowFixed>
-                    <TokenLogo address={tokens[Field.TOKEN0]?.address} style={{ marginRight: '12px' }} />
+                    <TokenLogo address={tokensAdjusted[Field.TOKEN0]?.address} style={{ marginRight: '12px' }} />
                     <Text fontSize={24} fontWeight={500}>
-                      {tokens[Field.TOKEN0]?.symbol}
+                      {tokensAdjusted[Field.TOKEN0]?.symbol}
                     </Text>
                   </RowFixed>
                 </RowBetween>
@@ -625,9 +632,9 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
                     {formattedAmounts[Field.TOKEN1] ? formattedAmounts[Field.TOKEN1] : '-'}
                   </Text>
                   <RowFixed>
-                    <TokenLogo address={tokens[Field.TOKEN1]?.address} style={{ marginRight: '12px' }} />
+                    <TokenLogo address={tokensAdjusted[Field.TOKEN1]?.address} style={{ marginRight: '12px' }} />
                     <Text fontSize={24} fontWeight={500}>
-                      {tokens[Field.TOKEN1]?.symbol}
+                      {tokensAdjusted[Field.TOKEN1]?.symbol}
                     </Text>
                   </RowFixed>
                 </RowBetween>
@@ -659,7 +666,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
               onUserInput={onUserInput}
               onMax={onMax}
               showMaxButton={!atMaxAmount}
-              token={tokens[Field.TOKEN0]}
+              token={tokensAdjusted[Field.TOKEN0]}
               label={'Output'}
               disableTokenSelect
               id="remove-liquidity-token0"
@@ -673,7 +680,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
               onUserInput={onUserInput}
               onMax={onMax}
               showMaxButton={!atMaxAmount}
-              token={tokens[Field.TOKEN1]}
+              token={tokensAdjusted[Field.TOKEN1]}
               label={'Output'}
               disableTokenSelect
               id="remove-liquidity-token1"
@@ -684,11 +691,11 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
           <RowBetween>
             Price:
             <div>
-              1 {pair?.token0.symbol} ={' '}
+              1 {tokensAdjusted[Field.TOKEN0]?.symbol} ={' '}
               {independentField === Field.TOKEN0 || independentField === Field.LIQUIDITY
                 ? route?.midPrice.toSignificant(6)
                 : route?.midPrice.invert().toSignificant(6)}{' '}
-              {pair?.token1.symbol}
+              {tokensAdjusted[Field.TOKEN1]?.symbol}
             </div>
           </RowBetween>
         </div>
