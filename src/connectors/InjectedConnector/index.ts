@@ -3,12 +3,10 @@ import { AbstractConnectorArguments, ConnectorUpdate } from '../types'
 import { AbstractConnector } from '../AbstractConnector'
 import warning from 'tiny-warning'
 import { userAccount } from '../../utils'
-import CertMessage = Connex.Vendor.CertMessage;
-
 const connex = new Connex({ node: 'https://mainnet.veblocks.net' })
 // const connex = new Connex({ node: 'https://testnet.veblocks.net', network: 'test' })
 
-const msg: CertMessage = {
+const msg: Connex.Vendor.CertMessage = {
   purpose: 'identification',
   payload: {
     type: 'text',
