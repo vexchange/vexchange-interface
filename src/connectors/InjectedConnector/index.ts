@@ -68,7 +68,7 @@ export class InjectedConnector extends AbstractConnector {
     // try to activate + get account via eth_requestAccounts
     let account
     try {
-      const annex = await sign.request()
+      const { annex } = await sign.request()
       account = annex.signer
       userAccount.set(account)
     } catch (error) {
@@ -94,7 +94,7 @@ export class InjectedConnector extends AbstractConnector {
     // try to activate + get account via eth_requestAccounts
     let account
     try {
-      const annex = await sign.request()
+      const { annex } = await sign.request()
       account = annex.signer
     } catch (error) {
       if ((error as any).code === 4001) {
