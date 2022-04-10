@@ -14,7 +14,14 @@ import QuestionHelper from '../../components/QuestionHelper'
 import { RowBetween, RowFixed } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
 import FormattedPriceImpact from '../../components/swap/FormattedPriceImpact'
-import { ArrowWrapper, BottomGrouping, Dots, FreeSwapRemainingText, StyledBalanceMaxMini, Wrapper } from '../../components/swap/styleds'
+import {
+  ArrowWrapper,
+  BottomGrouping,
+  Dots,
+  FreeSwapRemainingText,
+  StyledBalanceMaxMini,
+  Wrapper
+} from '../../components/swap/styleds'
 import SwapModalFooter from '../../components/swap/SwapModalFooter'
 import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
 import { useWeb3React } from '../../hooks'
@@ -35,9 +42,9 @@ import SwapModalHeader from '../../components/swap/SwapModalHeader'
 import { basisPointsToPercent, fetchUserFreeSwapInfo } from '../../utils'
 
 export interface IFreeSwapInfo {
-  address: string;
-  hasNFT: boolean;
-  remainingFreeSwaps: number;
+  address: string
+  hasNFT: boolean
+  remainingFreeSwaps: number
 }
 
 export default function Swap({ location: { search } }: RouteComponentProps) {
@@ -176,7 +183,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     if (bestTrade) {
       getSwapFee()
     }
-  }, [userHasSpecifiedInputOutput])
+  }, [library, bestTrade])
 
   // warnings on slippage
   const priceImpactSeverity = warningServerity(priceImpactWithoutFee)
@@ -359,21 +366,21 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           </ButtonError>
         ) : (
           <>
-          <FreeSwapRemainingText>
-            You have <span>{ remainingSwaps }</span> more free swaps remaining today
-          </FreeSwapRemainingText>
-          <ButtonError
-            onClick={() => {
-              setShowConfirm(true)
-            }}
-            id="swap-button"
-            disabled={!isValid}
-            error={isValid && priceImpactSeverity > 2}
-          >
-            <Text fontSize={20} fontWeight={500}>
-              {error ?? `${remainingSwaps > 0 ? 'Free ' : ''}Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-            </Text>
-          </ButtonError>
+            <FreeSwapRemainingText>
+              You have <span>{remainingSwaps}</span> more free swaps remaining today
+            </FreeSwapRemainingText>
+            <ButtonError
+              onClick={() => {
+                setShowConfirm(true)
+              }}
+              id="swap-button"
+              disabled={!isValid}
+              error={isValid && priceImpactSeverity > 2}
+            >
+              <Text fontSize={20} fontWeight={500}>
+                {error ?? `${remainingSwaps > 0 ? 'Free ' : ''}Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+              </Text>
+            </ButtonError>
           </>
         )}
       </BottomGrouping>
