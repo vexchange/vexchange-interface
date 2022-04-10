@@ -3,11 +3,10 @@ import { AbstractConnectorArguments, ConnectorUpdate } from '../types'
 import { AbstractConnector } from '../AbstractConnector'
 import warning from 'tiny-warning'
 import { userAccount } from '../../utils'
-
 const connex = new Connex({ node: 'https://mainnet.veblocks.net' })
 // const connex = new Connex({ node: 'https://testnet.veblocks.net', network: 'test' })
 
-const msg = {
+const msg: Connex.Vendor.CertMessage = {
   purpose: 'identification',
   payload: {
     type: 'text',
@@ -15,8 +14,7 @@ const msg = {
   }
 }
 
-//@ts-ignore
-const sign = connex.vendor.sign('cert', msg)
+const sign: Connex.Vendor.CertSigningService = connex.vendor.sign('cert', msg)
 
 export class NoEthereumProviderError extends Error {
   public constructor() {
@@ -72,6 +70,7 @@ export class InjectedConnector extends AbstractConnector {
       account = annex.signer
       userAccount.set(account)
     } catch (error) {
+      console.log(error)
       if ((error as any).code === 4001) {
         throw new UserRejectedRequestError()
       }

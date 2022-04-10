@@ -11,6 +11,7 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { isAddress } from '../utils'
 import { useWeb3React } from './index'
+import { IFreeSwapInfo } from '../pages/Swap'
 
 enum SwapType {
   EXACT_TOKENS_FOR_TOKENS,
@@ -65,7 +66,8 @@ export function useSwapCallback(
   trade?: Trade, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips, optional
   deadline: number = DEFAULT_DEADLINE_FROM_NOW, // in seconds from now, optional
-  to?: string // recipient of output, optional
+  to?: string, // recipient of output, optional
+  userFreeSwapInfo?: IFreeSwapInfo
 ): null | (() => Promise<string>) {
   const { account, chainId, library } = useWeb3React()
   const inputAllowance = useTokenAllowance(trade?.inputAmount?.token, account, ROUTER_ADDRESS)
@@ -190,7 +192,7 @@ export function useSwapCallback(
         comment = 'Wrap VET into WVET'
       }
 
-      return library.vendor
+      const tx = library.vendor
         .sign('tx', [
           {
             ...clause,
@@ -198,6 +200,12 @@ export function useSwapCallback(
           }
         ])
         .comment(comment)
+
+      if (userFreeSwapInfo && userFreeSwapInfo.remainingFreeSwaps > 0) {
+        tx.delegate(process.env.REACT_APP_VIP191_API_URL)
+      }
+
+      return tx
         .request()
         .then(response => {
           if (recipient === account) {
@@ -234,5 +242,16 @@ export function useSwapCallback(
           console.error(`Swap or gas estimate failed`, error)
         })
     }
-  }, [account, allowedSlippage, addTransaction, chainId, deadline, inputAllowance, library, trade, recipient])
+  }, [
+    account,
+    allowedSlippage,
+    addTransaction,
+    chainId,
+    deadline,
+    inputAllowance,
+    library,
+    trade,
+    recipient,
+    userFreeSwapInfo
+  ])
 }
