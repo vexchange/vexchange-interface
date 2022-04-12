@@ -149,7 +149,8 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     if (account) {
       getUserFreeSwapInfo()
     }
-  }, [userHasSpecifiedInputOutput, account, defaultFreeSwapInfo])
+  // eslint-disable-next-line
+  }, [userHasSpecifiedInputOutput, account])
 
   useMemo(() => {
     const getSwapFee = async () => {
