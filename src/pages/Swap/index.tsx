@@ -149,6 +149,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     if (account) {
       getUserFreeSwapInfo()
     }
+  // eslint-disable-next-line
   }, [userHasSpecifiedInputOutput, account])
 
   useMemo(() => {
