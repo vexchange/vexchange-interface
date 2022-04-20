@@ -158,7 +158,8 @@ export function useSwapCallback(
       ])
       .comment(`Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`)
 
-      if (userFreeSwapInfo && userFreeSwapInfo.remainingFreeSwaps > 0) {
+      const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
+      if (isEligibleForFreeSwap) {
         tx.delegate(process.env.REACT_APP_VIP191_API_URL)
       }
 
