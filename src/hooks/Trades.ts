@@ -68,9 +68,8 @@ export function useTradeExactIn(amountIn?: TokenAmount, tokenOut?: Token): Trade
           return null
         }
       } else if (!tokenInVet && !tokenInWvet && tokenOutVet) {
-        tokenOut = WVET[outputToken.chainId]
         const trade =
-          Trade.bestTradeExactIn(allowedPairs, amountIn, tokenOut, {
+          Trade.bestTradeExactIn(allowedPairs, amountIn, WVET[outputToken.chainId], {
             maxHops: 1,
             maxNumResults: 1
           })[0] ?? null
@@ -96,7 +95,17 @@ export function useTradeExactIn(amountIn?: TokenAmount, tokenOut?: Token): Trade
       }
     }
     return null
-  }, [allowedPairs, amountIn, tokenOut])
+  }, [
+    allowedPairs,
+    amountIn,
+    tokenOut,
+    inputToken,
+    outputToken,
+    tokenInVet,
+    tokenInWvet,
+    tokenOutVet,
+    tokenOutWvet,
+  ])
 }
 
 /**
@@ -130,9 +139,8 @@ export function useTradeExactOut(tokenIn?: Token, amountOut?: TokenAmount): Trad
           return null
         }
       } else if (tokenInVet && !tokenOutWvet && !tokenOutVet) {
-        tokenIn = WVET[outputToken.chainId]
         const trade =
-          Trade.bestTradeExactOut(allowedPairs, tokenIn, amountOut, {
+          Trade.bestTradeExactOut(allowedPairs, WVET[outputToken.chainId], amountOut, {
             maxHops: 1,
             maxNumResults: 1
           })[0] ?? null
@@ -158,5 +166,15 @@ export function useTradeExactOut(tokenIn?: Token, amountOut?: TokenAmount): Trad
       }
     }
     return null
-  }, [allowedPairs, tokenIn, amountOut])
+  }, [
+    allowedPairs,
+    tokenIn,
+    amountOut,
+    inputToken,
+    outputToken,
+    tokenInVet,
+    tokenInWvet,
+    tokenOutVet,
+    tokenOutWvet,
+  ])
 }
