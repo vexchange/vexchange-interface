@@ -167,7 +167,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     if (account) {
       getUserFreeSwapInfo()
     }
-  }, [userHasSpecifiedInputOutput, account, defaultFreeSwapInfo])
+  })
 
   useMemo(() => {
     const getSwapFee = async () => {
