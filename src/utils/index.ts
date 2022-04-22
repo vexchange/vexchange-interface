@@ -2,7 +2,8 @@ import { Contract } from '@ethersproject/contracts'
 import { getAddress } from '@ethersproject/address'
 import { AddressZero } from '@ethersproject/constants'
 import { find } from 'lodash'
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { JsonRpcSigner, Provider, Web3Provider } from '@ethersproject/providers'
+import { Signer } from '@ethersproject/abstract-signer'
 import { BigNumber } from '@ethersproject/bignumber'
 
 import { abi as IVexchangeV2PairABI } from '../constants/abis/IVexchangeV2Pair.json'
@@ -12,6 +13,7 @@ import { ROUTER_ADDRESS } from '../constants'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { ChainId, JSBI, Percent, TokenAmount } from 'vexchange-sdk'
 import { normalizeAccount } from '../context/normalizers'
+import { IFreeSwapInfo } from '../pages/Swap'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -28,7 +30,7 @@ export enum ERROR_CODES {
 }
 
 const EXPLORE_PREFIXES: { [chainId in ChainId]: string } = {
-  1: 'explore.',
+  1: 'vechainstats',
   3: 'explore-testnet.'
 }
 
@@ -47,11 +49,11 @@ export const userAccount = {
 }
 
 export function getExploreLink(chainId: ChainId, data: string, type: 'transaction' | 'address'): string {
-  const prefix = `https://${EXPLORE_PREFIXES[chainId] || EXPLORE_PREFIXES[1]}vechain.org`
+  const prefix = `https://${EXPLORE_PREFIXES[chainId] || EXPLORE_PREFIXES[1]}.com`
 
   switch (type) {
     case 'transaction': {
-      return `${prefix}/transactions/${data}`
+      return `${prefix}/transaction/${data}`
     }
     case 'address':
     default: {
@@ -110,7 +112,7 @@ export function getContract(address: string, ABI: any, library: Web3Provider, ac
     throw Error(`Invalid 'address' parameter '${address}'.`)
   }
 
-  return new Contract(address, ABI, getProviderOrSigner(library, account))
+  return new Contract(address, ABI, getProviderOrSigner(library, account) as Provider | Signer)
 }
 
 // account is optional
@@ -175,6 +177,17 @@ export async function getTokenDecimals(tokenAddress, library) {
       error.code = ERROR_CODES.TOKEN_DECIMALS
       throw error
     })
+}
+
+export async function fetchUserFreeSwapInfo(account: string): Promise<IFreeSwapInfo> {
+  return new Promise((resolve, reject) => {
+    fetch(`${process.env.REACT_APP_VIP191_API_URL}/${account}`)
+      .then(response => response.json())
+      .then(data => {
+        resolve(data)
+      })
+      .catch(error => reject(error))
+  })
 }
 
 export function escapeRegExp(string: string): string {

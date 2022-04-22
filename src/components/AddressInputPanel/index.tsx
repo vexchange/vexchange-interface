@@ -147,7 +147,7 @@ export default function AddressInputPanel({
               </TYPE.black>
               {data.address && (
                 <Link href={getExploreLink(chainId, data.name || data.address, 'address')} style={{ fontSize: '14px' }}>
-                  (View on Explore)
+                  (View on VeChain Stats)
                 </Link>
               )}
             </RowBetween>

@@ -1,5 +1,5 @@
 import { JSBI, TokenAmount, WVET } from 'vexchange-sdk'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
@@ -14,7 +14,7 @@ import QuestionHelper from '../../components/QuestionHelper'
 import { RowBetween, RowFixed } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
 import FormattedPriceImpact from '../../components/swap/FormattedPriceImpact'
-import { ArrowWrapper, BottomGrouping, Dots, StyledBalanceMaxMini, Wrapper } from '../../components/swap/styleds'
+import { ArrowWrapper, BottomGrouping, Dots, FreeSwapRemainingText, StyledBalanceMaxMini, Wrapper } from '../../components/swap/styleds'
 import SwapModalFooter from '../../components/swap/SwapModalFooter'
 import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
 import { useWeb3React } from '../../hooks'
@@ -32,15 +32,27 @@ import {
   warningServerity
 } from '../../utils/prices'
 import SwapModalHeader from '../../components/swap/SwapModalHeader'
-import { basisPointsToPercent } from '../../utils'
+import { basisPointsToPercent, fetchUserFreeSwapInfo } from '../../utils'
+
+export interface IFreeSwapInfo {
+  address: string;
+  hasNFT: boolean;
+  remainingFreeSwaps: number;
+}
 
 export default function Swap({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURL(search)
   // text translation
   // const { t } = useTranslation()
   const { chainId, account, library } = useWeb3React()
+  const defaultFreeSwapInfo: IFreeSwapInfo = {
+    address: account,
+    hasNFT: false,
+    remainingFreeSwaps: 0
+  }
   const theme = useContext(ThemeContext)
   const [isDark] = useDarkModeManager()
+  const [userFreeSwapInfo, setUserFreeSwapInfo] = useState(defaultFreeSwapInfo)
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle()
@@ -113,7 +125,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   }
 
   // the callback to execute the swap
-  const swapCallback = useSwapCallback(bestTrade, allowedSlippage, deadline)
+  const swapCallback = useSwapCallback(bestTrade, allowedSlippage, deadline, null, userFreeSwapInfo)
 
   function onSwap() {
     setAttemptingTxn(true)
@@ -134,6 +146,23 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   const [swapFee, setSwapFee] = useState(basisPointsToPercent(100))
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(bestTrade, swapFee)
 
+  useEffect(() => {
+    const getUserFreeSwapInfo = async () => {
+      try {
+        const userFreeSwapInfo = await fetchUserFreeSwapInfo(account)
+
+        setUserFreeSwapInfo(userFreeSwapInfo)
+      } catch (err) {
+        setUserFreeSwapInfo(defaultFreeSwapInfo)
+      }
+    }
+
+    if (account) {
+      getUserFreeSwapInfo()
+    }
+  // eslint-disable-next-line
+  }, [userHasSpecifiedInputOutput, account])
+
   useMemo(() => {
     const getSwapFee = async () => {
       try {
@@ -152,6 +181,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
 
   // warnings on slippage
   const priceImpactSeverity = warningServerity(priceImpactWithoutFee)
+  const remainingSwaps = userFreeSwapInfo.remainingFreeSwaps
 
   function modalHeader() {
     return (
@@ -329,6 +359,10 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
             </Text>
           </ButtonError>
         ) : (
+          <>
+          <FreeSwapRemainingText>
+            You have <span>{ remainingSwaps }</span> more free swaps remaining today
+          </FreeSwapRemainingText>
           <ButtonError
             onClick={() => {
               setShowConfirm(true)
@@ -338,9 +372,10 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
             error={isValid && priceImpactSeverity > 2}
           >
             <Text fontSize={20} fontWeight={500}>
-              {error ?? `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+              {error ?? `${remainingSwaps > 0 ? 'Free ' : ''}Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
             </Text>
           </ButtonError>
+          </>
         )}
       </BottomGrouping>
       {bestTrade && !isWrap && !isUnwrap && (

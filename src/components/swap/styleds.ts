@@ -8,6 +8,15 @@ export const Wrapper = styled.div`
   position: relative;
 `
 
+export const FreeSwapRemainingText = styled.div`
+  text-align: center;
+  margin-bottom: 15px;
+  span {
+    color: ${({ theme }) => theme.primary1};
+    font-weight: bold;
+  }
+`
+
 export const ArrowWrapper = styled.div`
   padding: 2px;
   border-radius: 12px;
