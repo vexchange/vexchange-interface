@@ -192,7 +192,7 @@ export function useSwapCallback(
         comment = 'Wrap VET into WVET'
       }
 
-      return library.vendor
+      const tx = library.vendor
         .sign('tx', [
           {
             ...clause,
@@ -200,14 +200,6 @@ export function useSwapCallback(
           }
         ])
         .comment(comment)
-      let tx = library.vendor
-      .sign('tx', [
-        {
-          ...clause,
-          value: value ? value.toString() : 0
-        }
-      ])
-      .comment(`Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`)
 
       if (userFreeSwapInfo && userFreeSwapInfo.remainingFreeSwaps > 0) {
         tx.delegate(process.env.REACT_APP_VIP191_API_URL)
@@ -250,5 +242,16 @@ export function useSwapCallback(
           console.error(`Swap or gas estimate failed`, error)
         })
     }
-  }, [account, allowedSlippage, addTransaction, chainId, deadline, inputAllowance, library, trade, recipient, userFreeSwapInfo])
+  }, [
+    account,
+    allowedSlippage,
+    addTransaction,
+    chainId,
+    deadline,
+    inputAllowance,
+    library,
+    trade,
+    recipient,
+    userFreeSwapInfo
+  ])
 }
