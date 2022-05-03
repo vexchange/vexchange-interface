@@ -257,7 +257,7 @@ export default function CurrencyInputPanel({
           </CurrencySelect>
         </InputRow>
       </Container>
-      {!disableTokenSelect && (
+      {!disableTokenSelect && modalOpen && (
         <SearchModal
           isOpen={modalOpen}
           onDismiss={() => {
