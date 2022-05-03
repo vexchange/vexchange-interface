@@ -121,6 +121,12 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     swapCallback().then(hash => {
       setTxHash(hash)
       setPendingConfirmation(false)
+      if (hash) {
+        setUserFreeSwapInfo(prev => {
+          const remainingFreeSwaps = prev.remainingFreeSwaps > 0 ? prev.remainingFreeSwaps - 1 : 0
+          return { ...prev, remainingFreeSwaps }
+        })
+      }
 
       ReactGA.event({
         category: 'Swap',
@@ -140,7 +146,13 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
       try {
         const userFreeSwapInfo = await fetchUserFreeSwapInfo(account)
 
-        setUserFreeSwapInfo(userFreeSwapInfo)
+        setUserFreeSwapInfo(prev => {
+          if (prev.hasNFT === false) return userFreeSwapInfo
+
+          if (prev.remainingFreeSwaps >= userFreeSwapInfo.remainingFreeSwaps) return userFreeSwapInfo
+
+          return prev
+        })
       } catch (err) {
         setUserFreeSwapInfo(defaultFreeSwapInfo)
       }
@@ -171,7 +183,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
 
   // warnings on slippage
   const priceImpactSeverity = warningServerity(priceImpactWithoutFee)
-  const remainingSwaps = userFreeSwapInfo.remainingFreeSwaps
+  const remainingSwaps = userFreeSwapInfo.hasNFT ? userFreeSwapInfo.remainingFreeSwaps : 0
 
   function modalHeader() {
     return (
@@ -188,7 +200,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   function modalBottom() {
     return (
       <SwapModalFooter
-        confirmText={priceImpactSeverity > 2 ? 'Swap Anyway' : 'Confirm Swap'}
+        confirmText={priceImpactSeverity > 2 ? 'Swap Anyway' : `Confirm ${remainingSwaps > 0 ? 'Free' : ''} Swap`}
         showInverted={showInverted}
         severity={priceImpactSeverity}
         setShowInverted={setShowInverted}
@@ -212,7 +224,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     <Wrapper id="swap-page">
       <ConfirmationModal
         isOpen={showConfirm}
-        title="Confirm Swap"
+        title={`Confirm ${remainingSwaps > 0 ? 'Free' : ''} Swap`}
         onDismiss={() => {
           resetModal()
           setShowConfirm(false)
@@ -344,21 +356,23 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           </ButtonLight>
         ) : (
           <>
-          <FreeSwapRemainingText>
-            You have <span>{ remainingSwaps }</span> more free swaps remaining today
-          </FreeSwapRemainingText>
-          <ButtonError
-            onClick={() => {
-              setShowConfirm(true)
-            }}
-            id="swap-button"
-            disabled={!isValid}
-            error={isValid && priceImpactSeverity > 2}
-          >
-            <Text fontSize={20} fontWeight={500}>
-              {error ?? `${remainingSwaps > 0 ? 'Free ' : ''}Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
-            </Text>
-          </ButtonError>
+            { userFreeSwapInfo.hasNFT && (
+              <FreeSwapRemainingText>
+                You have <span>{ remainingSwaps }</span> more free swaps remaining today
+              </FreeSwapRemainingText>
+            )}
+            <ButtonError
+              onClick={() => {
+                setShowConfirm(true)
+              }}
+              id="swap-button"
+              disabled={!isValid}
+              error={isValid && priceImpactSeverity > 2}
+            >
+              <Text fontSize={20} fontWeight={500}>
+                {error ?? `${remainingSwaps > 0 ? 'Free ' : ''}Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+              </Text>
+            </ButtonError>
           </>
         )}
       </BottomGrouping>
