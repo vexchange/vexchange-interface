@@ -349,7 +349,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           <>
             { userFreeSwapInfo.hasNFT && (
               <FreeSwapRemainingText>
-                You have <span>{ remainingSwaps }</span> more free swaps remaining today
+                You have <span>{ remainingSwaps }</span> free swaps remaining today
               </FreeSwapRemainingText>
             )}
             <ButtonError
