@@ -35,10 +35,12 @@ export interface IFreeSwapInfo {
   remainingFreeSwaps: number;
 }
 
+// throttle
+let fetchFreeSwaps = true
+setInterval(() => { fetchFreeSwaps = true }, 5000)
+
 export default function Swap({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURL(search)
-  // text translation
-  // const { t } = useTranslation()
   const { chainId, account, library } = useWeb3React()
   const defaultFreeSwapInfo: IFreeSwapInfo = {
     address: account,
@@ -121,12 +123,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     swapCallback().then(hash => {
       setTxHash(hash)
       setPendingConfirmation(false)
-      if (hash) {
-        setUserFreeSwapInfo(prev => {
-          const remainingFreeSwaps = prev.remainingFreeSwaps > 0 ? prev.remainingFreeSwaps - 1 : 0
-          return { ...prev, remainingFreeSwaps }
-        })
-      }
 
       ReactGA.event({
         category: 'Swap',
@@ -144,15 +140,10 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   useEffect(() => {
     const getUserFreeSwapInfo = async () => {
       try {
+        if (!fetchFreeSwaps) return
+        fetchFreeSwaps = false
         const userFreeSwapInfo = await fetchUserFreeSwapInfo(account)
-
-        setUserFreeSwapInfo(prev => {
-          if (prev.hasNFT === false) return userFreeSwapInfo
-
-          if (prev.remainingFreeSwaps >= userFreeSwapInfo.remainingFreeSwaps) return userFreeSwapInfo
-
-          return prev
-        })
+        setUserFreeSwapInfo(userFreeSwapInfo)
       } catch (err) {
         setUserFreeSwapInfo(defaultFreeSwapInfo)
       }
@@ -162,7 +153,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
       getUserFreeSwapInfo()
     }
   // eslint-disable-next-line
-  }, [userHasSpecifiedInputOutput, account])
+  }, [tokenBalances, account])
 
   useMemo(() => {
     const getSwapFee = async () => {
