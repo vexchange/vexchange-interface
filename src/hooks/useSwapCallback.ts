@@ -10,6 +10,7 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { isAddress } from '../utils'
 import { useWeb3React } from './index'
+import { useSignCallback } from './useSignCallback'
 import { IFreeSwapInfo } from '../pages/Swap'
 
 enum SwapType {
@@ -51,6 +52,7 @@ export function useSwapCallback(
   userFreeSwapInfo?: IFreeSwapInfo
 ): null | (() => Promise<string>) {
   const { account, chainId, library } = useWeb3React()
+  const [ signCallback ] = useSignCallback()
   const inputAllowance = useTokenAllowance(trade?.inputAmount?.token, account, ROUTER_ADDRESS)
   const addTransaction = useTransactionAdder()
   const recipient = to ? isAddress(to) : account
@@ -81,7 +83,7 @@ export function useSwapCallback(
         chainId
       )
 
-      let args, value, abi
+      let args, value, abi, tx
 
       switch (swapType) {
         case SwapType.EXACT_TOKENS_FOR_TOKENS:
@@ -146,59 +148,55 @@ export function useSwapCallback(
           break
       }
 
-      const method = library.thor.account(ROUTER_ADDRESS).method(abi)
-      const clause = method.asClause(...args)
+      const comment = `Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`
 
-      let tx = library.vendor
-      .sign('tx', [
-        {
-          ...clause,
-          value: value ? value.toString() : 0
+      tx = await signCallback(abi, value, args, comment, userFreeSwapInfo)
+
+      return tx.then(response => {
+        if (recipient === account) {
+          addTransaction(response, {
+            summary:
+              'Swap ' +
+              slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
+              ' ' +
+              trade.inputAmount.token.symbol +
+              ' for ' +
+              slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
+              ' ' +
+              trade.outputAmount.token.symbol
+          })
+        } else {
+          addTransaction(response, {
+            summary:
+              'Swap ' +
+              slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
+              ' ' +
+              trade.inputAmount.token.symbol +
+              ' for ' +
+              slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
+              ' ' +
+              trade.outputAmount.token.symbol +
+              ' to ' +
+              recipient
+          })
         }
-      ])
-      .comment(`Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`)
 
-      const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
-      if (isEligibleForFreeSwap) {
-        tx.delegate(process.env.REACT_APP_VIP191_API_URL)
-      }
-
-      return tx
-        .request()
-        .then(response => {
-          if (recipient === account) {
-            addTransaction(response, {
-              summary:
-                'Swap ' +
-                slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
-                ' ' +
-                trade.inputAmount.token.symbol +
-                ' for ' +
-                slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
-                ' ' +
-                trade.outputAmount.token.symbol
-            })
-          } else {
-            addTransaction(response, {
-              summary:
-                'Swap ' +
-                slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
-                ' ' +
-                trade.inputAmount.token.symbol +
-                ' for ' +
-                slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
-                ' ' +
-                trade.outputAmount.token.symbol +
-                ' to ' +
-                recipient
-            })
-          }
-
-          return response.txid
-        })
-        .catch(error => {
-          console.error(`Swap or gas estimate failed`, error)
-        })
+        return response.txid
+      })
+      .catch(error => {
+        console.error(`Swap or gas estimate failed`, error)
+      })
     }
-  }, [account, allowedSlippage, addTransaction, chainId, deadline, inputAllowance, library, trade, recipient, userFreeSwapInfo])
+  }, [
+    account,
+    addTransaction,
+    allowedSlippage,
+    chainId,
+    deadline,
+    inputAllowance,
+    library,
+    recipient,
+    trade,
+    userFreeSwapInfo,
+  ])
 }
