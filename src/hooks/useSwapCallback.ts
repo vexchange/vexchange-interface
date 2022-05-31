@@ -146,59 +146,90 @@ export function useSwapCallback(
           break
       }
 
-      const method = library.thor.account(ROUTER_ADDRESS).method(abi)
-      const clause = method.asClause(...args)
+      const comment = `Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`
+      let tx, method, clause
 
-      let tx = library.vendor
-      .sign('tx', [
-        {
-          ...clause,
-          value: value ? value.toString() : 0
+      if (window.connex) {
+        method = window.connex.thor.account(ROUTER_ADDRESS).method(abi)
+        clause = method.asClause(...args)
+        tx = window.connex.vendor.sign("tx").comment(comment)
+      
+        console.log(tx)
+
+        const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
+        if (isEligibleForFreeSwap) {
+          await tx.delegate((res: any) => {
+            return new Promise((resolve) => {
+              fetch(`${process.env.REACT_APP_VIP191_API_URL}`, {
+                method: 'POST',
+                headers: {
+                  'Accept': 'application/json, text/plain, */*',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(res)
+              })
+                .then(response => response.json())
+                .then(data => {
+                  resolve(data)
+                })
+            })
+          })
         }
-      ])
-      .comment(`Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`)
 
-      const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
-      if (isEligibleForFreeSwap) {
-        tx.delegate(process.env.REACT_APP_VIP191_API_URL)
+        tx = await tx.request([clause])
+        return tx.txid
+      } else {
+        method = library.thor.account(ROUTER_ADDRESS).method(abi)
+        clause = method.asClause(...args)
+
+        tx = library.vendor
+        .sign('tx', [
+          {
+            ...clause,
+            value: value ? value.toString() : 0
+          }
+        ])
+        .comment(`Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`)
+        
+        return tx
+          .request()
+          .then(response => {
+            console.log(response)
+            if (recipient === account) {
+              addTransaction(response, {
+                summary:
+                  'Swap ' +
+                  slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
+                  ' ' +
+                  trade.inputAmount.token.symbol +
+                  ' for ' +
+                  slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
+                  ' ' +
+                  trade.outputAmount.token.symbol
+              })
+            } else {
+              addTransaction(response, {
+                summary:
+                  'Swap ' +
+                  slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
+                  ' ' +
+                  trade.inputAmount.token.symbol +
+                  ' for ' +
+                  slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
+                  ' ' +
+                  trade.outputAmount.token.symbol +
+                  ' to ' +
+                  recipient
+              })
+            }
+  
+            return response.txid
+          })
+          .catch(error => {
+            console.error(`Swap or gas estimate failed`, error)
+          })
       }
 
-      return tx
-        .request()
-        .then(response => {
-          if (recipient === account) {
-            addTransaction(response, {
-              summary:
-                'Swap ' +
-                slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
-                ' ' +
-                trade.inputAmount.token.symbol +
-                ' for ' +
-                slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
-                ' ' +
-                trade.outputAmount.token.symbol
-            })
-          } else {
-            addTransaction(response, {
-              summary:
-                'Swap ' +
-                slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
-                ' ' +
-                trade.inputAmount.token.symbol +
-                ' for ' +
-                slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
-                ' ' +
-                trade.outputAmount.token.symbol +
-                ' to ' +
-                recipient
-            })
-          }
-
-          return response.txid
-        })
-        .catch(error => {
-          console.error(`Swap or gas estimate failed`, error)
-        })
     }
   }, [account, allowedSlippage, addTransaction, chainId, deadline, inputAllowance, library, trade, recipient, userFreeSwapInfo])
 }

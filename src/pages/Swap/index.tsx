@@ -121,6 +121,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   function onSwap() {
     setAttemptingTxn(true)
     swapCallback().then(hash => {
+      console.log(hash)
       setTxHash(hash)
       setPendingConfirmation(false)
 
