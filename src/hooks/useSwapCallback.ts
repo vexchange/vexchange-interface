@@ -173,7 +173,7 @@ export function useSwapCallback(
           })
         }
       } else {
-        tx = library.vendor.sign('tx', [
+        tx = connex.vendor.sign('tx', [
             {
               ...clause,
               value: value ? value.toString() : 0
@@ -192,7 +192,6 @@ export function useSwapCallback(
         : tx.request()
 
       return request.then(response => {
-          console.log(response)
           if (recipient === account) {
             addTransaction(response, {
               summary: comment
