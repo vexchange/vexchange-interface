@@ -148,12 +148,14 @@ export function useSwapCallback(
 
       const comment = `Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`
       const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
-      let tx, method, clause, request, delegateParam
+      const isConnex1 = !!window.connex
+      const connex = isConnex1 ? window.connex : library
+      let tx, request, delegateParam
+      let method = connex.thor.account(ROUTER_ADDRESS).method(abi)
+      let clause = method.asClause(...args)
 
-      if (window.connex) {
-        method = window.connex.thor.account(ROUTER_ADDRESS).method(abi)
-        clause = method.asClause(...args)
-        tx = window.connex.vendor.sign("tx").comment(comment)
+      if (isConnex1) {
+        tx = connex.vendor.sign("tx").comment(comment)
         delegateParam = (res: any) => {
           return new Promise((resolve) => {
             fetch(`${process.env.REACT_APP_VIP191_API_URL}`, {
@@ -170,32 +172,24 @@ export function useSwapCallback(
               })
           })
         }
-
-        if (isEligibleForFreeSwap) {
-          await tx.delegate(delegateParam)
-        }
-        
-        request = tx.request([clause])
       } else {
-        method = library.thor.account(ROUTER_ADDRESS).method(abi)
-        clause = method.asClause(...args)
-
-        tx = library.vendor
-        .sign('tx', [
-          {
-            ...clause,
-            value: value ? value.toString() : 0
-          }
-        ])
-        .comment(comment)
-        delegateParam = `${process.env.REACT_APP_VIP191_API_URL}`
-       
-        if (isEligibleForFreeSwap) {
-          await tx.delegate(delegateParam)
-        }
-
-        request = tx.request()
+        tx = library.vendor.sign('tx', [
+            {
+              ...clause,
+              value: value ? value.toString() : 0
+            }
+          ])
+          .comment(comment)
+        delegateParam = process.env.REACT_APP_VIP191_API_URL
       }
+
+      if (isEligibleForFreeSwap) {
+        await tx.delegate(delegateParam)
+      }
+
+      request = isConnex1 
+        ? tx.request([clause])
+        : tx.request()
 
       return request.then(response => {
           console.log(response)
