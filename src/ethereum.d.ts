@@ -5,4 +5,17 @@ interface Window {
     removeListener?: (...args: any[]) => void
   }
   web3?: {}
+  connex?: {
+    vendor?: {
+      sign?: (...args: any[]) => {
+        comment?: (...args: any[]) => void
+        request?: (...args: any[]) => Promise<void>
+      }
+    }
+    thor?: {
+      account?: (...args: any[]) => {
+        method?: (...args: any[]) => void
+      }
+    }
+  }
 }

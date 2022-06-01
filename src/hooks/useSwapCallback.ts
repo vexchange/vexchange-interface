@@ -146,49 +146,60 @@ export function useSwapCallback(
           break
       }
 
-      const method = library.thor.account(ROUTER_ADDRESS).method(abi)
-      const clause = method.asClause(...args)
-
-      let tx = library.vendor
-      .sign('tx', [
-        {
-          ...clause,
-          value: value ? value.toString() : 0
-        }
-      ])
-      .comment(`Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`)
-
+      const comment = `Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`
       const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
-      if (isEligibleForFreeSwap) {
-        tx.delegate(process.env.REACT_APP_VIP191_API_URL)
+      const isConnex1 = !!window.connex
+      const connex = isConnex1 ? window.connex : library
+      let tx, request, delegateParam
+      let method = connex.thor.account(ROUTER_ADDRESS).method(abi)
+      let clause = method.asClause(...args)
+
+      if (isConnex1) {
+        tx = connex.vendor.sign("tx").comment(comment)
+        delegateParam = (res: any) => {
+          return new Promise((resolve) => {
+            fetch(`${process.env.REACT_APP_VIP191_API_URL}`, {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(res)
+            })
+              .then(response => response.json())
+              .then(data => {
+                resolve(data)
+              })
+          })
+        }
+      } else {
+        tx = connex.vendor.sign('tx', [
+            {
+              ...clause,
+              value: value ? value.toString() : 0
+            }
+          ])
+          .comment(comment)
+        delegateParam = process.env.REACT_APP_VIP191_API_URL
       }
 
-      return tx
-        .request()
-        .then(response => {
+      if (isEligibleForFreeSwap) {
+        await tx.delegate(delegateParam)
+      }
+
+      request = isConnex1 
+        ? tx.request([clause])
+        : tx.request()
+
+      return request.then(response => {
           if (recipient === account) {
             addTransaction(response, {
-              summary:
-                'Swap ' +
-                slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
-                ' ' +
-                trade.inputAmount.token.symbol +
-                ' for ' +
-                slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
-                ' ' +
-                trade.outputAmount.token.symbol
+              summary: comment
             })
           } else {
             addTransaction(response, {
               summary:
-                'Swap ' +
-                slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
-                ' ' +
-                trade.inputAmount.token.symbol +
-                ' for ' +
-                slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
-                ' ' +
-                trade.outputAmount.token.symbol +
+                comment +
                 ' to ' +
                 recipient
             })
