@@ -15,5 +15,7 @@ export default [
 	new Token(ChainId.MAINNET, '0x170F4BA8e7ACF6510f55dB26047C83D13498AF8A', 18, 'WoV', 'WorldOfV'),
 	new Token(ChainId.MAINNET, '0x99763494a7b545f983ee9fe02a3b5441c7ef1396', 18, 'MVG', 'Mad Viking Games'),
 	new Token(ChainId.MAINNET, '0xae4C53b120cba91a44832f875107cbc8FbEe185C', 18, 'YEET', 'Yeet Coin'),
-	new Token(ChainId.MAINNET, '0x4e17357053da4b473e2daa2c65c2c949545724b8', 6, 'VEUSD', 'VeUSD')
+	new Token(ChainId.MAINNET, '0x4e17357053da4b473e2daa2c65c2c949545724b8', 6, 'VEUSD', 'VeUSD'),
+	new Token(ChainId.MAINNET, '0xC50378568aB1E0563cae0B5b729D3069C1000878', 18, 'DHN', 'Dohrnii'),
+	new Token(ChainId.MAINNET, '0x107a0b0faeb58c1fdef97f37f50e319833ad1b94', 18, 'DRAGON', 'Dragon Coin')
 ]
