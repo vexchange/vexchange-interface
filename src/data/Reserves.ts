@@ -28,7 +28,7 @@ function getPair(tokenA: Token, tokenB: Token): () => Promise<Pair | null> {
 
   return async (): Promise<Pair | null> => {
     try {
-      return Fetcher.fetchPairData(tokenA, tokenB, connex)
+      return await Fetcher.fetchPairData(tokenA, tokenB, connex)
     } catch {
       return null
     }
