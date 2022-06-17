@@ -181,25 +181,55 @@ export function useSwapCallback(
 
       const contractAddress =
         swapType === SwapType.UNWRAP_WVET || swapType === SwapType.WRAP_VET ? WVET[chainId].address : ROUTER_ADDRESS
-      const method = library.thor.account(contractAddress).method(abi)
-
-      const clause = method.asClause(...args)
-
       let comment = `Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`
+      const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
+      const isConnex1 = !!window.connex
+      const connex = isConnex1 ? window.connex : library
+      let tx, request, delegateParam
+      let method = connex.thor.account(contractAddress).method(abi)
+      let clause = method.asClause(...args)
+
       if (swapType === SwapType.UNWRAP_WVET) {
         comment = 'Unwrap WVET into VET'
       } else if (swapType === SwapType.WRAP_VET) {
         comment = 'Wrap VET into WVET'
       }
 
-      const tx = library.vendor
-        .sign('tx', [
-          {
-            ...clause,
-            value: value ? value.toString() : 0
-          }
-        ])
-        .comment(comment)
+      if (isConnex1) {
+        tx = connex.vendor.sign('tx').comment(comment)
+        delegateParam = (res: any) => {
+          return new Promise(resolve => {
+            fetch(`${process.env.REACT_APP_VIP191_API_URL}`, {
+              method: 'POST',
+              headers: {
+                Accept: 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(res)
+            })
+              .then(response => response.json())
+              .then(data => {
+                resolve(data)
+              })
+          })
+        }
+      } else {
+        tx = connex.vendor
+          .sign('tx', [
+            {
+              ...clause,
+              value: value ? value.toString() : 0
+            }
+          ])
+          .comment(comment)
+        delegateParam = process.env.REACT_APP_VIP191_API_URL
+      }
+
+      if (isEligibleForFreeSwap) {
+        await tx.delegate(delegateParam)
+      }
+
+      request = isConnex1 ? tx.request([clause]) : tx.request()
 
       if (userFreeSwapInfo && userFreeSwapInfo.remainingFreeSwaps > 0) {
         tx.delegate(process.env.REACT_APP_VIP191_API_URL)
@@ -210,29 +240,11 @@ export function useSwapCallback(
         .then(response => {
           if (recipient === account) {
             addTransaction(response, {
-              summary:
-                'Swap ' +
-                slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
-                ' ' +
-                trade.inputAmount.token.symbol +
-                ' for ' +
-                slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
-                ' ' +
-                trade.outputAmount.token.symbol
+              summary: comment
             })
           } else {
             addTransaction(response, {
-              summary:
-                'Swap ' +
-                slippageAdjustedAmounts[Field.INPUT].toSignificant(3) +
-                ' ' +
-                trade.inputAmount.token.symbol +
-                ' for ' +
-                slippageAdjustedAmounts[Field.OUTPUT].toSignificant(3) +
-                ' ' +
-                trade.outputAmount.token.symbol +
-                ' to ' +
-                recipient
+              summary: comment + ' to ' + recipient
             })
           }
 
