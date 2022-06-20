@@ -185,6 +185,7 @@ export function useSwapCallback(
       const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
       const isConnex1 = !!window.connex
       const connex = isConnex1 ? window.connex : library
+      // eslint-disable-next-line
       let tx, request, delegateParam
       let method = connex.thor.account(contractAddress).method(abi)
       let clause = method.asClause(...args)
