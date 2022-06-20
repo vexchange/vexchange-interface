@@ -150,7 +150,7 @@ export function useSwapCallback(
       const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
       const isConnex1 = !!window.connex
       const connex = isConnex1 ? window.connex : library
-      let tx, request, delegateParam
+      let tx, delegateParam
       let method = connex.thor.account(ROUTER_ADDRESS).method(abi)
       let clause = method.asClause(...args)
 
@@ -172,6 +172,7 @@ export function useSwapCallback(
               })
           })
         }
+        clause.value = value ? value.toString() : 0
       } else {
         tx = connex.vendor.sign('tx', [
             {
@@ -187,11 +188,7 @@ export function useSwapCallback(
         await tx.delegate(delegateParam)
       }
 
-      request = isConnex1 
-        ? tx.request([clause])
-        : tx.request()
-
-      return request.then(response => {
+      return tx.request([clause]).then(response => {
           if (recipient === account) {
             addTransaction(response, {
               summary: comment
