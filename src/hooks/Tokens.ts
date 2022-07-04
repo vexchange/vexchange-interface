@@ -1,4 +1,4 @@
-import { Token } from 'vexchange-sdk'
+import { Token, WVET } from 'vexchange-sdk'
 import { useEffect, useMemo } from 'react'
 import { findKey } from 'lodash'
 import { useAddUserToken, useFetchTokenByAddress, useUserAddedTokens } from '../state/user/hooks'
@@ -8,18 +8,17 @@ import MAINNET_TOKENS from '../constants/tokens/mainnet'
 
 export const ALL_TOKENS = [
   // WVET on all chains
-  //...Object.values(WVET),
+  ...Object.values(WVET),
   // chain-specific tokens
   ...MAINNET_TOKENS
 ]
-  // remap WVET to VET
-  // .map(token => {
-  //   if (token.equals(WVET[token.chainId])) {
-  //     ;(token as any).symbol = 'VET'
-  //     ;(token as any).name = 'VeChain'
-  //   }
-  //   return token
-  // })
+  .map(token => {
+    if (token.equals(WVET[token.chainId])) {
+      ;(token as any).symbol = 'VET'
+      ;(token as any).name = 'VeChain'
+    }
+    return token
+  })
   // put into an object
   .reduce((tokenMap, token) => {
     if (tokenMap?.[token.chainId]?.[token.address] !== undefined) throw Error('Duplicate tokens.')
