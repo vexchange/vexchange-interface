@@ -19,6 +19,14 @@ const MAINNET_WALLETS = {
     description: 'Easy-to-use browser extension.',
     href: null,
     color: '#E8831D'
+  },
+  NUFINETES: {
+    connector: injected,
+    name: 'Nufintes',
+    iconName: 'nufinetes-logo.svg',
+    description: 'Next generation wallet.',
+    href: null,
+    color: '#E8831D'
   }
 }
 
