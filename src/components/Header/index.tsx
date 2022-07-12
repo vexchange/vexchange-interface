@@ -14,13 +14,13 @@ import Web3Status from '../Web3Status'
 
 import { Link } from '../../theme'
 import { Text } from 'rebass'
-import { WVET, ChainId } from 'vexchange-sdk'
+import { ChainId } from 'vexchange-sdk'
 import { YellowCard } from '../Card'
 import { useWeb3React } from '../../hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { ButtonSecondary } from '../Button'
 
-import { VEX } from '../../constants/index'
+import { DUMMY_VET, VEX } from '../../constants/index'
 import ERC20_ABI from '../../constants/abis/erc20.json'
 import Logo from '../../assets/svg/logo.svg'
 import Wordmark from '../../assets/svg/wordmark_light.svg'
@@ -198,7 +198,7 @@ export default function Header() {
   const [darkMode, toggleDarkMode] = useDarkModeManager()
   const [userVexBalance, setUserVexBalance] = useState(0)
 
-  const userEthBalance = useTokenBalanceTreatingWETHasETH(account, WVET[chainId])
+  const userEthBalance = useTokenBalanceTreatingWETHasETH(account, DUMMY_VET[chainId])
   const [isDark] = useDarkModeManager()
 
   useEffect(() => {

@@ -14,9 +14,16 @@ import QuestionHelper from '../../components/QuestionHelper'
 import { RowBetween, RowFixed } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
 import FormattedPriceImpact from '../../components/swap/FormattedPriceImpact'
-import { ArrowWrapper, BottomGrouping, Dots, FreeSwapRemainingText, StyledBalanceMaxMini, Wrapper } from '../../components/swap/styleds'
+import {
+  ArrowWrapper,
+  BottomGrouping,
+  Dots,
+  FreeSwapRemainingText,
+  StyledBalanceMaxMini,
+  Wrapper
+} from '../../components/swap/styleds'
 import SwapModalFooter from '../../components/swap/SwapModalFooter'
-import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
+import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
 import { useWeb3React } from '../../hooks'
 import { useApproveCallbackFromTrade, Approval } from '../../hooks/useApproveCallback'
 import { useSwapCallback } from '../../hooks/useSwapCallback'
@@ -25,7 +32,12 @@ import { Field } from '../../state/swap/actions'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { useDefaultsFromURL, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
 import { CursorPointer, TYPE } from '../../theme'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, FetchSwapFee, warningServerity } from '../../utils/prices'
+import {
+  computeSlippageAdjustedAmounts,
+  computeTradePriceBreakdown,
+  FetchSwapFee,
+  warningServerity
+} from '../../utils/prices'
 import SwapModalHeader from '../../components/swap/SwapModalHeader'
 import { basisPointsToPercent, fetchUserFreeSwapInfo } from '../../utils'
 
@@ -81,9 +93,15 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   // check whether the user has approved the router on the input token
   const [approval, approveCallback] = useApproveCallbackFromTrade(bestTrade, allowedSlippage)
 
+  //we don't need to approve for WVET -> VET unwrapping
+  const isUnwrap = tokens[Field.INPUT]?.equals(WVET[chainId]) && tokens[Field.OUTPUT]?.equals(DUMMY_VET[chainId])
+  const isWrap = tokens[Field.INPUT]?.equals(DUMMY_VET[chainId]) && tokens[Field.OUTPUT]?.equals(WVET[chainId])
+
+  const decimals = isUnwrap || isWrap ? 100 : 6
+
   const formattedAmounts = {
     [independentField]: typedValue,
-    [dependentField]: parsedAmounts[dependentField] ? parsedAmounts[dependentField].toSignificant(6) : ''
+    [dependentField]: parsedAmounts[dependentField] ? parsedAmounts[dependentField].toSignificant(decimals) : ''
   }
 
   const { onSwitchTokens, onTokenSelection, onUserInput } = useSwapActionHandlers()
@@ -91,12 +109,12 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   const maxAmountInput: TokenAmount =
     !!tokenBalances[Field.INPUT] &&
     !!tokens[Field.INPUT] &&
-    !!WVET[chainId] &&
+    !!DUMMY_VET[chainId] &&
     tokenBalances[Field.INPUT].greaterThan(
-      new TokenAmount(tokens[Field.INPUT], tokens[Field.INPUT].equals(WVET[chainId]) ? MIN_ETH : '0')
+      new TokenAmount(tokens[Field.INPUT], tokens[Field.INPUT].equals(DUMMY_VET[chainId]) ? MIN_ETH : '0')
     )
-      ? tokens[Field.INPUT].equals(WVET[chainId])
-        ? tokenBalances[Field.INPUT].subtract(new TokenAmount(WVET[chainId], MIN_ETH))
+      ? tokens[Field.INPUT].equals(DUMMY_VET[chainId])
+        ? tokenBalances[Field.INPUT].subtract(new TokenAmount(DUMMY_VET[chainId], MIN_ETH))
         : tokenBalances[Field.INPUT]
       : undefined
   const atMaxAmountInput: boolean =
@@ -169,7 +187,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     if (bestTrade) {
       getSwapFee()
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [userHasSpecifiedInputOutput])
 
   // warnings on slippage
@@ -279,7 +297,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           />
         </>
 
-        {!noRoute && tokens[Field.OUTPUT] && tokens[Field.INPUT] && (
+        {!noRoute && tokens[Field.OUTPUT] && tokens[Field.INPUT] && !isWrap && !isUnwrap && (
           <Card padding={'0.75rem 0.75rem 0.75rem 1rem'} borderRadius={'20px'}>
             <AutoColumn gap="4px">
               <RowBetween align="center">
@@ -309,7 +327,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
                 </Text>
               </RowBetween>
 
-              {bestTrade && priceImpactSeverity > 1 && (
+              {bestTrade && priceImpactSeverity > 1 && !isWrap && !isUnwrap && (
                 <RowBetween>
                   <TYPE.main style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }} fontSize={14}>
                     Price Impact
@@ -337,7 +355,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           <GreyCard style={{ textAlign: 'center' }}>
             <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
           </GreyCard>
-        ) : approval === Approval.NOT_APPROVED || approval === Approval.PENDING ? (
+        ) : (approval === Approval.NOT_APPROVED || approval === Approval.PENDING) && !isUnwrap ? (
           <ButtonLight onClick={approveCallback} disabled={approval === Approval.PENDING}>
             {approval === Approval.PENDING ? (
               <Dots>Unlocking {tokens[Field.INPUT]?.symbol}</Dots>
@@ -345,6 +363,12 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
               'Unlock ' + tokens[Field.INPUT]?.symbol
             )}
           </ButtonLight>
+        ) : isWrap || isUnwrap ? (
+          <ButtonError onClick={onSwap} id="swap-button">
+            <Text fontSize={20} fontWeight={500}>
+              {isWrap ? 'Wrap' : 'Unwrap'}
+            </Text>
+          </ButtonError>
         ) : (
           <>
             { userFreeSwapInfo.hasNFT && (
@@ -368,7 +392,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           </>
         )}
       </BottomGrouping>
-      {bestTrade && (
+      {bestTrade && !isWrap && !isUnwrap && (
         <AdvancedSwapDetailsDropdown
           trade={bestTrade}
           rawSlippage={allowedSlippage}

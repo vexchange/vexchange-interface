@@ -1,6 +1,8 @@
 import { Token, ChainId } from 'vexchange-sdk'
+import { DUMMY_VET } from '..'
 
 export default [
+  DUMMY_VET[ChainId.MAINNET],
   new Token(ChainId.MAINNET, '0x0BD802635eb9cEB3fCBe60470D2857B86841aab6', 18, 'VEX', 'Vexchange'),
   new Token(ChainId.MAINNET, '0x0000000000000000000000000000456E65726779', 18, 'VTHO', 'VeThor'),
   new Token(ChainId.MAINNET, '0x0ce6661b4ba86a0ea7ca2bd86a0de87b0b860f14', 18, 'OCE', 'OceanEx'),

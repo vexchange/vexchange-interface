@@ -27,7 +27,7 @@ import {
 } from '../../components/swap/styleds'
 import { TransferModalHeader } from '../../components/swap/TransferModalHeader'
 import TokenLogo from '../../components/TokenLogo'
-import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
+import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
 import { useWeb3React } from '../../hooks'
 import { useApproveCallbackFromTrade, Approval } from '../../hooks/useApproveCallback'
 import { useSendCallback } from '../../hooks/useSendCallback'
@@ -37,7 +37,12 @@ import { Field } from '../../state/swap/actions'
 import { useDefaultsFromURL, useDerivedSwapInfo, useSwapActionHandlers, useSwapState } from '../../state/swap/hooks'
 import { useAllTokenBalancesTreatingWETHasETH } from '../../state/wallet/hooks'
 import { CursorPointer, TYPE } from '../../theme'
-import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown, FetchSwapFee, warningServerity } from '../../utils/prices'
+import {
+  computeSlippageAdjustedAmounts,
+  computeTradePriceBreakdown,
+  FetchSwapFee,
+  warningServerity
+} from '../../utils/prices'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { basisPointsToPercent } from '../../utils'
 
@@ -110,7 +115,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
     if (bestTrade) {
       getSwapFee()
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [userHasSpecifiedInputOutput])
 
   const { onSwitchTokens, onTokenSelection, onUserInput } = useSwapActionHandlers()
@@ -125,12 +130,12 @@ export default function Send({ location: { search } }: RouteComponentProps) {
   const maxAmountInput: TokenAmount =
     !!tokenBalances[Field.INPUT] &&
     !!tokens[Field.INPUT] &&
-    !!WVET[chainId] &&
+    !!DUMMY_VET[chainId] &&
     tokenBalances[Field.INPUT].greaterThan(
-      new TokenAmount(tokens[Field.INPUT], tokens[Field.INPUT].equals(WVET[chainId]) ? MIN_ETH : '0')
+      new TokenAmount(tokens[Field.INPUT], tokens[Field.INPUT].equals(DUMMY_VET[chainId]) ? MIN_ETH : '0')
     )
-      ? tokens[Field.INPUT].equals(WVET[chainId])
-        ? tokenBalances[Field.INPUT].subtract(new TokenAmount(WVET[chainId], MIN_ETH))
+      ? tokens[Field.INPUT].equals(DUMMY_VET[chainId])
+        ? tokenBalances[Field.INPUT].subtract(new TokenAmount(DUMMY_VET[chainId], MIN_ETH))
         : tokenBalances[Field.INPUT]
       : undefined
   const atMaxAmountInput: boolean =
@@ -186,6 +191,9 @@ export default function Send({ location: { search } }: RouteComponentProps) {
   // warnings on slippage
   const severity = !sendingWithSwap ? 0 : warningServerity(priceImpactWithoutFee)
 
+  const isUnwrap = tokens[Field.INPUT]?.equals(WVET[chainId]) && tokens[Field.OUTPUT]?.equals(DUMMY_VET[chainId])
+  const isWrap = tokens[Field.INPUT]?.equals(DUMMY_VET[chainId]) && tokens[Field.OUTPUT]?.equals(WVET[chainId])
+
   function modalHeader() {
     if (!sendingWithSwap) {
       return <TransferModalHeader amount={parsedAmounts?.[Field.INPUT]} recipient={recipient} />
@@ -229,7 +237,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
       )
     }
 
-    if (sendingWithSwap) {
+    if (sendingWithSwap && !isWrap && !isUnwrap) {
       return (
         <SwapModalFooter
           trade={bestTrade}
@@ -432,7 +440,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
             }}
           />
         </AutoColumn>
-        {!noRoute && tokens[Field.OUTPUT] && tokens[Field.INPUT] && (
+        {!noRoute && tokens[Field.OUTPUT] && tokens[Field.INPUT] && !isUnwrap && !isWrap && (
           <Card padding={'.25rem 1.25rem 0 .75rem'} borderRadius={'20px'}>
             <AutoColumn gap="4px">
               <RowBetween align="center">
@@ -490,7 +498,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
           <GreyCard style={{ textAlign: 'center' }}>
             <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
           </GreyCard>
-        ) : approval === Approval.NOT_APPROVED || approval === Approval.PENDING ? (
+        ) : (approval === Approval.NOT_APPROVED || approval === Approval.PENDING) && !isUnwrap ? (
           <ButtonLight onClick={approveCallback} disabled={approval === Approval.PENDING}>
             {approval === Approval.PENDING ? (
               <Dots>Unlocking {tokens[Field.INPUT]?.symbol}</Dots>
@@ -498,6 +506,12 @@ export default function Send({ location: { search } }: RouteComponentProps) {
               'Unlock ' + tokens[Field.INPUT]?.symbol
             )}
           </ButtonLight>
+        ) : isWrap || isUnwrap ? (
+          <ButtonError onClick={onSwap} id="swap-button" disabled={true}>
+            <Text fontSize={20} fontWeight={500}>
+              {isWrap ? 'Wrap' : 'Unwrap'}
+            </Text>
+          </ButtonError>
         ) : (
           <ButtonError
             onClick={() => {
@@ -515,7 +529,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
           </ButtonError>
         )}
       </BottomGrouping>
-      {bestTrade && (
+      {bestTrade && !isWrap && !isUnwrap && (
         <AdvancedSwapDetailsDropdown
           trade={bestTrade}
           swapFee={swapFee}

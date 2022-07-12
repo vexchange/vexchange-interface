@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { WVET, TokenAmount, JSBI } from 'vexchange-sdk'
+import { TokenAmount, JSBI } from 'vexchange-sdk'
 import { useMemo } from 'react'
 import { find } from 'lodash'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -8,6 +8,7 @@ import { useTokenBalanceTreatingWETHasETH } from '../state/wallet/hooks'
 
 import { isAddress } from '../utils'
 import { useWeb3React } from './index'
+import { DUMMY_VET } from '../constants'
 
 // returns a callback for sending a token amount, treating WVET as VET
 // returns null with invalid arguments
@@ -26,7 +27,7 @@ export function useSendCallback(amount?: TokenAmount, recipient?: string): null 
     const token = amount?.token
 
     return async function onSend(): Promise<string> {
-      if (token.equals(WVET[chainId])) {
+      if (token.equals(DUMMY_VET[chainId])) {
         return library.vendor
           .sign('tx', [
             {

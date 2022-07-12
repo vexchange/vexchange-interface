@@ -87,6 +87,7 @@ export function useDerivedSwapInfo(): {
   const relevantTokenBalances = useTokenBalancesTreatWETHAsETH(account, [tokenIn, tokenOut])
 
   const isExactIn: boolean = independentField === Field.INPUT
+
   const amount = tryParseAmount(typedValue, isExactIn ? tokenIn : tokenOut)
 
   const bestTradeExactIn = useTradeExactIn(isExactIn ? amount : null, tokenOut)
