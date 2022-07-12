@@ -17,6 +17,7 @@ import { ChevronDown, ChevronUp } from 'react-feather'
 import { ButtonSecondary } from '../Button'
 import { RowBetween, RowFixed } from '../Row'
 import { useDarkModeManager } from '../../state/user/hooks'
+import { overrideWVET } from '../../utils'
 
 const FixedHeightRow = styled(RowBetween)`
   height: 24px;
@@ -135,7 +136,7 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
             <RowFixed>
               <DoubleLogo a0={token0?.address || ''} a1={token1?.address || ''} margin={true} size={20} />
               <Text fontWeight={500} fontSize={20}>
-                {token0?.symbol}/{token1?.symbol}
+                {overrideWVET(token0?.symbol)}/{overrideWVET(token1?.symbol)}
               </Text>
             </RowFixed>
             <RowFixed>
@@ -151,7 +152,7 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
               <FixedHeightRow>
                 <RowFixed>
                   <Text fontSize={16} fontWeight={500}>
-                    Pooled {token0?.symbol}:
+                    Pooled {overrideWVET(token0?.symbol)}
                   </Text>
                 </RowFixed>
                 {token0Deposited ? (
@@ -169,7 +170,7 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
               <FixedHeightRow>
                 <RowFixed>
                   <Text fontSize={16} fontWeight={500}>
-                    Pooled {token1?.symbol}:
+                    Pooled {overrideWVET(token1?.symbol)}
                   </Text>
                 </RowFixed>
                 {token1Deposited ? (

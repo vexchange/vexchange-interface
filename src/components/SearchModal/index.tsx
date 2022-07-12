@@ -4,7 +4,7 @@ import styled, { ThemeContext } from 'styled-components'
 import { JSBI, Token, WVET } from 'vexchange-sdk'
 import { isMobile } from 'react-device-detect'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { COMMON_BASES, DUMMY_VET } from '../../constants'
+import { DUMMY_VET } from '../../constants'
 import { useAllTokenBalancesTreatingWETHasETH } from '../../state/wallet/hooks'
 import { Link as StyledLink } from '../../theme/components'
 
@@ -23,7 +23,7 @@ import { Spinner, TYPE } from '../../theme'
 import { RowBetween, RowFixed, AutoRow } from '../Row'
 
 import { useDarkModeManager } from '../../state/user/hooks'
-import { isAddress, escapeRegExp } from '../../utils'
+import { isAddress, escapeRegExp, overrideWVET } from '../../utils'
 import { useWeb3React } from '../../hooks'
 import {
   useAllDummyPairs,
@@ -34,7 +34,6 @@ import {
 } from '../../state/user/hooks'
 import { useTranslation } from 'react-i18next'
 import { useToken, useAllTokens } from '../../hooks/Tokens'
-import QuestionHelper from '../QuestionHelper'
 
 const TokenModalInfo = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -81,7 +80,7 @@ const Input = styled.input<{ isDark?: boolean }>`
   outline: none;
   box-sizing: border-box;
   border-radius: 20px;
-  color: rgba(255, 255, 255, 0.57);
+  color: ${({ isDark }) => (isDark ? '#ffffff' : 'rgba(255, 255, 255, 0.57)')}
   -webkit-appearance: none;
 
   font-size: 18px;
@@ -145,21 +144,6 @@ const MenuItem = styled(PaddedItem)<{ isDark?: boolean }>`
     background-color: rgba(0, 0, 0, 0.1);
   }
   opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};
-`
-
-const BaseWrapper = styled(AutoRow)<{ disable?: boolean }>`
-  border: 1px solid ${({ theme, disable }) => (disable ? 'transparent' : theme.bg3)};
-  padding: 0 6px;
-  border-radius: 10px;
-  width: 120px;
-
-  :hover {
-    cursor: ${({ disable }) => !disable && 'pointer'};
-    background-color: ${({ theme, disable }) => !disable && theme.bg2};
-  }
-
-  background-color: ${({ theme, disable }) => disable && theme.bg3};
-  opacity: ${({ disable }) => disable && '0.4'};
 `
 
 // filters on results
@@ -425,7 +409,7 @@ function SearchModal({
           >
             <RowFixed>
               <DoubleTokenLogo a0={token0?.address || ''} a1={token1?.address || ''} size={24} margin={true} />
-              <Text fontWeight={500} fontSize={16}>{`${token0?.symbol}/${token1?.symbol}`}</Text>
+              <Text fontWeight={500} fontSize={16}>{overrideWVET(token0?.symbol)}/{overrideWVET(token1?.symbol)}</Text>
             </RowFixed>
 
             <ButtonPrimary
@@ -623,33 +607,6 @@ function SearchModal({
               ref={inputRef}
               onChange={onInput}
             />
-            {showCommonBases && (
-              <AutoColumn gap="md">
-                <AutoRow>
-                  <Text fontWeight={500} fontSize={16}>
-                    Common Bases
-                  </Text>
-                  <QuestionHelper text="These tokens are commonly used in pairs." />
-                </AutoRow>
-                <AutoRow gap="10px">
-                  {COMMON_BASES[chainId]?.map(token => {
-                    return (
-                      <BaseWrapper
-                        gap="6px"
-                        onClick={() => hiddenToken !== token.address && _onTokenSelect(token.address)}
-                        disable={hiddenToken === token.address}
-                        key={token.address}
-                      >
-                        <TokenLogo address={token.address} />
-                        <Text fontWeight={500} fontSize={16}>
-                          {token.symbol}
-                        </Text>
-                      </BaseWrapper>
-                    )
-                  })}
-                </AutoRow>
-              </AutoColumn>
-            )}
             <RowBetween>
               <Text fontSize={14} fontWeight={500}>
                 {filterType === 'tokens' ? 'Token Name' : 'Pool Name'}
