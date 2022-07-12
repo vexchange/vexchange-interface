@@ -12,14 +12,6 @@ export const ALL_TOKENS = [
   // chain-specific tokens
   ...MAINNET_TOKENS
 ]
-  // remap WVET to VET
-  .map(token => {
-    if (token.equals(WVET[token.chainId])) {
-      ;(token as any).symbol = 'VET'
-      ;(token as any).name = 'VeChain'
-    }
-    return token
-  })
   // put into an object
   .reduce((tokenMap, token) => {
     if (tokenMap?.[token.chainId]?.[token.address] !== undefined) throw Error('Duplicate tokens.')

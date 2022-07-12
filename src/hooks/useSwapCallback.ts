@@ -2,8 +2,9 @@ import { BigNumber } from '@ethersproject/bignumber'
 import { Token, Trade, TradeType, WVET } from 'vexchange-sdk'
 import { useMemo } from 'react'
 import { find } from 'lodash'
-import { DEFAULT_DEADLINE_FROM_NOW, INITIAL_ALLOWED_SLIPPAGE, ROUTER_ADDRESS } from '../constants'
+import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, ROUTER_ADDRESS } from '../constants'
 import { abi as IVexchangeV2Router02ABI } from '../constants/abis/IVexchangeV2Router02.json'
+import { abi as WVETABI } from '../constants/abis/WVET.json'
 import { useTokenAllowance } from '../data/Allowances'
 import { Field } from '../state/swap/actions'
 import { useTransactionAdder } from '../state/transactions/hooks'
@@ -18,23 +19,41 @@ enum SwapType {
   EXACT_ETH_FOR_TOKENS,
   TOKENS_FOR_EXACT_TOKENS,
   TOKENS_FOR_EXACT_ETH,
-  ETH_FOR_EXACT_TOKENS
+  ETH_FOR_EXACT_TOKENS,
+  WRAP_VET,
+  UNWRAP_WVET
 }
 
 function getSwapType(tokens: { [field in Field]?: Token }, isExactIn: boolean, chainId: number): SwapType {
   if (isExactIn) {
-    if (tokens[Field.INPUT]?.equals(WVET[chainId])) {
-      return SwapType.EXACT_ETH_FOR_TOKENS
-    } else if (tokens[Field.OUTPUT]?.equals(WVET[chainId])) {
-      return SwapType.EXACT_TOKENS_FOR_ETH
+    if (tokens[Field.INPUT]?.equals(DUMMY_VET[chainId])) {
+      if (tokens[Field.OUTPUT]?.equals(WVET[chainId])) {
+        return SwapType.WRAP_VET
+      } else {
+        return SwapType.EXACT_ETH_FOR_TOKENS
+      }
+    } else if (tokens[Field.OUTPUT]?.equals(DUMMY_VET[chainId])) {
+      if (tokens[Field.INPUT]?.equals(WVET[chainId])) {
+        return SwapType.UNWRAP_WVET
+      } else {
+        return SwapType.EXACT_TOKENS_FOR_ETH
+      }
     } else {
       return SwapType.EXACT_TOKENS_FOR_TOKENS
     }
   } else {
-    if (tokens[Field.INPUT]?.equals(WVET[chainId])) {
-      return SwapType.ETH_FOR_EXACT_TOKENS
-    } else if (tokens[Field.OUTPUT]?.equals(WVET[chainId])) {
-      return SwapType.TOKENS_FOR_EXACT_ETH
+    if (tokens[Field.INPUT]?.equals(DUMMY_VET[chainId])) {
+      if (tokens[Field.OUTPUT]?.equals(WVET[chainId])) {
+        return SwapType.WRAP_VET
+      } else {
+        return SwapType.ETH_FOR_EXACT_TOKENS
+      }
+    } else if (tokens[Field.OUTPUT]?.equals(DUMMY_VET[chainId])) {
+      if (tokens[Field.INPUT]?.equals(WVET[chainId])) {
+        return SwapType.UNWRAP_WVET
+      } else {
+        return SwapType.TOKENS_FOR_EXACT_ETH
+      }
     } else {
       return SwapType.TOKENS_FOR_EXACT_TOKENS
     }
@@ -62,10 +81,14 @@ export function useSwapCallback(
     // will always be defined
     const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, allowedSlippage)
 
+    const isUnwrap =
+      trade.inputAmount.token.equals(WVET[chainId]) && trade.outputAmount.token.equals(DUMMY_VET[chainId])
+
     // no allowance
     if (
-      !trade.inputAmount.token.equals(WVET[chainId]) &&
-      (!inputAllowance || slippageAdjustedAmounts[Field.INPUT].greaterThan(inputAllowance))
+      !trade.inputAmount.token.equals(DUMMY_VET[chainId]) &&
+      (!inputAllowance || slippageAdjustedAmounts[Field.INPUT].greaterThan(inputAllowance)) &&
+      !isUnwrap
     ) {
       return null
     }
@@ -144,24 +167,43 @@ export function useSwapCallback(
           args = [slippageAdjustedAmounts[Field.OUTPUT].raw.toString(), path, recipient, deadlineFromNow]
           value = BigNumber.from(slippageAdjustedAmounts[Field.INPUT].raw.toString())
           break
+        case SwapType.WRAP_VET:
+          args = []
+          abi = find(WVETABI, { name: 'deposit' })
+          value = BigNumber.from(slippageAdjustedAmounts[Field.INPUT].raw.toString())
+          break
+        case SwapType.UNWRAP_WVET:
+          args = [slippageAdjustedAmounts[Field.INPUT].raw.toString()]
+          abi = find(WVETABI, { name: 'withdraw' })
+          value = null
+          break
       }
 
-      const comment = `Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`
+      const contractAddress =
+        swapType === SwapType.UNWRAP_WVET || swapType === SwapType.WRAP_VET ? WVET[chainId].address : ROUTER_ADDRESS
+      let comment = `Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`
       const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
       const isConnex1 = !!window.connex
       const connex = isConnex1 ? window.connex : library
+      // eslint-disable-next-line
       let tx, request, delegateParam
-      let method = connex.thor.account(ROUTER_ADDRESS).method(abi)
+      let method = connex.thor.account(contractAddress).method(abi)
       let clause = method.asClause(...args)
 
+      if (swapType === SwapType.UNWRAP_WVET) {
+        comment = 'Unwrap WVET into VET'
+      } else if (swapType === SwapType.WRAP_VET) {
+        comment = 'Wrap VET into WVET'
+      }
+
       if (isConnex1) {
-        tx = connex.vendor.sign("tx").comment(comment)
+        tx = connex.vendor.sign('tx').comment(comment)
         delegateParam = (res: any) => {
-          return new Promise((resolve) => {
+          return new Promise(resolve => {
             fetch(`${process.env.REACT_APP_VIP191_API_URL}`, {
               method: 'POST',
               headers: {
-                'Accept': 'application/json, text/plain, */*',
+                Accept: 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify(res)
@@ -173,7 +215,8 @@ export function useSwapCallback(
           })
         }
       } else {
-        tx = connex.vendor.sign('tx', [
+        tx = connex.vendor
+          .sign('tx', [
             {
               ...clause,
               value: value ? value.toString() : 0
@@ -187,21 +230,22 @@ export function useSwapCallback(
         await tx.delegate(delegateParam)
       }
 
-      request = isConnex1 
-        ? tx.request([clause])
-        : tx.request()
+      request = isConnex1 ? tx.request([clause]) : tx.request()
 
-      return request.then(response => {
+      if (userFreeSwapInfo && userFreeSwapInfo.remainingFreeSwaps > 0) {
+        tx.delegate(process.env.REACT_APP_VIP191_API_URL)
+      }
+
+      return tx
+        .request()
+        .then(response => {
           if (recipient === account) {
             addTransaction(response, {
               summary: comment
             })
           } else {
             addTransaction(response, {
-              summary:
-                comment +
-                ' to ' +
-                recipient
+              summary: comment + ' to ' + recipient
             })
           }
 
@@ -211,5 +255,16 @@ export function useSwapCallback(
           console.error(`Swap or gas estimate failed`, error)
         })
     }
-  }, [account, allowedSlippage, addTransaction, chainId, deadline, inputAllowance, library, trade, recipient, userFreeSwapInfo])
+  }, [
+    account,
+    allowedSlippage,
+    addTransaction,
+    chainId,
+    deadline,
+    inputAllowance,
+    library,
+    trade,
+    recipient,
+    userFreeSwapInfo
+  ])
 }

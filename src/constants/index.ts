@@ -5,6 +5,11 @@ export const V1_FACTORY_ADDRESS = '0x6A662F91E14312a11a2E35b359427AEf798fD928'
 
 export const ROUTER_ADDRESS = '0x6c0a6e1d922e0e63901301573370b932ae20dadb'
 
+export const DUMMY_VET = {
+  1: new Token(ChainId.MAINNET, '0x0000000000000000000000000000000000000000', 18, 'VET', 'Vechain'),
+  3: new Token(ChainId.TESTNET, '0x0000000000000000000000000000000000000000', 18, 'VET', 'Vechain')
+}
+
 // used for display in the default list when adding liquidity
 export const COMMON_BASES = {
   [ChainId.MAINNET]: [WVET[ChainId.MAINNET]],

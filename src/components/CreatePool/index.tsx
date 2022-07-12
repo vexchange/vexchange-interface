@@ -57,33 +57,14 @@ function CreatePool({ history }: RouteComponentProps) {
   return (
     <AutoColumn gap="20px" style={{ padding: '1rem' }}>
       <AutoColumn gap="24px">
-        {!token0Address ? (
-          <ButtonDropwdown
-            onClick={() => {
-              setShowSearch(true)
-              setActiveField(Fields.TOKEN0)
-            }}
-          >
-            <Text fontSize={20}>Select first token</Text>
-          </ButtonDropwdown>
-        ) : (
-          <ButtonDropwdownLight
-            onClick={() => {
-              setShowSearch(true)
-              setActiveField(Fields.TOKEN0)
-            }}
-          >
-            <Row align="flex-end">
-              <TokenLogo address={token0Address} />
-              <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
-                {token0?.symbol}{' '}
-              </Text>
-              <TYPE.darkGray fontWeight={500} fontSize={16} marginLeft={'8px'}>
-                {token0?.address === 'VET' && '(default)'}
-              </TYPE.darkGray>
-            </Row>
-          </ButtonDropwdownLight>
-        )}
+        <ButtonDropwdown
+          onClick={() => {
+            setShowSearch(true)
+            setActiveField(Fields.TOKEN0)
+          }}
+        >
+          <Text fontSize={20}>Select first token</Text>
+        </ButtonDropwdown>
         <ColumnCenter>
           <Plus size="16" color="#888D9B" />
         </ColumnCenter>

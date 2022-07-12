@@ -21,7 +21,7 @@ import SearchModal from '../../components/SearchModal'
 
 import TokenLogo from '../../components/TokenLogo'
 
-import { ROUTER_ADDRESS } from '../../constants'
+import { DUMMY_VET, ROUTER_ADDRESS } from '../../constants'
 import { usePair } from '../../data/Reserves'
 import { useTotalSupply } from '../../data/TotalSupply'
 import { useWeb3React } from '../../hooks'
@@ -154,7 +154,11 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
 
   // input state
-  const [state, dispatch] = useReducer(reducer, initializeAddState(token0, token1))
+  //initialize with VET instead of WVET
+  const initialToken0 = token0 === WVET[chainId].address ? DUMMY_VET[chainId].address : token0
+  const initialToken1 = token1 === WVET[chainId].address ? DUMMY_VET[chainId].address : token1
+
+  const [state, dispatch] = useReducer(reducer, initializeAddState(initialToken0, initialToken1))
   const { independentField, typedValue, ...fieldData } = state
   const dependentField: Field = independentField === Field.INPUT ? Field.OUTPUT : Field.INPUT
 
@@ -164,9 +168,17 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     [Field.OUTPUT]: useTokenByAddressAndAutomaticallyAdd(fieldData[Field.OUTPUT].address)
   }
 
+  const outputIsVET = tokens[Field.OUTPUT].equals(DUMMY_VET[chainId])
+  const inputIsVET = tokens[Field.INPUT].equals(DUMMY_VET[chainId])
+
+  const tokensAdjusted: { [field in Field]: Token } = {
+    [Field.INPUT]: inputIsVET ? WVET[chainId] : tokens[Field.INPUT],
+    [Field.OUTPUT]: outputIsVET ? WVET[chainId] : tokens[Field.OUTPUT]
+  }
+
   // exchange data
-  const pair = usePair(tokens[Field.INPUT], tokens[Field.OUTPUT])
-  const route: Route = pair ? new Route([pair], tokens[independentField]) : undefined
+  const pair = usePair(tokensAdjusted[Field.INPUT], tokensAdjusted[Field.OUTPUT])
+  const route: Route = pair ? new Route([pair], tokensAdjusted[independentField]) : undefined
   const totalSupply: TokenAmount = useTotalSupply(pair?.liquidityToken)
   const noLiquidity = // used to detect new exchange
     pair === null ||
@@ -185,7 +197,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
   })
 
   useEffect(() => {
-    if (typedValue !== '.' && tokens[independentField] && noLiquidity) {
+    if (typedValue !== '.' && tokensAdjusted[independentField] && noLiquidity) {
       const newNonRelationalAmounts = nonrelationalAmounts
       if (typedValue === '') {
         if (independentField === Field.OUTPUT) {
@@ -195,11 +207,11 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
         }
       } else {
         try {
-          const typedValueParsed = parseUnits(typedValue, tokens[independentField].decimals).toString()
+          const typedValueParsed = parseUnits(typedValue, tokensAdjusted[independentField].decimals).toString()
           if (independentField === Field.OUTPUT) {
-            newNonRelationalAmounts[Field.OUTPUT] = new TokenAmount(tokens[independentField], typedValueParsed)
+            newNonRelationalAmounts[Field.OUTPUT] = new TokenAmount(tokensAdjusted[independentField], typedValueParsed)
           } else {
-            newNonRelationalAmounts[Field.INPUT] = new TokenAmount(tokens[independentField], typedValueParsed)
+            newNonRelationalAmounts[Field.INPUT] = new TokenAmount(tokensAdjusted[independentField], typedValueParsed)
           }
         } catch (error) {
           console.log(error)
@@ -207,7 +219,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
       }
       setNonrelationalAmounts(newNonRelationalAmounts)
     }
-  }, [independentField, nonrelationalAmounts, tokens, typedValue, noLiquidity])
+  }, [independentField, nonrelationalAmounts, tokensAdjusted, typedValue, noLiquidity])
 
   // caclulate the token amounts based on the input
   const parsedAmounts: { [field: number]: TokenAmount } = {}
@@ -215,11 +227,11 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     parsedAmounts[independentField] = nonrelationalAmounts[independentField]
     parsedAmounts[dependentField] = nonrelationalAmounts[dependentField]
   }
-  if (typedValue !== '' && typedValue !== '.' && tokens[independentField]) {
+  if (typedValue !== '' && typedValue !== '.' && tokensAdjusted[independentField]) {
     try {
-      const typedValueParsed = parseUnits(typedValue, tokens[independentField].decimals).toString()
+      const typedValueParsed = parseUnits(typedValue, tokensAdjusted[independentField].decimals).toString()
       if (typedValueParsed !== '0')
-        parsedAmounts[independentField] = new TokenAmount(tokens[independentField], typedValueParsed)
+        parsedAmounts[independentField] = new TokenAmount(tokensAdjusted[independentField], typedValueParsed)
     } catch (error) {
       console.error(error)
     }
@@ -389,10 +401,10 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     let args, value, abi
 
     // one of the tokens is ETH
-    if (tokens[Field.INPUT].equals(WVET[chainId]) || tokens[Field.OUTPUT].equals(WVET[chainId])) {
+    if (inputIsVET || outputIsVET) {
       abi = find(IVexchangeV2Router02ABI, { name: 'addLiquidityVET' })
 
-      const outputIsETH = tokens[Field.OUTPUT].equals(WVET[chainId])
+      const outputIsETH = tokens[Field.OUTPUT].equals(DUMMY_VET[chainId])
 
       args = [
         tokens[outputIsETH ? Field.INPUT : Field.OUTPUT].address, // token

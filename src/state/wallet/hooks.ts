@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address'
-import { JSBI, Token, TokenAmount, WVET } from 'vexchange-sdk'
+import { JSBI, Token, TokenAmount } from 'vexchange-sdk'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAllTokens } from '../../hooks/Tokens'
@@ -14,6 +14,7 @@ import {
   TokenBalanceListenerKey
 } from './actions'
 import { balanceKey } from './reducer'
+import { DUMMY_VET } from '../../constants'
 
 /**
  * Returns a map of the given addresses to their eventually consistent ETH balances.
@@ -124,7 +125,7 @@ export function useTokenBalancesTreatWETHAsETH(
     }
     let includesWETH = false
     const tokensWithoutWETH = tokens.filter(t => {
-      const isWETH = t?.equals(WVET[chainId]) ?? false
+      const isWETH = t?.equals(DUMMY_VET[chainId]) ?? false
       if (isWETH) includesWETH = true
       return !isWETH
     })
@@ -136,7 +137,7 @@ export function useTokenBalancesTreatWETHAsETH(
 
   return useMemo(() => {
     if (includesWETH) {
-      const weth = WVET[chainId]
+      const weth = DUMMY_VET[chainId]
       const ethBalance = ETHBalance[address]
       return {
         ...balancesWithoutWETH,

@@ -34,6 +34,8 @@ const EXPLORE_PREFIXES: { [chainId in ChainId]: string } = {
   3: 'explore-testnet.'
 }
 
+export const overrideWVET = symbol => symbol === 'WVET' ? 'VET' : symbol
+
 export const userAccount = {
   get: (account: string) => {
     const savedAccount = localStorage.getItem('wallet')

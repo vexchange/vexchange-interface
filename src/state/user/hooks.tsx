@@ -16,6 +16,7 @@ import {
   SerializedToken,
   updateUserDarkMode
 } from './actions'
+import { DUMMY_VET } from '../../constants'
 
 delete Array.prototype.flatMap
 flatMap.shim()
@@ -168,6 +169,11 @@ export function useAllDummyPairs(): Pair[] {
               // to construct pairs of the given token with each base
               .map(base => {
                 if (base.address === token.address) {
+                  return null
+                } else if (
+                  (base.address === DUMMY_VET[chainId].address && token.address === WVET[chainId].address) ||
+                  (base.address === WVET[chainId].address && token.address === DUMMY_VET[chainId].address)
+                ) {
                   return null
                 } else {
                   return new Pair(new TokenAmount(base, ZERO), new TokenAmount(token, ZERO))

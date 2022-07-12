@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Token, TokenAmount } from 'vexchange-sdk'
 import useSWR from 'swr'
 import { find } from 'lodash'
-import { abi as IERC20ABI } from '@uniswap/v2-core/build/IERC20.json'
+import ERC20_ABI from '../constants/abis/erc20.json'
 
 import { SWRKeys, useKeepSWRDataLiveAsBlocksArrive } from '.'
 import { useWeb3React } from '../hooks'
@@ -10,7 +10,7 @@ import { useWeb3React } from '../hooks'
 // returns null on errors
 export function useContract(address) {
   const { library } = useWeb3React()
-  const abi = find(IERC20ABI, { name: 'totalSupply' })
+  const abi = find(ERC20_ABI, { name: 'totalSupply' })
 
   return useMemo(() => {
     try {

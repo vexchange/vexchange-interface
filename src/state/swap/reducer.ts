@@ -1,8 +1,8 @@
 import { parse } from 'qs'
 import { createReducer } from '@reduxjs/toolkit'
-import { WVET } from 'vexchange-sdk'
 import { isAddress } from '../../utils'
 import { Field, selectToken, setDefaultsFromURL, switchTokens, typeInput } from './actions'
+import { DUMMY_VET } from '../../constants'
 
 export interface SwapState {
   readonly independentField: Field
@@ -30,11 +30,11 @@ function parseCurrencyFromURLParameter(urlParam: any, chainId: number): string {
   if (typeof urlParam === 'string') {
     const valid = isAddress(urlParam)
     if (valid) return valid
-    if (urlParam.toLowerCase() === 'eth') return WVET[chainId]?.address ?? ''
-    if (valid === false) return WVET[chainId]?.address ?? ''
+    if (urlParam.toLowerCase() === 'eth') return DUMMY_VET[chainId]?.address ?? ''
+    if (valid === false) return DUMMY_VET[chainId]?.address ?? ''
   }
 
-  return WVET[chainId]?.address
+  return DUMMY_VET[chainId]?.address
 }
 
 function parseTokenAmountURLParameter(urlParam: any): string {
@@ -76,7 +76,7 @@ export default createReducer<SwapState>(initialState, builder =>
       return {
         ...initialState,
         [Field.INPUT]: {
-          address: WVET[chainId]?.address
+          address: DUMMY_VET[chainId]?.address
         }
       }
     })
