@@ -42,14 +42,16 @@ import SwapModalHeader from '../../components/swap/SwapModalHeader'
 import { basisPointsToPercent, fetchUserFreeSwapInfo } from '../../utils'
 
 export interface IFreeSwapInfo {
-  address: string;
-  hasNFT: boolean;
-  remainingFreeSwaps: number;
+  address: string
+  hasNFT: boolean
+  remainingFreeSwaps: number
 }
 
 // throttle
 let fetchFreeSwaps = true
-setInterval(() => { fetchFreeSwaps = true }, 5000)
+setInterval(() => {
+  fetchFreeSwaps = true
+}, 5000)
 
 export default function Swap({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURL(search)
@@ -170,7 +172,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     if (account) {
       getUserFreeSwapInfo()
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [tokenBalances, account])
 
   useMemo(() => {
@@ -193,6 +195,36 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   // warnings on slippage
   const priceImpactSeverity = warningServerity(priceImpactWithoutFee)
   const remainingSwaps = userFreeSwapInfo.hasNFT ? userFreeSwapInfo.remainingFreeSwaps : 0
+  const showRoutePath = () => {
+    try {
+      let route = ''
+      bestTrade.route.path.map((item, i) => {
+        route += item.symbol
+
+        if (i + 1 !== bestTrade.route.path.length) {
+          route += ' > '
+        }
+
+        return route
+      })
+
+      return (
+        <span
+          style={{
+            display: 'block',
+            textAlign: 'center',
+            padding: '20px',
+            background: '#000',
+            margin: '20px auto'
+          }}
+        >
+          {route}
+        </span>
+      )
+    } catch (error) {
+      return null
+    }
+  }
 
   function modalHeader() {
     return (
@@ -371,10 +403,10 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           </ButtonError>
         ) : (
           <>
-            { userFreeSwapInfo.hasNFT && (
+            {showRoutePath()}
+            {userFreeSwapInfo.hasNFT && (
               <FreeSwapRemainingText>
-                You have <span>{ remainingSwaps }</span> free {
-                  remainingSwaps !== 1 ? 'swaps' : 'swap' } remaining today
+                You have <span>{remainingSwaps}</span> free {remainingSwaps !== 1 ? 'swaps' : 'swap'} remaining today
               </FreeSwapRemainingText>
             )}
             <ButtonError
