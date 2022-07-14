@@ -213,6 +213,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           style={{
             display: 'block',
             textAlign: 'center',
+            color: '#fff',
             padding: '20px',
             background: '#000',
             margin: '20px auto'
