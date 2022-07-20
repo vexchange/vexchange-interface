@@ -194,7 +194,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         const swapFeeOld = await FetchSwapFee(pairAddress, library)
 
         await Promise.all(promises).then(res => {
-          console.log(res)
           // const totalFee = res.reduce((a: Fraction, b: Fraction) =>
           //   new Fraction(JSBI.BigInt(1)).subtract(a).multiply(new Fraction(JSBI.BigInt(1)).subtract(b))
           // )
