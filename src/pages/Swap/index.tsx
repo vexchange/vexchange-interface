@@ -181,11 +181,11 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         console.log('--------------------------')
         const promises = []
         bestTrade.route.pairs.map(tradePair => {
-          promises.push(
+          return promises.push(
             new Promise(async resolve => {
               const pairAddress = tradePair.liquidityToken.address
               const swapFee = await FetchSwapFee(pairAddress, library)
-              resolve(swapFee)
+              return resolve(swapFee)
             })
           )
         })
@@ -193,18 +193,16 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         const pairAddress = bestTrade.route.pairs[0].liquidityToken.address
         const swapFeeOld = await FetchSwapFee(pairAddress, library)
 
+        // for each hop in our trade, take away the x*y=k price impact from 0.3% fees
+        // e.g. for 3 tokens/2 hops: 1 - ((1 - .03) * (1-.03))
         await Promise.all(promises).then(res => {
-          // const totalFee = res.reduce((a: Fraction, b: Fraction) =>
-          //   new Fraction(JSBI.BigInt(1)).subtract(a).multiply(new Fraction(JSBI.BigInt(1)).subtract(b))
-          // )
+          const totalFee = res.reduce(
+            (a: Fraction, b: Fraction) => new Fraction(JSBI.BigInt(1)).subtract(b).multiply(a),
+            new Fraction(JSBI.BigInt(1))
+          )
 
-          let totalFee: Fraction = new Fraction(JSBI.BigInt(1))
-          res.map(item => {
-            totalFee = new Fraction(JSBI.BigInt(1)).subtract(item).multiply(totalFee)
-          })
           const fractionFee = new Fraction(JSBI.BigInt(1)).subtract(totalFee)
           const swapFee = new Percent(fractionFee.numerator, fractionFee.denominator)
-          // console.log({ totalFee, swapFee })
           setSwapFee(swapFee)
         })
 
