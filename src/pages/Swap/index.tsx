@@ -1,4 +1,4 @@
-import { JSBI, TokenAmount, WVET } from 'vexchange-sdk'
+import { Fraction, JSBI, Percent, TokenAmount, WVET } from 'vexchange-sdk'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -178,9 +178,38 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   useMemo(() => {
     const getSwapFee = async () => {
       try {
+        console.log('--------------------------')
+        const promises = []
+        bestTrade.route.pairs.map(tradePair => {
+          promises.push(
+            new Promise(async resolve => {
+              const pairAddress = tradePair.liquidityToken.address
+              const swapFee = await FetchSwapFee(pairAddress, library)
+              resolve(swapFee)
+            })
+          )
+        })
+
         const pairAddress = bestTrade.route.pairs[0].liquidityToken.address
-        const swapFee = await FetchSwapFee(pairAddress, library)
-        setSwapFee(swapFee)
+        const swapFeeOld = await FetchSwapFee(pairAddress, library)
+
+        await Promise.all(promises).then(res => {
+          console.log(res)
+          // const totalFee = res.reduce((a: Fraction, b: Fraction) =>
+          //   new Fraction(JSBI.BigInt(1)).subtract(a).multiply(new Fraction(JSBI.BigInt(1)).subtract(b))
+          // )
+
+          let totalFee: Fraction = new Fraction(JSBI.BigInt(1))
+          res.map(item => {
+            totalFee = new Fraction(JSBI.BigInt(1)).subtract(item).multiply(totalFee)
+          })
+          const fractionFee = new Fraction(JSBI.BigInt(1)).subtract(totalFee)
+          const swapFee = new Percent(fractionFee.numerator, fractionFee.denominator)
+          // console.log({ totalFee, swapFee })
+          setSwapFee(swapFee)
+        })
+
+        console.log({ swapFee, swapFeeOld })
       } catch (err) {
         console.error('Failed to get swap fee', err)
       }
