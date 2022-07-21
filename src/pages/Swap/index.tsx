@@ -1,4 +1,4 @@
-import { Fraction, JSBI, Percent, TokenAmount, WVET } from 'vexchange-sdk'
+import { Fraction, JSBI, Percent, TokenAmount, Trade, WVET } from 'vexchange-sdk'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -52,6 +52,20 @@ let fetchFreeSwaps = true
 setInterval(() => {
   fetchFreeSwaps = true
 }, 5000)
+
+let lockSwapFeeFetch: boolean = false
+
+// we don't show fees for wrap/unwrap
+let swapFeePerRoute: { [route: string]: Percent } = {
+  'VET-WVET': new Percent(JSBI.BigInt(0)),
+  'WVET-VET': new Percent(JSBI.BigInt(0))
+}
+
+const getRoutePath = (trade: Trade | null) => {
+  if (!trade?.route?.path) return null
+
+  return trade.route.path.map(item => item.symbol).join('-')
+}
 
 export default function Swap({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURL(search)
@@ -178,7 +192,12 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   useMemo(() => {
     const getSwapFee = async () => {
       try {
-        console.log('--------------------------')
+        const routePath = getRoutePath(bestTrade)
+        
+        if (swapFeePerRoute[routePath]) return swapFeePerRoute[routePath]
+        if (lockSwapFeeFetch) return
+
+        lockSwapFeeFetch = true
         const promises = []
         bestTrade.route.pairs.map(tradePair => {
           return promises.push(
@@ -190,9 +209,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           )
         })
 
-        const pairAddress = bestTrade.route.pairs[0].liquidityToken.address
-        const swapFeeOld = await FetchSwapFee(pairAddress, library)
-
         // for each hop in our trade, take away the x*y=k price impact from 0.3% fees
         // e.g. for 3 tokens/2 hops: 1 - ((1 - .03) * (1-.03))
         await Promise.all(promises).then(res => {
@@ -203,36 +219,29 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
 
           const fractionFee = new Fraction(JSBI.BigInt(1)).subtract(totalFee)
           const swapFee = new Percent(fractionFee.numerator, fractionFee.denominator)
+          swapFeePerRoute[routePath] = swapFee
+          lockSwapFeeFetch = false
           setSwapFee(swapFee)
         })
-
-        console.log({ swapFee, swapFeeOld })
       } catch (err) {
+        lockSwapFeeFetch = false
         console.error('Failed to get swap fee', err)
       }
     }
 
-    if (bestTrade) {
+    if (bestTrade && userHasSpecifiedInputOutput) {
       getSwapFee()
     }
     // eslint-disable-next-line
-  }, [userHasSpecifiedInputOutput])
+  }, [tokenBalances])
 
   // warnings on slippage
   const priceImpactSeverity = warningServerity(priceImpactWithoutFee)
   const remainingSwaps = userFreeSwapInfo.hasNFT ? userFreeSwapInfo.remainingFreeSwaps : 0
+
   const showRoutePath = () => {
     try {
-      let route = ''
-      bestTrade.route.path.map((item, i) => {
-        route += item.symbol
-
-        if (i + 1 !== bestTrade.route.path.length) {
-          route += ' > '
-        }
-
-        return route
-      })
+      let route = getRoutePath(bestTrade)
 
       return (
         <span

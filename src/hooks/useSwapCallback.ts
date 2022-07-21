@@ -104,8 +104,6 @@ export function useSwapCallback(
         chainId
       )
 
-      console.log(SwapType[swapType])
-
       let args, value, abi
 
       switch (swapType) {

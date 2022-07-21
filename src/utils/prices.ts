@@ -24,20 +24,12 @@ export async function FetchSwapFee(pairAddress?: string, library?: any): Promise
 // computes price breakdown for the trade
 export function computeTradePriceBreakdown(
   trade?: Trade,
-  baseFee?: Percent
+  swapFee?: Percent
 ): { priceImpactWithoutFee?: Percent; realizedLPFee?: TokenAmount } {
-  const realizedLPFee = !trade
-    ? undefined
-    : baseFee
-
-  // console.log({
-  //   baseFee,
-  //   trade,
-  //   realizedLPFee
-  // })
+  swapFee = !trade ? undefined : swapFee
 
   // remove lp fees from price impact
-  const priceImpactWithoutFeeFraction = trade?.slippage?.subtract(realizedLPFee)
+  const priceImpactWithoutFeeFraction = trade?.slippage?.subtract(swapFee)
 
   // the x*y=k impact
   const priceImpactWithoutFeePercent = priceImpactWithoutFeeFraction
@@ -46,7 +38,7 @@ export function computeTradePriceBreakdown(
 
   // the amount of the input that accrues to LPs
   const realizedLPFeeAmount =
-    realizedLPFee && new TokenAmount(trade.inputAmount.token, realizedLPFee.multiply(trade.inputAmount.raw).quotient)
+    swapFee && new TokenAmount(trade.inputAmount.token, swapFee.multiply(trade.inputAmount.raw).quotient)
 
   return { priceImpactWithoutFee: priceImpactWithoutFeePercent, realizedLPFee: realizedLPFeeAmount }
 }
