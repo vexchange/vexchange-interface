@@ -1,5 +1,5 @@
 import { Fraction, JSBI, Percent, TokenAmount, Trade, WVET } from 'vexchange-sdk'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
 import { RouteComponentProps } from 'react-router-dom'
