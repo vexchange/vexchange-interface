@@ -27,7 +27,6 @@ export function computeTradePriceBreakdown(
   swapFee?: Percent
 ): { priceImpactWithoutFee?: Percent; realizedLPFee?: TokenAmount } {
   swapFee = !trade ? undefined : swapFee
-
   // remove lp fees from price impact
   const priceImpactWithoutFeeFraction = trade?.slippage?.subtract(swapFee)
 

@@ -189,12 +189,12 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     // eslint-disable-next-line
   }, [tokenBalances, account])
 
-  useMemo(() => {
+  useEffect(() => {
     const getSwapFee = async () => {
       try {
         const routePath = getRoutePath(bestTrade)
-        
-        if (swapFeePerRoute[routePath]) return swapFeePerRoute[routePath]
+
+        if (swapFeePerRoute[routePath]) return setSwapFee(swapFeePerRoute[routePath])
         if (lockSwapFeeFetch) return
 
         lockSwapFeeFetch = true
@@ -203,8 +203,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           return promises.push(
             new Promise(async resolve => {
               const pairAddress = tradePair.liquidityToken.address
-              const swapFee = await FetchSwapFee(pairAddress, library)
-              return resolve(swapFee)
+              return resolve(await FetchSwapFee(pairAddress, library))
             })
           )
         })
@@ -216,9 +215,9 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
             (a: Fraction, b: Fraction) => new Fraction(JSBI.BigInt(1)).subtract(b).multiply(a),
             new Fraction(JSBI.BigInt(1))
           )
-
           const fractionFee = new Fraction(JSBI.BigInt(1)).subtract(totalFee)
           const swapFee = new Percent(fractionFee.numerator, fractionFee.denominator)
+
           swapFeePerRoute[routePath] = swapFee
           lockSwapFeeFetch = false
           setSwapFee(swapFee)
@@ -229,11 +228,11 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
       }
     }
 
-    if (bestTrade && userHasSpecifiedInputOutput) {
+    if (bestTrade) {
       getSwapFee()
     }
     // eslint-disable-next-line
-  }, [tokenBalances])
+  }, [bestTrade])
 
   // warnings on slippage
   const priceImpactSeverity = warningServerity(priceImpactWithoutFee)
@@ -243,7 +242,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     try {
       let route = getRoutePath(bestTrade)
 
-      return (
+      return !route ? null : (
         <span
           style={{
             display: 'block',
