@@ -238,29 +238,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   const priceImpactSeverity = warningServerity(priceImpactWithoutFee)
   const remainingSwaps = userFreeSwapInfo.hasNFT ? userFreeSwapInfo.remainingFreeSwaps : 0
 
-  const showRoutePath = () => {
-    try {
-      let route = getRoutePath(bestTrade)
-
-      return !route ? null : (
-        <span
-          style={{
-            display: 'block',
-            textAlign: 'center',
-            color: '#fff',
-            padding: '20px',
-            background: '#000',
-            margin: '20px auto'
-          }}
-        >
-          {route}
-        </span>
-      )
-    } catch (error) {
-      return null
-    }
-  }
-
   function modalHeader() {
     return (
       <SwapModalHeader
@@ -438,7 +415,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           </ButtonError>
         ) : (
           <>
-            {showRoutePath()}
             {userFreeSwapInfo.hasNFT && (
               <FreeSwapRemainingText>
                 You have <span>{remainingSwaps}</span> free {remainingSwaps !== 1 ? 'swaps' : 'swap'} remaining today
