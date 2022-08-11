@@ -3321,10 +3321,10 @@
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-"@vimworld/nufinetes-link@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@vimworld/nufinetes-link/-/nufinetes-link-0.1.3.tgz#c600fb89b22f4643e9f45ffa7b1f14817a3beaee"
-  integrity sha512-UtTPG4aR3Wj4Qk1sfizKekUse8LGV8xj7MTnaDML+O/a+657bFJG4JZbMR74cBa3SGGSZXQcG+G7PKVitazlOQ==
+"@vimworld/nufinetes-link@^0.1.6":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@vimworld/nufinetes-link/-/nufinetes-link-0.1.7.tgz#2d6c58a7dac4229200d438611bba48c02923fa87"
+  integrity sha512-1WjUkm41RMAEBzOBzh0qbA0S6UguAkPfVGVim8Hatny16QBQJY2pMgzhtqxtDYrSnpXT4xAe+l/1/4rHwyEFjw==
   dependencies:
     "@ethersproject/providers" "^5"
     "@walletconnect/legacy-types" "^2.0.0-beta.26"
@@ -19443,11 +19443,6 @@ yargs@^7.1.0:
     which-module "^1.0.0"
     y18n "^3.2.1"
     yargs-parser "^5.0.0"
-
-yarn@^1.22.19:
-  version "1.22.19"
-  resolved "https://registry.yarnpkg.com/yarn/-/yarn-1.22.19.tgz#4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
-  integrity sha512-/0V5q0WbslqnwP91tirOvldvYISzaqhClxzyUKXYxs07yUILIs5jx/k6CFe8bvKSkds5w+eiOqta39Wk3WxdcQ==
 
 yauzl@2.10.0, yauzl@^2.10.0, yauzl@^2.4.2:
   version "2.10.0"
