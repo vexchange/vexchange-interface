@@ -15,7 +15,6 @@ import { usePrevious } from '../../hooks'
 import { Link } from '../../theme'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { useDarkModeManager } from '../../state/user/hooks'
-import { hooks } from '../../connectors/Nufintes'
 import { NufinetesConnector } from '@vimworld/nufinetes-link'
 
 const CloseIcon = styled.div`
@@ -121,8 +120,6 @@ const WALLET_VIEWS = {
   ACCOUNT: 'account',
   PENDING: 'pending'
 }
-
-const { useAccounts, useIsActive, useError } = hooks
 
 export default function WalletModal({
   pendingTransactions,
