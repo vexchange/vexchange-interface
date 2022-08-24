@@ -15,6 +15,8 @@ import { usePrevious } from '../../hooks'
 import { Link } from '../../theme'
 import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { useDarkModeManager } from '../../state/user/hooks'
+import { hooks } from '../../connectors/Nufintes'
+import { NufinetesConnector } from '@vimworld/nufinetes-link'
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -120,6 +122,8 @@ const WALLET_VIEWS = {
   PENDING: 'pending'
 }
 
+const { useAccounts, useIsActive, useError } = hooks
+
 export default function WalletModal({
   pendingTransactions,
   confirmedTransactions
@@ -181,13 +185,20 @@ export default function WalletModal({
     })
     setPendingWallet(connector) // set wallet for pending view
     setWalletView(WALLET_VIEWS.PENDING)
-    activate(connector, undefined, true).catch(error => {
-      if (error instanceof UnsupportedChainIdError) {
-        activate(connector) // a little janky...can't use setError because the connector isn't set
-      } else {
+    if (connector instanceof NufinetesConnector) {
+      //TODO: Select test net based on .env
+      connector.activate(818000000).catch(e => {
         setPendingError(true)
-      }
-    })
+      })
+    } else {
+      activate(connector, undefined, true).catch(error => {
+        if (error instanceof UnsupportedChainIdError) {
+          activate(connector) // a little janky...can't use setError because the connector isn't set
+        } else {
+          setPendingError(true)
+        }
+      })
+    }
   }
 
   // get wallets user can switch too, depending on device/browser

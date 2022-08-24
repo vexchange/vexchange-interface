@@ -9,10 +9,22 @@ import ERC20_ABI from '../constants/abis/erc20.json'
 import { injected } from '../connectors'
 import { NetworkContextName } from '../constants'
 import { getContract, getExchangeContract } from '../utils'
+import { hooks } from '../connectors/Nufintes'
+import { getLibrary } from '..'
+const { useAccounts, useIsActive, useError } = hooks
 
 export function useWeb3React() {
   const context = useWeb3ReactCore<Web3Provider>()
   const contextNetwork = useWeb3ReactCore<Web3Provider>(NetworkContextName)
+  //Nufinetes
+  const accounts = useAccounts()
+  const isActive = useIsActive()
+  const nufinetesError = useError()
+  context.active = context.active || isActive
+  context.account = context.account || (accounts ? accounts[0] : undefined)
+  context.error = context.error || nufinetesError
+  context.chainId = context.chainId || 1
+  context.library = context.library || getLibrary()
   return context.active ? context : contextNetwork
 }
 
