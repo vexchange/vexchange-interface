@@ -1,5 +1,6 @@
 import { ChainId, WVET, JSBI, Percent, Token } from 'vexchange-sdk'
 import { injected } from '../connectors'
+import { nufinetes } from '../connectors/Nufintes'
 
 export const V1_FACTORY_ADDRESS = '0x6A662F91E14312a11a2E35b359427AEf798fD928'
 
@@ -22,6 +23,14 @@ const MAINNET_WALLETS = {
     name: 'Sync',
     iconName: 'sync-logo.svg',
     description: 'Easy-to-use browser extension.',
+    href: null,
+    color: '#E8831D'
+  },
+  NUFINETES: {
+    connector: nufinetes,
+    name: 'Nufintes',
+    iconName: 'nufinetes-logo.svg',
+    description: 'Next generation wallet.',
     href: null,
     color: '#E8831D'
   }
