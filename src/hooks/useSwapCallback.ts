@@ -11,6 +11,7 @@ import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { isAddress } from '../utils'
 import { useWeb3React } from './index'
 import { IFreeSwapInfo } from '../pages/Swap'
+import { NufinetesConnector } from '@vimworld/nufinetes-link'
 
 enum SwapType {
   EXACT_TOKENS_FOR_TOKENS,
@@ -50,7 +51,7 @@ export function useSwapCallback(
   to?: string, // recipient of output, optional
   userFreeSwapInfo?: IFreeSwapInfo
 ): null | (() => Promise<string>) {
-  const { account, chainId, library } = useWeb3React()
+  const { account, chainId, library, connector } = useWeb3React()
   const inputAllowance = useTokenAllowance(trade?.inputAmount?.token, account, ROUTER_ADDRESS)
   const addTransaction = useTransactionAdder()
   const recipient = to ? isAddress(to) : account
@@ -149,19 +150,20 @@ export function useSwapCallback(
       const comment = `Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`
       const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
       const isConnex1 = !!window.connex
+      const isNufintes = connector.constructor.name === 'NufinetesWeb3Provider'
       const connex = isConnex1 ? window.connex : library
       let tx, request, delegateParam
-      let method = connex.thor.account(ROUTER_ADDRESS).method(abi)
-      let clause = method.asClause(...args)
+      const method = connex.thor.account(ROUTER_ADDRESS).method(abi)
+      const clause = method.asClause(...args)
 
       if (isConnex1) {
-        tx = connex.vendor.sign("tx").comment(comment)
+        tx = connex.vendor.sign('tx').comment(comment)
         delegateParam = (res: any) => {
-          return new Promise((resolve) => {
+          return new Promise(resolve => {
             fetch(`${process.env.REACT_APP_VIP191_API_URL}`, {
               method: 'POST',
               headers: {
-                'Accept': 'application/json, text/plain, */*',
+                Accept: 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify(res)
@@ -172,8 +174,27 @@ export function useSwapCallback(
               })
           })
         }
+        request = tx.request([clause])
+      } else if (isNufintes) {
+        const clauseForCustomRequest = [{ comment, ...clause }]
+        const transferTokenJSON = {
+          id: 898998,
+          jsonrpc: '2.0',
+          method: 'vechain_transaction',
+          params: [
+            clauseForCustomRequest,
+            {
+              broadcast: true,
+              chainId: (connector as any).chainId,
+              signer: account
+            }
+          ]
+        }
+        request = (connector as any).sendCustomRequest(transferTokenJSON)
+        console.log('request', request)
       } else {
-        tx = connex.vendor.sign('tx', [
+        tx = connex.vendor
+          .sign('tx', [
             {
               ...clause,
               value: value ? value.toString() : 0
@@ -181,27 +202,22 @@ export function useSwapCallback(
           ])
           .comment(comment)
         delegateParam = process.env.REACT_APP_VIP191_API_URL
+        request = tx.request()
       }
 
       if (isEligibleForFreeSwap) {
         await tx.delegate(delegateParam)
       }
 
-      request = isConnex1 
-        ? tx.request([clause])
-        : tx.request()
-
-      return request.then(response => {
+      return request
+        .then(response => {
           if (recipient === account) {
             addTransaction(response, {
               summary: comment
             })
           } else {
             addTransaction(response, {
-              summary:
-                comment +
-                ' to ' +
-                recipient
+              summary: comment + ' to ' + recipient
             })
           }
 
@@ -211,5 +227,17 @@ export function useSwapCallback(
           console.error(`Swap or gas estimate failed`, error)
         })
     }
-  }, [account, allowedSlippage, addTransaction, chainId, deadline, inputAllowance, library, trade, recipient, userFreeSwapInfo])
+  }, [
+    account,
+    connector,
+    allowedSlippage,
+    addTransaction,
+    chainId,
+    deadline,
+    inputAllowance,
+    library,
+    trade,
+    recipient,
+    userFreeSwapInfo
+  ])
 }
