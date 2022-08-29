@@ -175,7 +175,7 @@ export function useSwapCallback(
         }
         request = tx.request([clause])
       } else if (isNufintes) {
-        const clauseForCustomRequest = [{ comment, ...clause }]
+        const clauseForCustomRequest = [{ comment, ...clause, value: value ? value.toString() : 0 }]
         const transferTokenJSON = {
           id: 898998,
           jsonrpc: '2.0',
@@ -190,7 +190,6 @@ export function useSwapCallback(
           ]
         }
         request = (connector as any).sendCustomRequest(transferTokenJSON)
-        console.log('request', request)
       } else {
         tx = connex.vendor
           .sign('tx', [
