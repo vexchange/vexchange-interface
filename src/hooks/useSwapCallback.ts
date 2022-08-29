@@ -11,7 +11,6 @@ import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { isAddress } from '../utils'
 import { useWeb3React } from './index'
 import { IFreeSwapInfo } from '../pages/Swap'
-import { NufinetesConnector } from '@vimworld/nufinetes-link'
 
 enum SwapType {
   EXACT_TOKENS_FOR_TOKENS,

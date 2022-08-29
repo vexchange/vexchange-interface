@@ -14,8 +14,8 @@ import { getExploreLink, userAccount } from '../../utils'
 import { injected } from '../../connectors'
 import Identicon from '../Identicon'
 
-
 import { Link, TYPE } from '../../theme'
+import { nufinetes } from '../../connectors/Nufintes'
 
 const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
@@ -236,8 +236,7 @@ export default function AccountDetails({
     const isMetaMask = !!(ethereum && ethereum.isMetaMask)
     const name = Object.keys(SUPPORTED_WALLETS)
       .filter(
-        k =>
-          SUPPORTED_WALLETS[k].connector === connector && (connector !== injected || isMetaMask === (k === 'SYNC'))
+        k => SUPPORTED_WALLETS[k].connector === connector && (connector !== injected || isMetaMask === (k === 'SYNC'))
       )
       .map(k => SUPPORTED_WALLETS[k].name)[0]
     return <WalletName>{name}</WalletName>
@@ -261,6 +260,11 @@ export default function AccountDetails({
     [dispatch, chainId]
   )
 
+  const disconnectWallet = () => {
+    nufinetes.deactivate()
+    userAccount.remove()
+  }
+
   return (
     <>
       <UpperSection>
@@ -274,13 +278,7 @@ export default function AccountDetails({
               <AccountGroupingRow>
                 {getStatusIcon()}
                 <div>
-                  {account && (
-                    <WalletAction
-                      onClick={userAccount.remove}
-                    >
-                      Disconnect
-                    </WalletAction>
-                  )}
+                  {account && <WalletAction onClick={disconnectWallet}>Disconnect</WalletAction>}
                   <CircleWrapper>
                     <GreenCircle>
                       <div />
@@ -295,9 +293,7 @@ export default function AccountDetails({
               </AccountGroupingRow>
               <AccountGroupingRow>
                 <AccountControl>
-                  <StyledLink href={getExploreLink(chainId, account, 'address')}>
-                    View on VeChain Stats ↗
-                  </StyledLink>
+                  <StyledLink href={getExploreLink(chainId, account, 'address')}>View on VeChain Stats ↗</StyledLink>
                 </AccountControl>
               </AccountGroupingRow>
             </InfoCard>
