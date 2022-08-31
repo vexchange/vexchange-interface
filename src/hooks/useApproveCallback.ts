@@ -22,10 +22,11 @@ export function useApproveCallback(
   amountToApprove?: TokenAmount,
   addressToApprove?: string
 ): [Approval, () => Promise<void>] {
-  const { account, library } = useWeb3React()
+  const { account, library, connector } = useWeb3React()
 
   const currentAllowance = useTokenAllowance(amountToApprove?.token, account, addressToApprove)
   const pendingApproval = useHasPendingApproval(amountToApprove?.token?.address)
+  const isNufintes = connector.constructor.name === 'NufinetesWeb3Provider'
 
   // check the current approval status
   const approval = useMemo(() => {
@@ -53,11 +54,33 @@ export function useApproveCallback(
     const method = library.thor.account(amountToApprove?.token?.address).method(abi)
 
     const clause = method.asClause(addressToApprove, MaxUint256)
+    const comment = `Unlock ${amountToApprove?.token?.symbol}`
+    let request
 
-    return library.vendor
-      .sign('tx', [{ ...clause }])
-      .comment(`Unlock ${amountToApprove?.token?.symbol}`)
-      .request()
+    if (isNufintes) {
+      const clauseForCustomRequest = [{ comment, ...clause }]
+      const transferTokenJSON = {
+        id: 898998,
+        jsonrpc: '2.0',
+        method: 'vechain_transaction',
+        params: [
+          clauseForCustomRequest,
+          {
+            broadcast: true,
+            chainId: (connector as any).chainId,
+            signer: account
+          }
+        ]
+      }
+      request = (connector as any).sendCustomRequest(transferTokenJSON)
+    } else {
+      request = library.vendor
+        .sign('tx', [{ ...clause }])
+        .comment(comment)
+        .request()
+    }
+
+    return request
       .then(response => {
         addTransaction(response, {
           summary: 'Unlock ' + amountToApprove?.token?.symbol,
