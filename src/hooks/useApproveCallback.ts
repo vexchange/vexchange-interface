@@ -90,7 +90,18 @@ export function useApproveCallback(
       .catch(error => {
         console.debug('Failed to approve token', error)
       })
-  }, [addTransaction, addressToApprove, amountToApprove, approval, abi, library.thor, library.vendor])
+  }, [
+    addTransaction,
+    addressToApprove,
+    amountToApprove,
+    approval,
+    abi,
+    library.thor,
+    library.vendor,
+    account,
+    connector,
+    isNufintes,
+  ])
 
   return [approval, approve]
 }
