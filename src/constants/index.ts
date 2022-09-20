@@ -1,6 +1,6 @@
 import { ChainId, WVET, JSBI, Percent, Token } from 'vexchange-sdk'
 import { injected } from '../connectors'
-import { nufinetes } from '../connectors/Nufintes'
+import { nufinetes } from '../connectors/Nufinetes'
 
 export const V1_FACTORY_ADDRESS = '0x6A662F91E14312a11a2E35b359427AEf798fD928'
 

@@ -15,7 +15,7 @@ import { injected } from '../../connectors'
 import Identicon from '../Identicon'
 
 import { Link, TYPE } from '../../theme'
-import { nufinetes } from '../../connectors/Nufintes'
+import { nufinetes } from '../../connectors/Nufinetes'
 
 const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
