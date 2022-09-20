@@ -155,6 +155,8 @@ export function useSwapCallback(
       const method = connex.thor.account(ROUTER_ADDRESS).method(abi)
       const clause = method.asClause(...args)
       console.log(isConnex1, isNufintes)
+      console.log(connector)
+      console.log(connector.constructor.name)
 
       if (isNufintes) {
         const clauseForCustomRequest = [{ comment, ...clause, value: value ? value.toString() : 0 }]
