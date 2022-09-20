@@ -154,9 +154,25 @@ export function useSwapCallback(
       let tx, request, delegateParam
       const method = connex.thor.account(ROUTER_ADDRESS).method(abi)
       const clause = method.asClause(...args)
-      console.log(isNufintes)
+      console.log(isConnex1, isNufintes)
 
-      if (isConnex1) {
+      if (isNufintes) {
+        const clauseForCustomRequest = [{ comment, ...clause, value: value ? value.toString() : 0 }]
+        const transferTokenJSON = {
+          id: 898998,
+          jsonrpc: '2.0',
+          method: 'vechain_transaction',
+          params: [
+            clauseForCustomRequest,
+            {
+              broadcast: true,
+              chainId: (connector as any).chainId,
+              signer: account
+            }
+          ]
+        }
+        request = (connector as any).sendCustomRequest(transferTokenJSON)
+      } else if (isConnex1) {
         tx = connex.vendor.sign('tx').comment(comment)
         delegateParam = (res: any) => {
           return new Promise(resolve => {
@@ -175,22 +191,6 @@ export function useSwapCallback(
           })
         }
         request = tx.request([clause])
-      } else if (isNufintes) {
-        const clauseForCustomRequest = [{ comment, ...clause, value: value ? value.toString() : 0 }]
-        const transferTokenJSON = {
-          id: 898998,
-          jsonrpc: '2.0',
-          method: 'vechain_transaction',
-          params: [
-            clauseForCustomRequest,
-            {
-              broadcast: true,
-              chainId: (connector as any).chainId,
-              signer: account
-            }
-          ]
-        }
-        request = (connector as any).sendCustomRequest(transferTokenJSON)
       } else {
         tx = connex.vendor
           .sign('tx', [
