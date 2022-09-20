@@ -154,6 +154,7 @@ export function useSwapCallback(
       let tx, request, delegateParam
       const method = connex.thor.account(ROUTER_ADDRESS).method(abi)
       const clause = method.asClause(...args)
+      console.log(isNufintes)
 
       if (isConnex1) {
         tx = connex.vendor.sign('tx').comment(comment)
