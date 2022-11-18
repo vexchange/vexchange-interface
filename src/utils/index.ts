@@ -13,7 +13,6 @@ import { ROUTER_ADDRESS } from '../constants'
 import ERC20_ABI from '../constants/abis/erc20.json'
 import { ChainId, JSBI, Percent, TokenAmount } from 'vexchange-sdk'
 import { normalizeAccount } from '../context/normalizers'
-import { IFreeSwapInfo } from '../pages/Swap'
 
 // returns the checksummed address if the address is valid, otherwise returns false
 export function isAddress(value: any): string | false {
@@ -34,7 +33,7 @@ const EXPLORE_PREFIXES: { [chainId in ChainId]: string } = {
   3: 'explore-testnet.'
 }
 
-export const overrideWVET = symbol => symbol === 'WVET' ? 'VET' : symbol
+export const overrideWVET = symbol => (symbol === 'WVET' ? 'VET' : symbol)
 
 export const userAccount = {
   get: (account: string) => {
@@ -179,17 +178,6 @@ export async function getTokenDecimals(tokenAddress, library) {
       error.code = ERROR_CODES.TOKEN_DECIMALS
       throw error
     })
-}
-
-export async function fetchUserFreeSwapInfo(account: string): Promise<IFreeSwapInfo> {
-  return new Promise((resolve, reject) => {
-    fetch(`${process.env.REACT_APP_VIP191_API_URL}/${account}`)
-      .then(response => response.json())
-      .then(data => {
-        resolve(data)
-      })
-      .catch(error => reject(error))
-  })
 }
 
 export function escapeRegExp(string: string): string {

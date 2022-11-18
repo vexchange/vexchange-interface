@@ -11,7 +11,6 @@ import { useTransactionAdder } from '../state/transactions/hooks'
 import { computeSlippageAdjustedAmounts } from '../utils/prices'
 import { isAddress } from '../utils'
 import { useWeb3React } from './index'
-import { IFreeSwapInfo } from '../pages/Swap'
 
 enum SwapType {
   EXACT_TOKENS_FOR_TOKENS,
@@ -66,8 +65,7 @@ export function useSwapCallback(
   trade?: Trade, // trade to execute, required
   allowedSlippage: number = INITIAL_ALLOWED_SLIPPAGE, // in bips, optional
   deadline: number = DEFAULT_DEADLINE_FROM_NOW, // in seconds from now, optional
-  to?: string, // recipient of output, optional
-  userFreeSwapInfo?: IFreeSwapInfo
+  to?: string // recipient of output, optional
 ): null | (() => Promise<string>) {
   const { account, chainId, library } = useWeb3React()
   const inputAllowance = useTokenAllowance(trade?.inputAmount?.token, account, ROUTER_ADDRESS)
@@ -182,13 +180,12 @@ export function useSwapCallback(
       const contractAddress =
         swapType === SwapType.UNWRAP_WVET || swapType === SwapType.WRAP_VET ? WVET[chainId].address : ROUTER_ADDRESS
       let comment = `Swap ${trade.inputAmount.token.symbol} for ${trade.outputAmount.token.symbol}`
-      const isEligibleForFreeSwap = userFreeSwapInfo?.remainingFreeSwaps > 0 && userFreeSwapInfo?.hasNFT
       const isConnex1 = !!window.connex
       const connex = isConnex1 ? window.connex : library
       // eslint-disable-next-line
       let tx, request, delegateParam
-      let method = connex.thor.account(contractAddress).method(abi)
-      let clause = method.asClause(...args)
+      const method = connex.thor.account(contractAddress).method(abi)
+      const clause = method.asClause(...args)
 
       if (swapType === SwapType.UNWRAP_WVET) {
         comment = 'Unwrap WVET into VET'
@@ -196,48 +193,14 @@ export function useSwapCallback(
         comment = 'Wrap VET into WVET'
       }
 
-      if (isConnex1) {
-        tx = connex.vendor.sign('tx').comment(comment)
-        delegateParam = (res: any) => {
-          return new Promise(resolve => {
-            fetch(`${process.env.REACT_APP_VIP191_API_URL}`, {
-              method: 'POST',
-              headers: {
-                Accept: 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(res)
-            })
-              .then(response => response.json())
-              .then(data => {
-                resolve(data)
-              })
-          })
-        }
-        clause.value = value ? value.toString() : 0
-      } else {
-        tx = connex.vendor
-          .sign('tx', [
-            {
-              ...clause,
-              value: value ? value.toString() : 0
-            }
-          ])
-          .comment(comment)
-        delegateParam = process.env.REACT_APP_VIP191_API_URL
-      }
-
-      if (isEligibleForFreeSwap) {
-        await tx.delegate(delegateParam)
-      }
-
-      request = isConnex1 ? tx.request([clause]) : tx.request()
-
-      if (userFreeSwapInfo && userFreeSwapInfo.remainingFreeSwaps > 0) {
-        tx.delegate(process.env.REACT_APP_VIP191_API_URL)
-      }
-
-      return tx
+      return library.vendor
+        .sign('tx', [
+          {
+            ...clause,
+            value: value ? value.toString() : 0
+          }
+        ])
+        .comment(comment)
         .request()
         .then(response => {
           if (recipient === account) {
@@ -256,16 +219,5 @@ export function useSwapCallback(
           console.error(`Swap or gas estimate failed`, error)
         })
     }
-  }, [
-    account,
-    allowedSlippage,
-    addTransaction,
-    chainId,
-    deadline,
-    inputAllowance,
-    library,
-    trade,
-    recipient,
-    userFreeSwapInfo
-  ])
+  }, [account, allowedSlippage, addTransaction, chainId, deadline, inputAllowance, library, trade, recipient])
 }

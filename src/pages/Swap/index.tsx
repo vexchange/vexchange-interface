@@ -14,14 +14,7 @@ import QuestionHelper from '../../components/QuestionHelper'
 import { RowBetween, RowFixed } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
 import FormattedPriceImpact from '../../components/swap/FormattedPriceImpact'
-import {
-  ArrowWrapper,
-  BottomGrouping,
-  Dots,
-  FreeSwapRemainingText,
-  StyledBalanceMaxMini,
-  Wrapper
-} from '../../components/swap/styleds'
+import { ArrowWrapper, BottomGrouping, Dots, StyledBalanceMaxMini, Wrapper } from '../../components/swap/styleds'
 import SwapModalFooter from '../../components/swap/SwapModalFooter'
 import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
 import { useWeb3React } from '../../hooks'
@@ -39,24 +32,12 @@ import {
   warningServerity
 } from '../../utils/prices'
 import SwapModalHeader from '../../components/swap/SwapModalHeader'
-import { basisPointsToPercent, fetchUserFreeSwapInfo } from '../../utils'
+import { basisPointsToPercent } from '../../utils'
 
-export interface IFreeSwapInfo {
-  address: string
-  hasNFT: boolean
-  remainingFreeSwaps: number
-}
-
-// throttle
-let fetchFreeSwaps = true
-setInterval(() => {
-  fetchFreeSwaps = true
-}, 5000)
-
-let lockSwapFeeFetch: boolean = false
+let lockSwapFeeFetch = false
 
 // we don't show fees for wrap/unwrap
-let swapFeePerRoute: { [route: string]: Percent } = {
+const swapFeePerRoute: { [route: string]: Percent } = {
   'VET-WVET': new Percent(JSBI.BigInt(0)),
   'WVET-VET': new Percent(JSBI.BigInt(0))
 }
@@ -70,14 +51,9 @@ const getRoutePath = (trade: Trade | null) => {
 export default function Swap({ location: { search } }: RouteComponentProps) {
   useDefaultsFromURL(search)
   const { chainId, account, library } = useWeb3React()
-  const defaultFreeSwapInfo: IFreeSwapInfo = {
-    address: account,
-    hasNFT: false,
-    remainingFreeSwaps: 0
-  }
+
   const theme = useContext(ThemeContext)
   const [isDark] = useDarkModeManager()
-  const [userFreeSwapInfo, setUserFreeSwapInfo] = useState(defaultFreeSwapInfo)
 
   // toggle wallet when disconnected
   const toggleWalletModal = useWalletModalToggle()
@@ -150,7 +126,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   }
 
   // the callback to execute the swap
-  const swapCallback = useSwapCallback(bestTrade, allowedSlippage, deadline, null, userFreeSwapInfo)
+  const swapCallback = useSwapCallback(bestTrade, allowedSlippage, deadline)
 
   function onSwap() {
     setAttemptingTxn(true)
@@ -170,24 +146,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   const [showInverted, setShowInverted] = useState<boolean>(false)
   const [swapFee, setSwapFee] = useState(basisPointsToPercent(100))
   const { priceImpactWithoutFee, realizedLPFee } = computeTradePriceBreakdown(bestTrade, swapFee)
-
-  useEffect(() => {
-    const getUserFreeSwapInfo = async () => {
-      try {
-        if (!fetchFreeSwaps) return
-        fetchFreeSwaps = false
-        const userFreeSwapInfo = await fetchUserFreeSwapInfo(account)
-        setUserFreeSwapInfo(userFreeSwapInfo)
-      } catch (err) {
-        setUserFreeSwapInfo(defaultFreeSwapInfo)
-      }
-    }
-
-    if (account) {
-      getUserFreeSwapInfo()
-    }
-    // eslint-disable-next-line
-  }, [tokenBalances, account])
 
   useEffect(() => {
     const getSwapFee = async () => {
@@ -236,7 +194,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
 
   // warnings on slippage
   const priceImpactSeverity = warningServerity(priceImpactWithoutFee)
-  const remainingSwaps = userFreeSwapInfo.hasNFT ? userFreeSwapInfo.remainingFreeSwaps : 0
 
   function modalHeader() {
     return (
@@ -253,7 +210,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
   function modalBottom() {
     return (
       <SwapModalFooter
-        confirmText={priceImpactSeverity > 2 ? 'Swap Anyway' : `Confirm ${remainingSwaps > 0 ? 'Free' : ''} Swap`}
+        confirmText={priceImpactSeverity > 2 ? 'Swap Anyway' : 'Confirm Swap'}
         showInverted={showInverted}
         severity={priceImpactSeverity}
         setShowInverted={setShowInverted}
@@ -277,7 +234,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
     <Wrapper id="swap-page">
       <ConfirmationModal
         isOpen={showConfirm}
-        title={`Confirm ${remainingSwaps > 0 ? 'Free' : ''} Swap`}
+        title="Confirm Swap"
         onDismiss={() => {
           resetModal()
           setShowConfirm(false)
@@ -415,11 +372,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           </ButtonError>
         ) : (
           <>
-            {userFreeSwapInfo.hasNFT && (
-              <FreeSwapRemainingText>
-                You have <span>{remainingSwaps}</span> free {remainingSwaps !== 1 ? 'swaps' : 'swap'} remaining today
-              </FreeSwapRemainingText>
-            )}
             <ButtonError
               onClick={() => {
                 setShowConfirm(true)
@@ -429,7 +381,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
               error={isValid && priceImpactSeverity > 2}
             >
               <Text fontSize={20} fontWeight={500}>
-                {error ?? `${remainingSwaps > 0 ? 'Free ' : ''}Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
+                {error ?? `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
               </Text>
             </ButtonError>
           </>
