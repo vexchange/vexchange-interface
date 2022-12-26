@@ -21,5 +21,6 @@ export default [
   new Token(ChainId.MAINNET, '0x8e57aadf0992afcc41f7843656c6c7129f738f7b', 18, 'DHN', 'Dohrnii'),
   new Token(ChainId.MAINNET, '0x107a0b0faeb58c1fdef97f37f50e319833ad1b94', 18, 'DRAGON', 'Dragon Coin'),
   new Token(ChainId.MAINNET, '0x23368c20c16f64ecbb30164a08666867be22f216', 18, 'VSEA', 'VeSea Token'),
-  new Token(ChainId.MAINNET, '0x34109fc2a649965eecd953d31802c67dcc183d57', 18, 'UNION', 'UNION')
+  new Token(ChainId.MAINNET, '0x34109fc2a649965eecd953d31802c67dcc183d57', 18, 'UNION', 'UNION'),
+  new Token(ChainId.MAINNET, '0xFF3BC357600885aAA97506ea6e24fB21abA88fbD', 18, 'GOLD', 'GOLD Coin')
 ]
