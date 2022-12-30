@@ -171,7 +171,7 @@ export default function App() {
                 <Body isDark={isDark}>
                   <NavigationTabs />
                   <Switch>
-                    <Route exact strict path="/stably" component={Stably} />
+                    <Route exact strict path="/fiat-onramp" component={Stably} />
                     <Route exact strict path="/swap" component={Swap} />
                     <Route exact strict path="/send" component={Send} />
                     <Route exact strict path="/find" component={Find} />
