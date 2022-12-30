@@ -215,8 +215,10 @@ export default function Header() {
   return (
     <HeaderFrame>
       <MigrateBanner isDark={isDark}>
-        <a href="vtho.exchange.io">vtho.exchange</a>&nbsp; is currently experiencing problems. Please use
-        Vexchange.io.&nbsp; You can also visit our Discord for assistance.
+        Through our partnership with Stably, we&apos;d like to introduce our&nbsp;
+        <HistoryLink to="/fiat-onramp">
+          <b>Fiat VeUSD Onramp.</b>
+        </HistoryLink>
       </MigrateBanner>
 
       <RowBetween padding="1rem">
