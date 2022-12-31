@@ -128,6 +128,9 @@ export default function Menu() {
       </StyledMenuButton>
       {open ? (
         <MenuFlyout isDark={isDark}>
+          <MenuItem id="link" href="/fiat-onramp">
+            Fiat Onramp
+          </MenuItem>
           <MenuItem id="link" href="https://info.vexchange.io">
             Info
           </MenuItem>
