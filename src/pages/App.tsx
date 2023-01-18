@@ -22,6 +22,7 @@ import Find from '../components/PoolFinder'
 import MigrateV1 from './MigrateV1'
 import MigrateV1Exchange from './MigrateV1/MigrateV1Exchange'
 import Create from '../components/CreatePool'
+import Disclaimer from '../components/Disclaimer'
 
 const AppWrapper = styled.div`
   display: flex;
@@ -216,6 +217,7 @@ export default function App() {
                     <Redirect to="/swap" />
                   </Switch>
                 </Body>
+                <Disclaimer />
               </Web3ReactManager>
               <Footer />
             </BodyWrapper>
