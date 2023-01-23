@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import queryString from 'query-string';
 
 import { useWeb3React } from '../../hooks'
 
@@ -19,17 +20,24 @@ const Wrapper = styled.div`
 export default function Stably() {
   const { account } = useWeb3React()
 
+  const stringified = queryString.stringify({
+    address: account,
+    network: 'vechain',
+    asset: 'VEUSD',
+    filter: true
+  })
+
   if (!account) {
     return (
       <Wrapper>
-        <div>Please sign in to continue</div>
+        <div>Please sign in to use our Stably VeUSD Ramp</div>
       </Wrapper>
     )
   }
 
   return (
     <div>
-      <Iframe src={`https://ramp.stably.io/?address=${account}&network=vechain&asset=veusd&filter=true`}></Iframe>
+      <Iframe src={`https://ramp.stably.io/?${stringified}`}></Iframe>
     </div>
   )
 }
