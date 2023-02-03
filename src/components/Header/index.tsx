@@ -12,7 +12,6 @@ import Row from '../Row'
 import Menu from '../Menu'
 import Web3Status from '../Web3Status'
 
-import { Link } from '../../theme'
 import { Text } from 'rebass'
 import { ChainId } from 'vexchange-sdk'
 import { YellowCard } from '../Card'
@@ -216,18 +215,8 @@ export default function Header() {
   return (
     <HeaderFrame>
       <MigrateBanner isDark={isDark}>
-        $VEX is here!&nbsp;
-        <Link href="https://medium.com/@vexchange/vex-launch-information-9e14b9da4b64">
-          <b>Read about it here ↗</b>
-        </Link>
-        &nbsp;or&nbsp;
-        <HistoryLink to="add/0xD8CCDD85abDbF68DFEc95f06c973e87B1b5A9997-0x0BD802635eb9cEB3fCBe60470D2857B86841aab6">
-          <b>Add Liquidity</b>
-        </HistoryLink>
-        &nbsp;then&nbsp;
-        <Link href="https://farm.vexchange.io">
-          <b>Stake your LP Tokens ↗</b>
-        </Link>
+        <a href="vtho.exchange.io">vtho.exchange</a>&nbsp; is currently experiencing problems. Please use
+        Vexchange.io.&nbsp; You can also visit our Discord for assistance.
       </MigrateBanner>
 
       <RowBetween padding="1rem">
