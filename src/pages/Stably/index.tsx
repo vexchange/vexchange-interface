@@ -23,7 +23,7 @@ export default function Stably() {
   const stringified = queryString.stringify({
     address: account,
     network: 'vechain',
-    asset: 'VEUSD',
+    asset: 'VeUSD',
     filter: true
   })
 
