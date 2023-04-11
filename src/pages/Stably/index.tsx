@@ -24,7 +24,8 @@ export default function Stably() {
     address: account,
     network: 'vechain',
     asset: 'VeUSD',
-    filter: true
+    filter: true,
+    lock: true
   })
 
   if (!account) {
