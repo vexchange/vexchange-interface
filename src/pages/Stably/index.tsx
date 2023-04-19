@@ -35,7 +35,7 @@ export default function Stably() {
     )
   }
 
-  https: return (
+  return (
     <div>
       <Iframe src={`https://ramp.stably.io/?${stringified}`}></Iframe>
     </div>
