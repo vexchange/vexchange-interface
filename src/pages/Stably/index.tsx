@@ -22,9 +22,8 @@ export default function Stably() {
 
   const stringified = queryString.stringify({
     address: account,
-    network: 'vechain',
+    network: 'vechainthor',
     asset: 'VeUSD',
-    filter: true,
     lock: true
   })
 
@@ -35,8 +34,8 @@ export default function Stably() {
       </Wrapper>
     )
   }
-
-  return (
+  //ramp.stably.io/?address=hx777535db1b4039c837580e74aac35d0bbaaa7b4c&amount=42.42&network=icon&asset=USDS&filter=true
+  https: return (
     <div>
       <Iframe src={`https://ramp.stably.io/?${stringified}`}></Iframe>
     </div>
