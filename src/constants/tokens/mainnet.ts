@@ -26,5 +26,6 @@ export default [
   new Token(ChainId.MAINNET, '0xFF3BC357600885aAA97506ea6e24fB21abA88fbD', 18, 'GOLD', 'GOLD Coin'),
   new Token(ChainId.MAINNET, '0x99ae6b435d37995befb749670c1fb7c377fbb6d1', 18, 'Lion', 'LION'),
   new Token(ChainId.MAINNET, '0xc3fd50a056dc4025875fa164ced1524c93053f29', 18, 'MVA', 'MVA Token'),
-  new Token(ChainId.MAINNET, '0x9af004570f2a301d99f2ce4554e564951ee48e3c', 18, 'SHT', 'Sh*tCoin')
+  new Token(ChainId.MAINNET, '0x9af004570f2a301d99f2ce4554e564951ee48e3c', 18, 'SHT', 'Sh*tCoin'),
+  new Token(ChainId.MAINNET, '0xa4f95b1f1c9f4cf984b0a003c4303e8ea86302f6', 18, 'VFA', 'VFoxToken')
 ]
