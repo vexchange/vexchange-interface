@@ -33,7 +33,7 @@ import { useApproveCallback, Approval } from '../../hooks/useApproveCallback'
 import { Dots } from '../../components/swap/styleds'
 
 // denominated in bips
-const ALLOWED_SLIPPAGE = 50
+const ALLOWED_SLIPPAGE = 200
 
 // denominated in seconds
 const DEADLINE_FROM_NOW = 60 * 20
@@ -418,8 +418,8 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
     library.vendor
       .sign('tx', [{ ...clause }])
       .comment(
-        `Remove ${parsedAmounts[Field.TOKEN0]?.toSignificant(3)} + 
-        ${tokensAdjusted[Field.TOKEN0]?.symbol} and 
+        `Remove ${parsedAmounts[Field.TOKEN0]?.toSignificant(3)} +
+        ${tokensAdjusted[Field.TOKEN0]?.symbol} and
         ${parsedAmounts[Field.TOKEN1]?.toSignificant(3)} ${tokensAdjusted[Field.TOKEN1]?.symbol}`
       )
       .request()
