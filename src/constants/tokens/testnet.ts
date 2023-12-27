@@ -1,4 +1,4 @@
-import { Token, ChainId } from 'vexchange-sdk'
+import { Token, ChainId } from 'vexchange-sdk/dist'
 import { DUMMY_VET } from '..'
 
 export default [

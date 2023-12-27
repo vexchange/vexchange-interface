@@ -1,5 +1,5 @@
-import { parseUnits } from '@ethersproject/units'
-import { JSBI, Token, TokenAmount, Trade, ChainId } from 'vexchange-sdk'
+import { parseUnits } from 'ethers'
+import { JSBI, Token, TokenAmount, Trade, ChainId } from 'vexchange-sdk/dist'
 import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useWeb3React } from '../../hooks'

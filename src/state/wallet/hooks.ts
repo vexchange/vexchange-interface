@@ -1,5 +1,5 @@
 import { getAddress } from '@ethersproject/address'
-import { JSBI, Token, TokenAmount } from 'vexchange-sdk'
+import { JSBI, Token, TokenAmount } from 'vexchange-sdk/dist'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAllTokens } from '../../hooks/Tokens'

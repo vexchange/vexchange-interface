@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Token, TokenAmount } from 'vexchange-sdk'
+import { Token, TokenAmount } from 'vexchange-sdk/dist'
 import useSWR from 'swr'
 import { find } from 'lodash'
 import { SWRKeys, useKeepSWRDataLiveAsBlocksArrive } from '.'

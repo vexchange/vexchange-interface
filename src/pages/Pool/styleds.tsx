@@ -21,7 +21,7 @@ export const MaxButton = styled.button<{ width: string }>`
   background-color: ${({ theme }) => theme.primary5};
   border: 1px solid ${({ theme }) => theme.primary5};
   border: 1px solid #ffffff;
-  border-radius: 0.5rem;
+  border-radius: 8px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;

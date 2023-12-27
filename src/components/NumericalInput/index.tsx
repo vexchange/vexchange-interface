@@ -1,9 +1,11 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { escapeRegExp } from '../../utils'
-import { useDarkModeManager } from '../../state/user/hooks'
+import { Input as ChakraInput } from '@chakra-ui/react'
+import { useDarkMode } from 'usehooks-ts'
 
-const StyledInput = styled.input<{ error?: boolean; fontSize?: string; align?: string; isDark?: boolean }>`
+import { escapeRegExp } from '../../utils'
+
+const StyledInput = styled(ChakraInput)<{ error?: boolean; fontSize?: string; align?: string; isDark?: boolean }>`
   color: ${({ error, theme }) => error && theme.red1};
   color: ${({ theme }) => theme.text1};
   width: 0;
@@ -68,7 +70,7 @@ export const Input = React.memo(function InnerInput({
   fontSize?: string
   align?: 'right' | 'left'
 } & Omit<React.HTMLProps<HTMLInputElement>, 'ref' | 'onChange' | 'as'>) {
-  const [isDark] = useDarkModeManager()
+  const { isDarkMode } = useDarkMode()
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
       onUserInput(nextUserInput)
@@ -78,7 +80,7 @@ export const Input = React.memo(function InnerInput({
   return (
     <StyledInput
       {...rest}
-      isDark={isDark}
+      // isDark={isDark}
       value={value}
       onChange={event => {
         enforcer(event.target.value)

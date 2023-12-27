@@ -1,27 +1,23 @@
 import React, { Suspense, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import ReactGA from 'react-ga'
-import { BrowserRouter, Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-import Header from '../components/Header'
-import Footer from '../components/Footer'
-import NavigationTabs from '../components/NavigationTabs'
+import { Header } from '../components/Header'
+import { Footer } from '../components/Footer'
+import { NavigationTabs } from '../components/NavigationTabs'
 import Web3ReactManager from '../components/Web3ReactManager'
 import { useDarkModeManager } from '../state/user/hooks'
 
 import Popups from '../components/Popups'
 import { isAddress } from '../utils'
 
-import Swap from './Swap'
-import Send from './Send'
-import Pool from './Pool'
-import Stably from './Stably'
-import Add from './Pool/AddLiquidity'
+import { Swap } from './Swap'
+import { Send } from './Send'
+import { Supply, AddLiquidity } from './Pool'
 import Remove from './Pool/RemoveLiquidity'
-import Find from '../components/PoolFinder'
-import MigrateV1 from './MigrateV1'
-import MigrateV1Exchange from './MigrateV1/MigrateV1Exchange'
-import Create from '../components/CreatePool'
+import { PoolFinder } from '../components/PoolFinder'
+import { CreatePool } from '../components/CreatePool'
 import Disclaimer from '../components/Disclaimer'
 
 const AppWrapper = styled.div`
@@ -63,7 +59,7 @@ const BodyWrapper = styled.div`
 `
 
 const Body = styled.div<{ isDark?: boolean }>`
-  border-radius: 30px;
+  border-radius: 8px;
   box-sizing: border-box;
   margin-bottom: 10rem;
   max-width: 534px;
@@ -71,60 +67,7 @@ const Body = styled.div<{ isDark?: boolean }>`
   position: relative;
   width: 100%;
   z-index: 0;
-
-  &:before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 4px;
-    border-radius: 30px;
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: destination-out;
-    mask-composite: exclude;
-  }
-
-  ${({ isDark }) =>
-    isDark
-      ? css`
-          background-image: linear-gradient(
-            210deg,
-            rgba(189, 162, 47, 0.02) 0%,
-            rgba(255, 255, 255, 0.02) 13%,
-            rgba(217, 216, 216, 0.15) 38%,
-            rgba(226, 225, 225, 0.08) 61%,
-            rgba(51, 41, 41, 0) 77%,
-            #893726 100%
-          );
-
-          box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.01), 0px 4px 8px rgba(0, 0, 0, 0.04),
-            0px 16px 24px rgba(0, 0, 0, 0.04), 0px 24px 32px rgba(0, 0, 0, 0.01);
-          box-shadow: 0 14px 22px 0 #001926;
-
-          &:before {
-            background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(18, 39, 68, 0.4));
-          }
-        `
-      : css`
-          background-image: linear-gradient(
-            210deg,
-            rgba(189, 162, 47, 0.02) 0%,
-            rgba(255, 255, 255, 0.02) 13%,
-            rgba(217, 216, 216, 0.15) 38%,
-            rgba(226, 225, 225, 0.08) 61%,
-            rgba(51, 41, 41, 0) 77%,
-            rgba(117, 31, 13, 0.07) 100%
-          );
-
-          box-shadow: 0 14px 22px 0 rgba(221, 77, 43, 0.22);
-
-          &:before {
-            background: rgba(255, 255, 255, 0.25);
-          }
-        `}
+  border: 1px solid black;
 `
 
 const StyledRed = styled.div`
@@ -147,7 +90,7 @@ const StyledRed = styled.div`
 `
 
 // fires a GA pageview every time the route changes
-function GoogleAnalyticsReporter({ location: { pathname, search } }: RouteComponentProps) {
+function GoogleAnalyticsReporter({ location: { pathname, search } }) {
   useEffect(() => {
     ReactGA.pageview(`${pathname}${search}`)
   }, [pathname, search])
@@ -161,7 +104,6 @@ export default function App() {
     <>
       <Suspense fallback={null}>
         <BrowserRouter>
-          <Route component={GoogleAnalyticsReporter} />
           <AppWrapper>
             <HeaderWrapper>
               <Header />
@@ -169,53 +111,49 @@ export default function App() {
             <BodyWrapper>
               <Popups />
               <Web3ReactManager>
-                <Body isDark={isDark}>
+                <Body>
                   <NavigationTabs />
-                  <Switch>
-                    <Route exact strict path="/fiat-onramp" component={Stably} />
-                    <Route exact strict path="/swap" component={Swap} />
-                    <Route exact strict path="/send" component={Send} />
-                    <Route exact strict path="/find" component={Find} />
-                    <Route exact strict path="/create" component={Create} />
-                    <Route exact strict path="/pool" component={Pool} />
-                    <Route
-                      exact
-                      strict
-                      path={'/add/:tokens'}
-                      component={({ match }) => {
-                        const tokens = match.params.tokens.split('-')
-                        const t0 =
-                          tokens?.[0] === 'VET' ? 'VET' : isAddress(tokens?.[0]) ? isAddress(tokens[0]) : undefined
-                        const t1 =
-                          tokens?.[1] === 'VET' ? 'VET' : isAddress(tokens?.[1]) ? isAddress(tokens[1]) : undefined
-                        if (t0 && t1) {
-                          return <Add token0={t0} token1={t1} />
-                        } else {
-                          return <Redirect to="/pool" />
-                        }
-                      }}
-                    />
-                    <Route
-                      exact
-                      strict
-                      path={'/remove/:tokens'}
-                      component={({ match }) => {
-                        const tokens = match.params.tokens.split('-')
-                        const t0 =
-                          tokens?.[0] === 'VET' ? 'VET' : isAddress(tokens?.[0]) ? isAddress(tokens[0]) : undefined
-                        const t1 =
-                          tokens?.[1] === 'VET' ? 'VET' : isAddress(tokens?.[1]) ? isAddress(tokens[1]) : undefined
-                        if (t0 && t1) {
-                          return <Remove token0={t0} token1={t1} />
-                        } else {
-                          return <Redirect to="/pool" />
-                        }
-                      }}
-                    />
-                    <Route exact strict path="/migrate/v1" component={MigrateV1} />
-                    <Route exact strict path="/migrate/v1/:address" component={MigrateV1Exchange} />
-                    <Redirect to="/swap" />
-                  </Switch>
+                  <Routes>
+                    <Route path="/">
+                      <Route index element={<Swap />} />
+                      <Route path="/swap" element={<Swap />} />
+                      <Route path="/send" element={<Send />} />
+                      <Route path="/find" element={<PoolFinder />} />
+                      <Route path="/create" element={<CreatePool />} />
+                      <Route path="/pool" element={<Supply />} />
+                      <Route
+                        path={'/add/:tokens'}
+                        element={({ match }) => {
+                          const tokens = match.params.tokens.split('-')
+                          const t0 =
+                            tokens?.[0] === 'VET' ? 'VET' : isAddress(tokens?.[0]) ? isAddress(tokens[0]) : undefined
+                          const t1 =
+                            tokens?.[1] === 'VET' ? 'VET' : isAddress(tokens?.[1]) ? isAddress(tokens[1]) : undefined
+                          if (t0 && t1) {
+                            return <AddLiquidity token0={t0} token1={t1} />
+                          } else {
+                            return <Redirect to="/pool" />
+                          }
+                        }}
+                      />
+                      <Route
+                        path={'/remove/:tokens'}
+                        element={({ match }) => {
+                          const tokens = match.params.tokens.split('-')
+                          const t0 =
+                            tokens?.[0] === 'VET' ? 'VET' : isAddress(tokens?.[0]) ? isAddress(tokens[0]) : undefined
+                          const t1 =
+                            tokens?.[1] === 'VET' ? 'VET' : isAddress(tokens?.[1]) ? isAddress(tokens[1]) : undefined
+                          if (t0 && t1) {
+                            return <Remove token0={t0} token1={t1} />
+                          } else {
+                            return <Redirect to="/pool" />
+                          }
+                        }}
+                      />
+                      {/* <Redirect to="/swap" /> */}
+                    </Route>
+                  </Routes>
                 </Body>
                 <Disclaimer />
               </Web3ReactManager>

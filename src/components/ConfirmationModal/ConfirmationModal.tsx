@@ -1,6 +1,6 @@
 import React, { useCallback, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 import Modal from '../Modal'
 import Loader from '../Loader'
@@ -18,9 +18,7 @@ import { getExploreLink } from '../../utils'
 const Wrapper = styled.div`
   width: 100%;
 `
-const Section = styled(AutoColumn)`
-  padding: 24px;
-`
+const Section = styled(AutoColumn)``
 
 const BottomSection = styled(Section)`
   background-color: ${({ theme }) => theme.bg2};
@@ -28,11 +26,9 @@ const BottomSection = styled(Section)`
   border-bottom-right-radius: 20px;
 `
 
-const ConfirmedIcon = styled(ColumnCenter)`
-  padding: 60px 0;
-`
+const ConfirmedIcon = styled(ColumnCenter)``
 
-interface ConfirmationModalProps extends RouteComponentProps<{}> {
+interface ConfirmationModalProps {
   isOpen: boolean
   onDismiss: () => void
   hash: string
@@ -44,8 +40,7 @@ interface ConfirmationModalProps extends RouteComponentProps<{}> {
   title?: string
 }
 
-function ConfirmationModal({
-  history,
+export const ConfirmationModal = ({
   isOpen,
   onDismiss,
   hash,
@@ -55,13 +50,16 @@ function ConfirmationModal({
   pendingConfirmation,
   pendingText,
   title = ''
-}: ConfirmationModalProps) {
+}: ConfirmationModalProps) => {
+  const location = useLocation()
+  const navitage = useNavigate()
+
   const { chainId } = useWeb3React()
   const theme = useContext(ThemeContext)
 
   const dismissAndReturn = useCallback(() => {
-    if (history.location.pathname.match('/add') || history.location.pathname.match('/remove')) {
-      history.push('/pool')
+    if (location.pathname.match('/add') || location.pathname.match('/remove')) {
+      navitage('/pool')
     }
     onDismiss()
   }, [onDismiss, history])
@@ -79,7 +77,7 @@ function ConfirmationModal({
             </RowBetween>
             {topContent()}
           </Section>
-          <BottomSection gap="12px">{bottomContent()}</BottomSection>
+          <BottomSection>{bottomContent()}</BottomSection>
         </Wrapper>
       ) : (
         <Wrapper>
@@ -95,11 +93,11 @@ function ConfirmationModal({
                 <ArrowUpCircle strokeWidth={0.5} size={90} color={theme.primary1} />
               )}
             </ConfirmedIcon>
-            <AutoColumn gap="12px" justify={'center'}>
+            <AutoColumn>
               <Text fontWeight={500} fontSize={20}>
                 {!pendingConfirmation ? 'Transaction Submitted' : 'Waiting For Confirmation'}
               </Text>
-              <AutoColumn gap="12px" justify={'center'}>
+              <AutoColumn>
                 <Text fontWeight={600} fontSize={14} color="" textAlign="center">
                   {pendingText}
                 </Text>
@@ -131,5 +129,3 @@ function ConfirmationModal({
     </Modal>
   )
 }
-
-export default withRouter(ConfirmationModal)

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Fetcher, Token, Pair } from 'vexchange-sdk'
+import { Fetcher, Token, Pair } from 'vexchange-sdk/dist'
 import useSWR from 'swr'
 import { getLibrary } from '../index'
 import { find } from 'lodash'

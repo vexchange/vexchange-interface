@@ -1,16 +1,17 @@
-import { JSBI, TokenAmount, WVET } from 'vexchange-sdk'
+import { JSBI, TokenAmount, WVET } from 'vexchange-sdk/dist'
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
+import { useLocation } from 'react-router-dom'
+
 import ReactGA from 'react-ga'
-import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import AddressInputPanel from '../../components/AddressInputPanel'
 import { ButtonError, ButtonLight, ButtonPrimary, ButtonSecondary } from '../../components/Button'
 import Card, { BlueCard, GreyCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
-import ConfirmationModal from '../../components/ConfirmationModal'
-import CurrencyInputPanel from '../../components/CurrencyInputPanel'
+import { ConfirmationModal } from '../../components/ConfirmationModal'
+import { CurrencyInputPanel } from '../../components/CurrencyInputPanel'
 import QuestionHelper from '../../components/QuestionHelper'
 import { AutoRow, RowBetween, RowFixed } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
@@ -46,8 +47,10 @@ import {
 import { useDarkModeManager } from '../../state/user/hooks'
 import { basisPointsToPercent } from '../../utils'
 
-export default function Send({ location: { search } }: RouteComponentProps) {
-  useDefaultsFromURL(search)
+export const Send = () => {
+  const location = useLocation()
+
+  useDefaultsFromURL(location.search)
   const [isDark] = useDarkModeManager()
 
   // text translation
@@ -201,9 +204,9 @@ export default function Send({ location: { search } }: RouteComponentProps) {
 
     if (sendingWithSwap) {
       return (
-        <AutoColumn gap="lg" style={{ marginTop: '40px' }}>
-          <AutoColumn gap="sm">
-            <AutoRow gap="10px">
+        <AutoColumn style={{ marginTop: '40px' }}>
+          <AutoColumn>
+            <AutoRow>
               <TokenLogo address={tokens[Field.OUTPUT]?.address} size={'30px'} />
               <Text fontSize={36} fontWeight={500}>
                 {slippageAdjustedAmounts[Field.OUTPUT]?.toSignificant(4)} {tokens[Field.OUTPUT]?.symbol}
@@ -213,7 +216,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
               Via {parsedAmounts[Field.INPUT]?.toSignificant(4)} {tokens[Field.INPUT]?.symbol} swap
             </BlueCard>
           </AutoColumn>
-          <AutoColumn gap="sm">
+          <AutoColumn>
             <TYPE.darkGray fontSize={20}>To</TYPE.darkGray>
             <TYPE.blue fontSize={36}>
               {recipient?.slice(0, 6)}...{recipient?.slice(36, 42)}
@@ -308,8 +311,8 @@ export default function Send({ location: { search } }: RouteComponentProps) {
         pendingText={pendingText}
       />
       {!sendingWithSwap && (
-        <AutoColumn justify="center" style={{ marginBottom: '1rem' }}>
-          <InputGroup gap="lg" justify="center">
+        <AutoColumn style={{ marginBottom: '1rem' }}>
+          <InputGroup>
             <StyledNumerical
               id="sending-no-swap-input"
               value={formattedAmounts[Field.INPUT]}
@@ -335,19 +338,17 @@ export default function Send({ location: { search } }: RouteComponentProps) {
           </InputGroup>
           <RowBetween style={{ width: 'fit-content' }}>
             <ButtonSecondary
-              isDark={isDark}
+              // isDark={isDark}
               width="fit-content"
               style={{ fontSize: '14px' }}
-              padding={'4px 8px'}
               onClick={() => setSendingWithSwap(true)}
             >
               + Add a swap
             </ButtonSecondary>
             {account && (
               <ButtonSecondary
-                isDark={isDark}
+                // isDark={isDark}
                 style={{ fontSize: '14px', marginLeft: '8px' }}
-                padding={'4px 8px'}
                 width="fit-content"
                 disabled={atMaxAmountInput}
                 onClick={() => {
@@ -360,7 +361,7 @@ export default function Send({ location: { search } }: RouteComponentProps) {
           </RowBetween>
         </AutoColumn>
       )}
-      <AutoColumn gap={'md'}>
+      <AutoColumn>
         {sendingWithSwap && (
           <>
             <CurrencyInputPanel
@@ -380,14 +381,13 @@ export default function Send({ location: { search } }: RouteComponentProps) {
 
             {sendingWithSwap ? (
               <ColumnCenter>
-                <RowBetween padding="0 1rem 0 12px">
+                <RowBetween>
                   <ArrowWrapper onClick={onSwitchTokens}>
                     <ArrowDown size="16" color={theme.text2} onClick={onSwitchTokens} />
                   </ArrowWrapper>
                   <ButtonSecondary
                     onClick={() => setSendingWithSwap(false)}
                     style={{ marginRight: '0px', width: 'fit-content', fontSize: '14px' }}
-                    padding={'4px 6px'}
                   >
                     Remove Swap
                   </ButtonSecondary>
@@ -419,14 +419,14 @@ export default function Send({ location: { search } }: RouteComponentProps) {
               id="swap-currency-output"
             />
             {sendingWithSwap && (
-              <RowBetween padding="0 1rem 0 12px">
+              <RowBetween>
                 <ArrowDown size="16" color={theme.text2} />
               </RowBetween>
             )}
           </>
         )}
 
-        <AutoColumn gap="lg" justify="center">
+        <AutoColumn>
           <AddressInputPanel
             onChange={_onRecipient}
             onError={(error: boolean, input) => {
@@ -441,9 +441,9 @@ export default function Send({ location: { search } }: RouteComponentProps) {
           />
         </AutoColumn>
         {!noRoute && tokens[Field.OUTPUT] && tokens[Field.INPUT] && !isUnwrap && !isWrap && (
-          <Card padding={'.25rem 1.25rem 0 .75rem'} borderRadius={'20px'}>
-            <AutoColumn gap="4px">
-              <RowBetween align="center">
+          <Card borderRadius={'20px'}>
+            <AutoColumn>
+              <RowBetween>
                 <Text fontWeight={500} fontSize={14} color={theme.text2}>
                   Price
                 </Text>

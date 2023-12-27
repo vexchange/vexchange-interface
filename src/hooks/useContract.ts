@@ -1,5 +1,5 @@
 import { Contract } from '@ethersproject/contracts'
-import { ChainId } from 'vexchange-sdk'
+import { ChainId } from 'vexchange-sdk/dist'
 import { abi as IVexchangeV2PairABI } from '../constants/abis/IVexchangeV2Pair.json'
 import { useMemo } from 'react'
 import ERC20_ABI from '../constants/abis/erc20.json'

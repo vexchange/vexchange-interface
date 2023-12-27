@@ -58,8 +58,8 @@ const initialState: UserState = {
 export default createReducer(initialState, builder =>
   builder
     .addCase(updateVersion, state => {
-      if (state.lastVersion !== process.env.REACT_APP_GIT_COMMIT_HASH) {
-        state.lastVersion = process.env.REACT_APP_GIT_COMMIT_HASH
+      if (state.lastVersion !== import.meta.env.VITE_GIT_COMMIT_HASH) {
+        state.lastVersion = import.meta.env.VITE_GIT_COMMIT_HASH
         // other stuff
       }
       state.timestamp = currentTimestamp()

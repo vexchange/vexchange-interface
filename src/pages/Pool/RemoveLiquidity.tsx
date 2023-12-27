@@ -1,5 +1,5 @@
-import { parseUnits } from '@ethersproject/units'
-import { JSBI, Percent, Route, Token, TokenAmount, WVET } from 'vexchange-sdk'
+import { parseUnits } from 'ethers'
+import { JSBI, Percent, Route, Token, TokenAmount, WVET } from 'vexchange-sdk/dist'
 import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { ArrowDown, Plus } from 'react-feather'
 import ReactGA from 'react-ga'
@@ -9,10 +9,10 @@ import { ThemeContext } from 'styled-components'
 import { ButtonConfirmed, ButtonPrimary } from '../../components/Button'
 import { LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
-import ConfirmationModal from '../../components/ConfirmationModal'
-import CurrencyInputPanel from '../../components/CurrencyInputPanel'
+import { ConfirmationModal } from '../../components/ConfirmationModal'
+import { CurrencyInputPanel } from '../../components/CurrencyInputPanel'
 import DoubleLogo from '../../components/DoubleLogo'
-import PositionCard from '../../components/PositionCard'
+import { PositionCard } from '../../components/PositionCard'
 import Row, { RowBetween, RowFixed } from '../../components/Row'
 
 import Slider from '../../components/Slider'
@@ -452,12 +452,12 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
 
   function modalHeader() {
     return (
-      <AutoColumn gap={'md'} style={{ marginTop: '20px', padding: '1rem' }}>
-        <RowBetween align="flex-end">
+      <AutoColumn style={{ marginTop: '20px', padding: '1rem' }}>
+        <RowBetween>
           <Text fontSize={24} fontWeight={500}>
             {!!parsedAmounts[Field.TOKEN0] && parsedAmounts[Field.TOKEN0].toSignificant(6)}
           </Text>
-          <RowFixed gap="4px">
+          <RowFixed>
             <TokenLogo address={tokensAdjusted[Field.TOKEN0]?.address} size={'24px'} />
             <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
               {tokensAdjusted[Field.TOKEN0]?.symbol || ''}
@@ -467,11 +467,11 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
         <RowFixed>
           <Plus size="16" color={theme.text2} />
         </RowFixed>
-        <RowBetween align="flex-end">
+        <RowBetween>
           <Text fontSize={24} fontWeight={600}>
             {!!parsedAmounts[Field.TOKEN1] && parsedAmounts[Field.TOKEN1].toSignificant(6)}
           </Text>
-          <RowFixed gap="4px">
+          <RowFixed>
             <TokenLogo address={tokensAdjusted[Field.TOKEN1]?.address} size={'24px'} />
             <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
               {tokensAdjusted[Field.TOKEN1]?.symbol || ''}
@@ -479,7 +479,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
           </RowFixed>
         </RowBetween>
 
-        <TYPE.italic fontSize={12} color={theme.text2} textAlign="left" padding={'12px 0 0 0'}>
+        <TYPE.italic fontSize={12} color={theme.text2} textAlign="left">
           {`Output is estimated. You will receive at least ${parsedAmounts[Field.TOKEN0]?.toSignificant(6)} ${
             tokensAdjusted[Field.TOKEN0]?.symbol
           } and at least ${parsedAmounts[Field.TOKEN1]?.toSignificant(6)} ${
@@ -565,9 +565,9 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
         pendingText={pendingText}
         title="You will recieve"
       />
-      <AutoColumn gap="md" style={{ padding: '1rem' }}>
+      <AutoColumn style={{ padding: '1rem' }}>
         <LightCard>
-          <AutoColumn gap="20px">
+          <AutoColumn>
             <RowBetween>
               <Text fontWeight={500}>Amount</Text>
               <ClickableText
@@ -615,7 +615,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
               <ArrowDown size="16" color={theme.text2} />
             </ColumnCenter>{' '}
             <LightCard>
-              <AutoColumn gap="10px">
+              <AutoColumn>
                 <RowBetween>
                   <Text fontSize={24} fontWeight={500}>
                     {formattedAmounts[Field.TOKEN0] ? formattedAmounts[Field.TOKEN0] : '-'}

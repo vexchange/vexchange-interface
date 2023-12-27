@@ -27,7 +27,7 @@ const Web3StatusGeneric = styled(ButtonSecondary)`
   ${({ theme }) => theme.flexRowNoWrap}
   width: 100%;
   align-items: center;
-  border-radius: 20px;
+  border-radius: 8px;
   box-sizing: border-box;
   cursor: pointer;
   user-select: none;
@@ -72,27 +72,9 @@ const Web3StatusConnect = styled(Web3StatusGeneric)<{ faded?: boolean }>`
       }
     `}
 
-  background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
   color: #ffffff;
-
   position: relative;
   z-index: 0;
-
-  &:before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 1px;
-    border-radius: 20px;
-    background: linear-gradient(to right, #e79631, #d92921);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: destination-out;
-    mask-composite: exclude;
-  }
 `
 
 const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
@@ -109,28 +91,10 @@ const Web3StatusConnected = styled(Web3StatusGeneric)<{ pending?: boolean }>`
     }
   }
 
-  background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
   border: none;
   color: #ffffff;
-
   position: relative;
   z-index: 0;
-
-  &:before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 1px;
-    border-radius: 20px;
-    background: linear-gradient(to right, #e79631, #d92921);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: destination-out;
-    mask-composite: exclude;
-  }
 `
 
 const Text = styled.p`
@@ -202,7 +166,8 @@ export default function Web3Status({ account, active }) {
       )
     } else {
       return (
-        <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
+        // <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal} faded={!account}>
+        <Web3StatusConnect id="connect-wallet" onClick={toggleWalletModal}>
           <Text>{t('Connect to a wallet')}</Text>
         </Web3StatusConnect>
       )

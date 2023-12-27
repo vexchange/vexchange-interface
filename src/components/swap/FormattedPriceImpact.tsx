@@ -1,4 +1,4 @@
-import { Percent } from 'vexchange-sdk'
+import { Percent } from 'vexchange-sdk/dist'
 import React from 'react'
 import { ONE_BIPS } from '../../constants'
 import { warningServerity } from '../../utils/prices'

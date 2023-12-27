@@ -1,4 +1,4 @@
-import { Percent } from 'vexchange-sdk'
+import { Percent } from 'vexchange-sdk/dist'
 import React, { useContext } from 'react'
 import { ChevronDown } from 'react-feather'
 import { Text } from 'rebass'
@@ -29,7 +29,7 @@ export default function AdvancedSwapDetailsDropdown({
         <AdvancedSwapDetails {...rest} onDismiss={() => setShowAdvanced(false)} />
       ) : (
         <CursorPointer>
-          <RowBetween onClick={() => setShowAdvanced(true)} padding={'8px 20px'} id="show-advanced">
+          <RowBetween onClick={() => setShowAdvanced(true)} id="show-advanced">
             <Text fontSize={16} fontWeight={500} style={{ userSelect: 'none' }}>
               Show Advanced
             </Text>
@@ -38,9 +38,7 @@ export default function AdvancedSwapDetailsDropdown({
         </CursorPointer>
       )}
       <FixedBottom>
-        <AutoColumn gap="lg">
-          {severity > 2 && <PriceSlippageWarningCard priceSlippage={priceImpactWithoutFee} />}
-        </AutoColumn>
+        <AutoColumn>{severity > 2 && <PriceSlippageWarningCard priceSlippage={priceImpactWithoutFee} />}</AutoColumn>
       </FixedBottom>
     </AdvancedDropwdown>
   )

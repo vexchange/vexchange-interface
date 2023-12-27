@@ -1,4 +1,4 @@
-import { Percent } from 'vexchange-sdk'
+import { Percent } from 'vexchange-sdk/dist'
 import React, { useContext } from 'react'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
@@ -10,7 +10,7 @@ export function PriceSlippageWarningCard({ priceSlippage }: { priceSlippage: Per
   const theme = useContext(ThemeContext)
   return (
     <YellowCard style={{ padding: '20px', paddingTop: '10px' }}>
-      <AutoColumn gap="md">
+      <AutoColumn>
         <RowBetween>
           <RowFixed style={{ paddingTop: '8px' }}>
             <span role="img" aria-label="warning">

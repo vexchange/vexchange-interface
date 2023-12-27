@@ -1,4 +1,4 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
+import { configureStore } from '@reduxjs/toolkit'
 import application from './application/reducer'
 import { updateVersion } from './user/actions'
 import user from './user/reducer'
@@ -17,7 +17,7 @@ const store = configureStore({
     user,
     wallet
   },
-  middleware: [...getDefaultMiddleware(), save({ states: PERSISTED_KEYS })],
+  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(save({ states: PERSISTED_KEYS })),
   preloadedState: load({ states: PERSISTED_KEYS })
 })
 

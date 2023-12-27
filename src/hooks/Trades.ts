@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { WVET, Token, TokenAmount, Trade, ChainId, Pair, Route, TradeType } from 'vexchange-sdk'
+import { WVET, Token, TokenAmount, Trade, ChainId, Pair, Route, TradeType } from 'vexchange-sdk/dist'
 import { useWeb3React } from './index'
 import { usePair } from '../data/Reserves'
 import { DUMMY_VET } from '../constants'
@@ -91,23 +91,11 @@ export function useTradeExactIn(amountIn?: TokenAmount, tokenOut?: Token): Trade
           maxNumResults: 1
         })
 
-        return (
-          trade[0] ?? null
-        )
+        return trade[0] ?? null
       }
     }
     return null
-  }, [
-    allowedPairs,
-    amountIn,
-    tokenOut,
-    inputToken,
-    outputToken,
-    tokenInVet,
-    tokenInWvet,
-    tokenOutVet,
-    tokenOutWvet,
-  ])
+  }, [allowedPairs, amountIn, tokenOut, inputToken, outputToken, tokenInVet, tokenInWvet, tokenOutVet, tokenOutWvet])
 }
 
 /**
@@ -168,15 +156,5 @@ export function useTradeExactOut(tokenIn?: Token, amountOut?: TokenAmount): Trad
       }
     }
     return null
-  }, [
-    allowedPairs,
-    tokenIn,
-    amountOut,
-    inputToken,
-    outputToken,
-    tokenInVet,
-    tokenInWvet,
-    tokenOutVet,
-    tokenOutWvet,
-  ])
+  }, [allowedPairs, tokenIn, amountOut, inputToken, outputToken, tokenInVet, tokenInWvet, tokenOutVet, tokenOutWvet])
 }

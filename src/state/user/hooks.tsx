@@ -1,4 +1,4 @@
-import { ChainId, JSBI, Pair, Token, TokenAmount, WVET } from 'vexchange-sdk'
+import { ChainId, JSBI, Pair, Token, TokenAmount, WVET } from 'vexchange-sdk/dist'
 import { useWeb3React } from '../../hooks'
 import flatMap from 'array.prototype.flatmap'
 import { useCallback, useMemo } from 'react'

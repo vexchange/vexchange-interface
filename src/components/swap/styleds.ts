@@ -35,8 +35,8 @@ export const AdvancedDropwdown = styled.div`
   margin-bottom: 100px;
   padding: 10px 0;
   padding-top: 24px;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   color: ${({ theme }) => theme.text2};
   // background-color: ${({ theme }) => theme.advancedBG};
   color: ${({ theme }) => theme.text2};
@@ -50,23 +50,8 @@ export const SectionBreak = styled.div`
 `
 
 export const BottomGrouping = styled.div<{ isDark?: boolean }>`
-  border-radius: 0 0 26px 26px;
+  border-radius: 0 0 8px 8px;
   position: relative;
-  padding: 2.4rem 4rem;
-
-  ${({ isDark }) =>
-    isDark
-      ? css`
-          background-image: linear-gradient(
-            137deg,
-            rgba(217, 41, 33, 0.1) 0%,
-            rgba(255, 255, 255, 0.1) 50%,
-            rgba(231, 150, 49, 0.1) 100%
-          );
-        `
-      : css`
-          background-color: rgba(100, 112, 142, 0.1);
-        `}
 `
 
 export const ErrorText = styled(Text)<{ severity?: 0 | 1 | 2 | 3 }>`

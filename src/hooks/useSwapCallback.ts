@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber'
-import { Token, Trade, TradeType, WVET } from 'vexchange-sdk'
+import { Token, Trade, TradeType, WVET } from 'vexchange-sdk/dist'
 import { useMemo } from 'react'
 import { find } from 'lodash'
 import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, ROUTER_ADDRESS } from '../constants'

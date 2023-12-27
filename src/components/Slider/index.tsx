@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import Slider from '@material-ui/core/Slider'
-import { withStyles } from '@material-ui/core/styles'
+// import Slider from '@material-ui/core/Slider'
+import { styled } from 'styled-components'
 import { useDebounce } from '../../hooks'
 
-const StyledSlider = withStyles({
+const StyledSlider = styled.div(props => ({
   root: {
     width: '90%',
     color: '#565A69',
@@ -47,7 +47,9 @@ const StyledSlider = withStyles({
     width: 2,
     marginTop: -4
   }
-})(Slider)
+}))
+
+// })(Slider)
 
 interface InputSliderProps {
   value: number

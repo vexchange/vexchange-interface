@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
-import { JSBI, Pair } from 'vexchange-sdk'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { JSBI, Pair } from 'vexchange-sdk/dist'
+import { useNavigate } from 'react-router-dom'
 
 import Question from '../../components/QuestionHelper'
-import SearchModal from '../../components/SearchModal'
-import PositionCard from '../../components/PositionCard'
+import { SearchModal } from '../../components/SearchModal'
+import { PositionCard } from '../../components/PositionCard'
 import { useTokenBalances } from '../../state/wallet/hooks'
 import { Link, TYPE } from '../../theme'
 import { Text } from 'rebass'
@@ -29,12 +29,13 @@ const FixedBottom = styled.div`
   width: 100%;
 `
 
-function PositionCardWrapper({ dummyPair }: { dummyPair: Pair }) {
+export const PositionCardWrapper = ({ dummyPair }: { dummyPair: Pair }) => {
   const pair = usePair(dummyPair.token0, dummyPair.token1)
   return <PositionCard pair={pair} />
 }
 
-function Supply({ history }: RouteComponentProps) {
+export const Supply = () => {
+  const navigate = useNavigate()
   const theme = useContext(ThemeContext)
   const { account } = useWeb3React()
   const [showPoolSearch, setShowPoolSearch] = useState(false)
@@ -59,10 +60,9 @@ function Supply({ history }: RouteComponentProps) {
     })
 
   return (
-    <AutoColumn gap="lg" justify="center" style={{ padding: '1rem' }}>
+    <AutoColumn style={{ padding: '1rem' }}>
       <ButtonPrimary
         id="join-pool-button"
-        padding="16px"
         onClick={() => {
           setShowPoolSearch(true)
         }}
@@ -72,19 +72,15 @@ function Supply({ history }: RouteComponentProps) {
         </Text>
       </ButtonPrimary>
       <Positions>
-        <AutoColumn gap="12px">
-          <RowBetween padding={'0 8px'}>
+        <AutoColumn>
+          <RowBetween>
             <Text color={theme.text1} fontWeight={500}>
               Your Pooled Liquidity
             </Text>
             <Question text="When you add liquidity, you are given pool tokens that represent your share. If you don’t see a pool you joined in this list, try importing a pool below." />
           </RowBetween>
           {filteredExchangeList?.length === 0 && (
-            <LightCard
-              isDark={isDark}
-              padding="40px
-          "
-            >
+            <LightCard>
               <TYPE.body color={theme.text3} textAlign="center">
                 No liquidity found.
               </TYPE.body>
@@ -96,7 +92,7 @@ function Supply({ history }: RouteComponentProps) {
             <Link
               id="import-pool-link"
               onClick={() => {
-                history.push('/find')
+                navigate('/find')
               }}
             >
               Import it.
@@ -106,11 +102,9 @@ function Supply({ history }: RouteComponentProps) {
         <FixedBottom>
           <ColumnCenter>
             <ButtonSecondary
-              isDark={isDark}
+              // isDark={isDark}
               width="136px"
-              padding="8px"
-              borderRadius="10px"
-              onClick={() => history.push('/create')}
+              onClick={() => navigate('/create')}
             >
               + Create Pool
             </ButtonSecondary>
@@ -121,4 +115,3 @@ function Supply({ history }: RouteComponentProps) {
     </AutoColumn>
   )
 }
-export default withRouter(Supply)

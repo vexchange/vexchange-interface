@@ -1,5 +1,5 @@
 import { MaxUint256 } from '@ethersproject/constants'
-import { Trade, TokenAmount } from 'vexchange-sdk'
+import { Trade, TokenAmount } from 'vexchange-sdk/dist'
 import { find } from 'lodash'
 import { useCallback, useMemo } from 'react'
 import { DUMMY_VET, ROUTER_ADDRESS } from '../constants'

@@ -1,4 +1,4 @@
-import { Token, TokenAmount } from 'vexchange-sdk'
+import { Token, TokenAmount } from 'vexchange-sdk/dist'
 import React, { useContext } from 'react'
 import { ArrowDown } from 'react-feather'
 import { Text } from 'rebass'
@@ -25,12 +25,12 @@ export default function SwapModalHeader({
 }) {
   const theme = useContext(ThemeContext)
   return (
-    <AutoColumn gap={'md'} style={{ marginTop: '20px' }}>
-      <RowBetween align="flex-end">
+    <AutoColumn style={{ marginTop: '20px' }}>
+      <RowBetween>
         <TruncatedText fontSize={24} fontWeight={500}>
           {!!formattedAmounts[Field.INPUT] && formattedAmounts[Field.INPUT]}
         </TruncatedText>
-        <RowFixed gap="4px">
+        <RowFixed>
           <TokenLogo address={tokens[Field.INPUT]?.address} size={'24px'} />
           <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
             {tokens[Field.INPUT]?.symbol || ''}
@@ -40,18 +40,18 @@ export default function SwapModalHeader({
       <RowFixed>
         <ArrowDown size="16" color={theme.text2} />
       </RowFixed>
-      <RowBetween align="flex-end">
+      <RowBetween>
         <TruncatedText fontSize={24} fontWeight={500} color={priceImpactSeverity > 2 ? theme.red1 : ''}>
           {!!formattedAmounts[Field.OUTPUT] && formattedAmounts[Field.OUTPUT]}
         </TruncatedText>
-        <RowFixed gap="4px">
+        <RowFixed>
           <TokenLogo address={tokens[Field.OUTPUT]?.address} size={'24px'} />
           <Text fontSize={24} fontWeight={500} style={{ marginLeft: '10px' }}>
             {tokens[Field.OUTPUT]?.symbol || ''}
           </Text>
         </RowFixed>
       </RowBetween>
-      <AutoColumn justify="flex-start" gap="sm" style={{ padding: '12px 0 0 0px' }}>
+      <AutoColumn style={{ padding: '12px 0 0 0px' }}>
         {independentField === Field.INPUT ? (
           <TYPE.italic textAlign="left" style={{ width: '100%' }}>
             {`Output is estimated. You will receive at least `}

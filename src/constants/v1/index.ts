@@ -1,4 +1,4 @@
-import { ChainId } from 'vexchange-sdk'
+import { ChainId } from 'vexchange-sdk/dist'
 import V1_EXCHANGE_ABI from './v1_exchange.json'
 import V1_FACTORY_ABI from './v1_factory.json'
 

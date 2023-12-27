@@ -58,7 +58,7 @@ export default function TxnPopup({
       ) : (
         <AlertCircle color={'#FF6871'} size={24} style={{ paddingRight: '24px' }} />
       )}
-      <AutoColumn gap="8px">
+      <AutoColumn>
         <TYPE.body fontWeight={500}>
           {summary ? summary : 'Hash: ' + hash.slice(0, 8) + '...' + hash.slice(58, 65)}
         </TYPE.body>

@@ -138,9 +138,10 @@ export default function AddressInputPanel({
 
   return (
     <InputPanel>
-      <ContainerRow error={input !== '' && error}>
+      <ContainerRow>
+        {/* <ContainerRow error={input !== '' && error}> */}
         <InputContainer>
-          <AutoColumn gap="md">
+          <AutoColumn>
             <RowBetween>
               <TYPE.black color={theme.text2} fontWeight={500} fontSize={14}>
                 Recipient
@@ -158,10 +159,9 @@ export default function AddressInputPanel({
               autoCapitalize="off"
               spellCheck="false"
               placeholder="Wallet Address"
-              error={input !== '' && error}
+              // error={input !== '' && error}
               onChange={onInput}
               value={input}
-              isDark={isDark}
             />
           </AutoColumn>
         </InputContainer>

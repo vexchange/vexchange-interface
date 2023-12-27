@@ -1,15 +1,14 @@
-import { Fraction, JSBI, Percent, TokenAmount, Trade, WVET } from 'vexchange-sdk'
+import { Fraction, JSBI, Percent, TokenAmount, Trade, WVET } from 'vexchange-sdk/dist'
 import React, { useContext, useEffect, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
-import { RouteComponentProps } from 'react-router-dom'
 import { Text } from 'rebass'
 import { ThemeContext } from 'styled-components'
 import { ButtonError, ButtonLight } from '../../components/Button'
 import Card, { GreyCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
-import ConfirmationModal from '../../components/ConfirmationModal'
-import CurrencyInputPanel from '../../components/CurrencyInputPanel'
+import { ConfirmationModal } from '../../components/ConfirmationModal'
+import { CurrencyInputPanel } from '../../components/CurrencyInputPanel'
 import QuestionHelper from '../../components/QuestionHelper'
 import { RowBetween, RowFixed } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
@@ -33,6 +32,7 @@ import {
 } from '../../utils/prices'
 import SwapModalHeader from '../../components/swap/SwapModalHeader'
 import { basisPointsToPercent } from '../../utils'
+import { useLocation } from 'react-router-dom'
 
 let lockSwapFeeFetch = false
 
@@ -48,8 +48,10 @@ const getRoutePath = (trade: Trade | null) => {
   return trade.route.path.map(item => item.symbol).join('-')
 }
 
-export default function Swap({ location: { search } }: RouteComponentProps) {
-  useDefaultsFromURL(search)
+export const Swap = () => {
+  const location = useLocation()
+
+  useDefaultsFromURL(location.search)
   const { chainId, account, library } = useWeb3React()
 
   const theme = useContext(ThemeContext)
@@ -247,7 +249,7 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         pendingText={pendingText}
       />
 
-      <AutoColumn gap={'md'}>
+      <AutoColumn>
         <>
           <CurrencyInputPanel
             field={Field.INPUT}
@@ -267,7 +269,6 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
           <CursorPointer>
             <AutoColumn
               style={{
-                padding: '0.5rem',
                 backgroundImage: isDark
                   ? `linear-gradient(270deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.03) 97%)`
                   : `none`,
@@ -299,8 +300,8 @@ export default function Swap({ location: { search } }: RouteComponentProps) {
         </>
 
         {!noRoute && tokens[Field.OUTPUT] && tokens[Field.INPUT] && !isWrap && !isUnwrap && (
-          <Card padding={'0.75rem 0.75rem 0.75rem 1rem'} borderRadius={'20px'}>
-            <AutoColumn gap="4px">
+          <Card>
+            <AutoColumn>
               <RowBetween align="center">
                 <Text fontWeight={500} fontSize={14} color={theme.text2}>
                   Price

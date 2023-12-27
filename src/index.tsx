@@ -1,10 +1,10 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import ReactGA from 'react-ga'
 import { Web3ReactProvider, createWeb3ReactRoot } from './context'
 import Connex from '@vechain/connex'
 import { Provider } from 'react-redux'
 import WebFont from 'webfontloader'
+import { ChakraProvider } from '@chakra-ui/react'
 
 import { NetworkContextName } from './constants'
 import WalletUpdater from './state/wallet/updater'
@@ -30,7 +30,7 @@ export function getLibrary() {
   return connex
 }
 
-const GOOGLE_ANALYTICS_ID: string | undefined = process.env.REACT_APP_GOOGLE_ANALYTICS_ID
+const GOOGLE_ANALYTICS_ID: string | undefined = import.meta.env.VITE_GOOGLE_ANALYTICS_ID
 
 if (typeof GOOGLE_ANALYTICS_ID === 'string') {
   ReactGA.initialize(GOOGLE_ANALYTICS_ID, {
@@ -54,7 +54,8 @@ function Updaters() {
   )
 }
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root'))
+root.render(
   <>
     <FixedGlobalStyle />
     <Web3ReactProvider getLibrary={getLibrary}>
@@ -62,14 +63,13 @@ ReactDOM.render(
         <Provider store={store}>
           <Updaters />
           <ThemeProvider>
-            <>
+            <ChakraProvider>
               <ThemedGlobalStyle />
               <App />
-            </>
+            </ChakraProvider>
           </ThemeProvider>
         </Provider>
       </Web3ProviderNetwork>
     </Web3ReactProvider>
-  </>,
-  document.getElementById('root')
+  </>
 )

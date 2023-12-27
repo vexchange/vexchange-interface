@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { isAddress } from '../../utils'
 import { useWeb3React } from '../../hooks'
-import { WVET } from 'vexchange-sdk'
+import { WVET } from 'vexchange-sdk/dist'
 import { DUMMY_VET } from '../../constants'
 
-import { ReactComponent as VeChainLogo } from '../../assets/images/vet-logo.svg'
+import VeChainLogo from '../../assets/images/vet-logo.svg'
 import WvetIcon from '../../assets/images/wvet-logo.png'
 
 const TOKEN_ICON_API = address =>
@@ -30,7 +30,7 @@ const Emoji = styled.span<{ size?: string }>`
   margin-bottom: -4px;
 `
 
-const StyledEthereumLogo = styled(VeChainLogo)<{ size: string }>`
+const StyledEthereumLogo = styled.svg<{ size: string }>`
   width: ${({ size }) => size};
   height: ${({ size }) => size};
   box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);

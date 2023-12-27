@@ -118,7 +118,8 @@ export default function Option({
   const [isDark] = useDarkModeManager()
 
   const content = (
-    <OptionCardClickable active={active} clickable={clickable && !active} id={id} isDark={isDark} onClick={onClick}>
+    // <OptionCardClickable clickable={clickable && !active} id={id} isDark={isDark} onClick={onClick}>
+    <OptionCardClickable id={id} isDark={isDark} onClick={onClick}>
       <OptionCardLeft>
         <HeaderText color={color}>
           {' '}

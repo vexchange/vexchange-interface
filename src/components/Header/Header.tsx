@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { Link as HistoryLink } from 'react-router-dom'
 import { Sun, Moon } from 'react-feather'
 import { find } from 'lodash'
-import { utils } from 'ethers'
+import { formatEther } from 'ethers'
 import { isMobile } from 'react-device-detect'
+import { useDarkMode } from 'usehooks-ts'
 
 import styled, { css } from 'styled-components'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
@@ -13,10 +14,9 @@ import Menu from '../Menu'
 import Web3Status from '../Web3Status'
 
 import { Text } from 'rebass'
-import { ChainId } from 'vexchange-sdk'
+import { ChainId } from 'vexchange-sdk/dist'
 import { YellowCard } from '../Card'
 import { useWeb3React } from '../../hooks'
-import { useDarkModeManager } from '../../state/user/hooks'
 import { ButtonSecondary } from '../Button'
 
 import { DUMMY_VET, VEX } from '../../constants/index'
@@ -40,7 +40,6 @@ const HeaderFrame = styled.div`
   pointer-events: none;
 
   ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    padding: 12px 0 0 0;
     width: calc(100%);
     position: relative;
   `};
@@ -75,20 +74,10 @@ const Title = styled.div`
   }
 `
 
-const TitleText = styled(Row)`
-  width: fit-content;
-  white-space: nowrap;
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-    display: none;
-  `};
-`
-
 const AccountElement = styled.div<{ active: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
-  // background-color: ${({ theme, active }) => (!active ? theme.bg1 : theme.bg3)};
-  background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
   border-radius: 20px;
   white-space: nowrap;
 
@@ -100,7 +89,7 @@ const AccountElement = styled.div<{ active: boolean }>`
     position: relative;
 
     &:after {
-      content: "";
+      content: '';
       display: block;
       background: rgba(0, 0, 0, 0.1);
       height: 100%;
@@ -129,50 +118,6 @@ const NetworkCard = styled(YellowCard)`
   padding: 8px 12px;
 `
 
-const MigrateBanner = styled(AutoColumn)<{ isDark?: boolean }>`
-  width: 100%;
-  padding: 12px 0;
-  display: flex;
-  justify-content: center;
-  color: ${({ theme }) => theme.primaryText1};
-  font-weight: 400;
-  text-align: center;
-  pointer-events: auto;
-  a {
-    color: ${({ theme }) => theme.primaryText1};
-  }
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    padding: 0;
-    display: none;
-  `};
-
-  ${({ isDark }) =>
-    isDark
-      ? css`
-          background-image: linear-gradient(
-            210deg,
-            rgba(189, 162, 47, 0.02) 0%,
-            rgba(255, 255, 255, 0.02) 13%,
-            rgba(217, 216, 216, 0.15) 38%,
-            rgba(226, 225, 225, 0.08) 61%,
-            rgba(51, 41, 41, 0) 77%,
-            #893726 100%
-          );
-        `
-      : css`
-          background-image: linear-gradient(
-              210deg,
-              rgba(189, 162, 47, 0.02) 0%,
-              rgba(255, 255, 255, 0.02) 13%,
-              rgba(217, 216, 216, 0.15) 38%,
-              rgba(226, 225, 225, 0.08) 61%,
-              rgba(51, 41, 41, 0) 77%,
-              #efa29a 100%
-            );
-          );
-        `}
-`
-
 const getTokenBalance = (tokenAddress, address, library): Promise<number> => {
   const abi = find(ERC20_ABI, { name: 'balanceOf' })
 
@@ -185,20 +130,20 @@ const getTokenBalance = (tokenAddress, address, library): Promise<number> => {
         decoded: { balance }
       } = await method.call(address)
 
-      resolve(parseFloat(utils.formatEther(balance)))
+      resolve(parseFloat(formatEther(balance)))
     } catch (error) {
       reject(error)
     }
   })
 }
 
-export default function Header() {
+export const Header = () => {
   const { account, chainId, active, library } = useWeb3React()
-  const [darkMode, toggleDarkMode] = useDarkModeManager()
+  const { isDarkMode, toggle } = useDarkMode()
+
   const [userVexBalance, setUserVexBalance] = useState(0)
 
   const userEthBalance = useTokenBalanceTreatingWETHasETH(account, DUMMY_VET[chainId])
-  const [isDark] = useDarkModeManager()
 
   useEffect(() => {
     const getUserVexBalance = async () => {
@@ -214,37 +159,16 @@ export default function Header() {
 
   return (
     <HeaderFrame>
-      <MigrateBanner isDark={isDark}>
-        Through our partnership with Stably, we&apos;d like to introduce our&nbsp;
-        <HistoryLink to="/fiat-onramp">
-          <b>Fiat VeUSD Onramp.</b>
-        </HistoryLink>
-      </MigrateBanner>
-
-      <RowBetween padding="1rem">
+      <RowBetween>
         <HeaderElement>
-          <Title>
-            <VexIcon id="link" to="/">
-              <img src={isDark ? LogoDark : Logo} alt="logo" />
-            </VexIcon>
-            {!isMobile && (
-              <TitleText>
-                <HistoryLink id="link" to="/">
-                  <img
-                    style={{ marginLeft: '10px', marginTop: '4px' }}
-                    src={isDark ? WordmarkDark : Wordmark}
-                    alt="logo"
-                  />
-                </HistoryLink>
-              </TitleText>
-            )}
-          </Title>
+          <Title>Vexchange</Title>
         </HeaderElement>
         <HeaderElement>
           <TestnetWrapper>
             {!isMobile && chainId === ChainId.TESTNET && <NetworkCard>Ropsten</NetworkCard>}
           </TestnetWrapper>
-          <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}>
+          {/* <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}> */}
+          <AccountElement style={{ pointerEvents: 'auto' }}>
             {account && userEthBalance ? (
               <>
                 <Text style={{ flexShrink: 0 }} px="0.5rem" fontSize="0.85rem" fontWeight={500}>
@@ -255,18 +179,20 @@ export default function Header() {
                 </Text>
               </>
             ) : null}
-            <Web3Status account={account} active={active} />
+            <Web3Status account={account} />
+            {/* <Web3Status account={account} active={active} /> */}
           </AccountElement>
           <ButtonSecondary
-            isDark={isDark}
+            // isDark={isDark}
             ml="0.5rem"
-            onClick={toggleDarkMode}
+            onClick={toggle}
             p="8px 12px"
             style={{ pointerEvents: 'auto' }}
             width="min-content"
           >
-            {darkMode ? <Sun size={16} /> : <Moon size={16} />}
+            {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
           </ButtonSecondary>
+
           <div style={{ pointerEvents: 'auto' }}>
             <Menu />
           </div>

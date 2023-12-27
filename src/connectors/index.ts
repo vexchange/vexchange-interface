@@ -2,10 +2,10 @@ import { InjectedConnector } from './InjectedConnector'
 
 import { NetworkConnector } from './Network'
 
-const NETWORK_URL = process.env.REACT_APP_NETWORK_URL
+const NETWORK_URL = import.meta.env.VITE_NETWORK_URL
 
 export const network = new NetworkConnector({
-  urls: { [Number(process.env.REACT_APP_CHAIN_ID)]: NETWORK_URL },
+  urls: { [Number(import.meta.env.VITE_CHAIN_ID)]: NETWORK_URL }
 })
 
 export const injected = new InjectedConnector({

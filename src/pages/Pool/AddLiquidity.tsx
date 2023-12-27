@@ -1,23 +1,22 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { find } from 'lodash'
-import { parseEther, parseUnits } from '@ethersproject/units'
-import { JSBI, Percent, Price, Route, Token, TokenAmount, WVET } from 'vexchange-sdk'
+import { parseEther, parseUnits } from 'ethers'
+import { JSBI, Percent, Price, Route, Token, TokenAmount, WVET } from 'vexchange-sdk/dist'
 import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { Text } from 'rebass'
 import styled, { ThemeContext } from 'styled-components'
 import { abi as IVexchangeV2Router02ABI } from '../../constants/abis/IVexchangeV2Router02.json'
 import { ButtonLight, ButtonPrimary } from '../../components/Button'
 import { BlueCard, GreyCard, LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
-import ConfirmationModal from '../../components/ConfirmationModal'
-import CurrencyInputPanel from '../../components/CurrencyInputPanel'
+import { ConfirmationModal } from '../../components/ConfirmationModal'
+import { CurrencyInputPanel } from '../../components/CurrencyInputPanel'
 import DoubleLogo from '../../components/DoubleLogo'
-import PositionCard from '../../components/PositionCard'
+import { PositionCard } from '../../components/PositionCard'
 import Row, { AutoRow, RowBetween, RowFixed, RowFlat } from '../../components/Row'
-import SearchModal from '../../components/SearchModal'
+import { SearchModal } from '../../components/SearchModal'
 
 import TokenLogo from '../../components/TokenLogo'
 
@@ -136,12 +135,12 @@ function reducer(
   }
 }
 
-interface AddLiquidityProps extends RouteComponentProps {
+interface AddLiquidityProps {
   token0: string
   token1: string
 }
 
-function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
+export const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
   const { account, chainId, library } = useWeb3React()
   const theme = useContext(ThemeContext)
   const toggleWalletModal = useWalletModalToggle()
@@ -473,8 +472,8 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
 
   const modalHeader = () => {
     return noLiquidity ? (
-      <AutoColumn gap="12px">
-        <LightCard margin={'30px 0'} borderRadius="20px">
+      <AutoColumn>
+        <LightCard margin={'30px 0'}>
           <ColumnCenter>
             <RowFixed>
               <Text fontSize={36} fontWeight={500} marginRight={20}>
@@ -485,7 +484,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
           </ColumnCenter>
         </LightCard>
         <TYPE.body>Starting pool prices</TYPE.body>
-        <LightCard borderRadius="20px">
+        <LightCard>
           <TYPE.mediumHeader>
             {parsedAmounts[0] &&
               parsedAmounts[1] &&
@@ -495,7 +494,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
             {tokens[Field.INPUT]?.symbol + '/' + tokens[Field.OUTPUT]?.symbol}
           </TYPE.mediumHeader>
         </LightCard>
-        <LightCard borderRadius="20px">
+        <LightCard>
           <TYPE.mediumHeader>
             {parsedAmounts[0] &&
               parsedAmounts[1] &&
@@ -507,7 +506,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
         </LightCard>
       </AutoColumn>
     ) : (
-      <AutoColumn gap="20px">
+      <AutoColumn>
         <RowFlat style={{ marginTop: '20px' }}>
           <Text fontSize="48px" fontWeight={500} lineHeight="42px" marginRight={10}>
             {liquidityMinted?.toSignificant(6)}
@@ -519,7 +518,7 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
             {tokens[Field.INPUT]?.symbol + ':' + tokens[Field.OUTPUT]?.symbol + ' Pool Tokens'}
           </Text>
         </Row>
-        <TYPE.italic fontSize={12} textAlign="left" padding={'8px 0 0 0 '}>
+        <TYPE.italic fontSize={12} textAlign="left">
           {`Output is estimated. You will receive at least ${liquidityMinted?.toSignificant(6)} VEX ${
             tokens[Field.INPUT]?.symbol
           }/${tokens[Field.OUTPUT]?.symbol} or the transaction will revert.`}
@@ -598,21 +597,21 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
 
   const PriceBar = () => {
     return (
-      <AutoColumn gap="md" justify="space-between">
-        <AutoRow justify="space-between">
-          <AutoColumn justify="center">
+      <AutoColumn>
+        <AutoRow>
+          <AutoColumn>
             <TYPE.black>{displayPriceInput}</TYPE.black>
             <Text fontWeight={500} fontSize={14} color={theme.text2} pt={1}>
               {tokens[Field.OUTPUT]?.symbol} per {tokens[Field.INPUT]?.symbol}
             </Text>
           </AutoColumn>
-          <AutoColumn justify="center">
+          <AutoColumn>
             <TYPE.black>{displayPriceOutput}</TYPE.black>
             <Text fontWeight={500} fontSize={14} color={theme.text2} pt={1}>
               {tokens[Field.INPUT]?.symbol} per {tokens[Field.OUTPUT]?.symbol}
             </Text>
           </AutoColumn>
-          <AutoColumn justify="center">
+          <AutoColumn>
             <TYPE.black>
               {noLiquidity && derivedPrice ? '100' : poolTokenPercentage?.toSignificant(4) ?? '0'}
               {'%'}
@@ -653,11 +652,11 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
           setShowSearch(false)
         }}
       />
-      <AutoColumn gap="20px">
+      <AutoColumn>
         {noLiquidity && (
           <ColumnCenter style={{ marginTop: '1.5rem' }}>
             <BlueCard>
-              <AutoColumn gap="10px">
+              <AutoColumn>
                 <TYPE.link fontWeight={600}>You are the first liquidity provider.</TYPE.link>
                 <TYPE.link fontWeight={400}>The ratio of tokens you add will set the price of this pool.</TYPE.link>
                 <TYPE.link fontWeight={400}>Once you are happy with the rate click supply to review.</TYPE.link>
@@ -705,13 +704,13 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
         />
         {tokens[Field.OUTPUT] && tokens[Field.INPUT] && (
           <>
-            <GreyCard borderRadius={'20px'}>
+            <GreyCard>
               <RowBetween marginBottom="1rem">
                 <TYPE.subHeader fontWeight={500} fontSize={14}>
                   {noLiquidity ? 'Initial prices' : 'Prices'} and pool share
                 </TYPE.subHeader>
               </RowBetween>{' '}
-              <LightCard padding="1rem" borderRadius={'20px'}>
+              <LightCard>
                 <PriceBar />
               </LightCard>
             </GreyCard>
@@ -762,5 +761,3 @@ function AddLiquidity({ token0, token1 }: AddLiquidityProps) {
     </Wrapper>
   )
 }
-
-export default withRouter(AddLiquidity)

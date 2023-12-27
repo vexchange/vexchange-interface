@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
-import { withRouter, NavLink, Link as HistoryLink, RouteComponentProps } from 'react-router-dom'
+import { NavLink, Link as HistoryLink, useNavigate, useLocation } from 'react-router-dom'
 import * as isExternal from 'is-url-external'
 
 import { useDarkModeManager } from '../../state/user/hooks'
@@ -38,23 +38,12 @@ const tabOrder = [
 const Tabs = styled.div<{ isDark?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
-  border-radius: 26px 26px 0 0;
-
-  ${({ isDark }) =>
-    isDark
-      ? css`
-          background-image: linear-gradient(270deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.03) 96%);
-        `
-      : css`
-          background-color: #e8eaee;
-        `}
+  border-radius: 8px 8px 0 0;
 `
 
 const activeClassName = 'ACTIVE'
 
-const StyledNavLink = styled(({ ...props }) => <NavLink {...props} />).attrs({
-  activeClassName
-})<{ isdark?: boolean }>`
+const StyledNavLink = styled(({ ...props }) => <NavLink {...props} />)<{ isdark?: boolean }>`
   ${({ theme }) => theme.flexRowNoWrap}
   align-items: center;
   justify-content: center;
@@ -72,23 +61,6 @@ const StyledNavLink = styled(({ ...props }) => <NavLink {...props} />).attrs({
     box-sizing: border-box;
     font-weight: 500;
     color: ${({ theme }) => theme.text1};
-
-    &:first-of-type {
-      border-radius: 26px 0 0 0;
-    }
-
-    &:last-of-type {
-      border-radius: 0 26px 0 0;
-    }
-
-    ${props =>
-      props.isdark
-        ? css`
-            background-image: linear-gradient(270deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.03) 96%);
-          `
-        : css`
-            background-color: #ffffff;
-          `}
   }
 
   :hover,
@@ -122,27 +94,29 @@ const ActiveText = styled.div`
   font-size: 20px;
 `
 
-const ArrowLink = styled(ArrowLeft)`
-  color: ${({ theme }) => theme.text1};
-`
+const ArrowLink = styled(ArrowLeft)``
 
-function NavigationTabs({ location: { pathname }, history }: RouteComponentProps<{}>) {
+export const NavigationTabs = () => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { pathname } = location
+
   const [isDark] = useDarkModeManager()
 
-  const navigate = useCallback(
+  const go = useCallback(
     direction => {
       const tabIndex = tabOrder.findIndex(({ regex }) => pathname.match(regex))
-      history.push(tabOrder[(tabIndex + tabOrder.length + direction) % tabOrder.length].path)
+      navigate(tabOrder[(tabIndex + tabOrder.length + direction) % tabOrder.length].path)
     },
-    [pathname, history]
+    [pathname, navigate]
   )
   const navigateRight = useCallback(() => {
-    navigate(1)
-  }, [navigate])
+    go(1)
+  }, [go])
   const navigateLeft = useCallback(() => {
-    navigate(-1)
-  }, [navigate])
+    go(-1)
+  }, [go])
 
   useBodyKeyDown('ArrowRight', navigateRight)
   useBodyKeyDown('ArrowLeft', navigateLeft)
@@ -155,9 +129,9 @@ function NavigationTabs({ location: { pathname }, history }: RouteComponentProps
   return (
     <>
       {adding || removing ? (
-        <Tabs isDark={isDark}>
+        <Tabs>
           <RowBetween style={{ padding: '1rem' }}>
-            <CursorPointer onClick={() => history.push('/pool')}>
+            <CursorPointer onClick={() => navigate('/pool')}>
               <ArrowLink />
             </CursorPointer>
             <ActiveText>{adding ? 'Add' : 'Remove'} Liquidity</ActiveText>
@@ -171,7 +145,7 @@ function NavigationTabs({ location: { pathname }, history }: RouteComponentProps
           </RowBetween>
         </Tabs>
       ) : finding ? (
-        <Tabs isDark={isDark}>
+        <Tabs>
           <RowBetween style={{ padding: '1rem' }}>
             <HistoryLink to="/pool">
               <ArrowLink />
@@ -181,7 +155,7 @@ function NavigationTabs({ location: { pathname }, history }: RouteComponentProps
           </RowBetween>
         </Tabs>
       ) : creating ? (
-        <Tabs isDark={isDark}>
+        <Tabs>
           <RowBetween style={{ padding: '1rem' }}>
             <HistoryLink to="/pool">
               <ArrowLink />
@@ -191,7 +165,7 @@ function NavigationTabs({ location: { pathname }, history }: RouteComponentProps
           </RowBetween>
         </Tabs>
       ) : (
-        <Tabs isDark={isDark}>
+        <Tabs>
           {tabOrder.map(({ path, textKey, regex }) => (
             <React.Fragment key={path}>
               {isExternal(path) ? (
@@ -200,10 +174,10 @@ function NavigationTabs({ location: { pathname }, history }: RouteComponentProps
                 </StyledLink>
               ) : (
                 <StyledNavLink
-                  isdark={isDark ? 1 : 0}
+                  // isdark={isDark ? 1 : 0}
                   id={`${textKey}-nav-link`}
                   to={path}
-                  isActive={(_, { pathname }) => !!pathname.match(regex)}
+                  // isActive={(_, { pathname }) => !!pathname.match(regex)}
                 >
                   {t(textKey)}
                 </StyledNavLink>
@@ -215,5 +189,3 @@ function NavigationTabs({ location: { pathname }, history }: RouteComponentProps
     </>
   )
 }
-
-export default withRouter(NavigationTabs)

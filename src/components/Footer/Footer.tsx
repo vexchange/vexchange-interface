@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { Send } from 'react-feather'
 
 import { ButtonSecondary } from '../Button'
-import { useDarkModeManager } from '../../state/user/hooks'
 
 const FooterFrame = styled.div`
   display: flex;
@@ -17,13 +16,11 @@ const FooterFrame = styled.div`
   `};
 `
 
-export default function Footer() {
-  const [isDark] = useDarkModeManager()
-
+export const Footer = () => {
   return (
     <FooterFrame>
       <form action="https://discord.gg/bzvUNqTENp" target="_blank">
-        <ButtonSecondary isDark={isDark} p="8px 12px">
+        <ButtonSecondary p="8px 12px">
           <Send size={16} style={{ marginRight: '8px' }} /> Feedback
         </ButtonSecondary>
       </form>

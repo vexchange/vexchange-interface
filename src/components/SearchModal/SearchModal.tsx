@@ -1,14 +1,14 @@
 import React, { useState, useRef, useMemo, useEffect, useContext } from 'react'
-import '@reach/tooltip/styles.css'
+// import '@reach/tooltip/styles.css'
 import styled, { ThemeContext } from 'styled-components'
-import { JSBI, Token, WVET } from 'vexchange-sdk'
+import { JSBI, Token, WVET } from 'vexchange-sdk/dist'
 import { isMobile } from 'react-device-detect'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { DUMMY_VET } from '../../constants'
 import { useAllTokenBalancesTreatingWETHasETH } from '../../state/wallet/hooks'
 import { Link as StyledLink } from '../../theme/components'
 
-import Card from '../../components/Card'
+import Card from '../Card'
 import Modal from '../Modal'
 import Circle from '../../assets/images/circle.svg'
 import TokenLogo from '../TokenLogo'
@@ -18,7 +18,7 @@ import { Text } from 'rebass'
 import { CursorPointer } from '../../theme'
 import { ArrowLeft } from 'react-feather'
 import { CloseIcon } from '../../theme/components'
-import { ButtonPrimary, ButtonSecondary } from '../../components/Button'
+import { ButtonPrimary, ButtonSecondary } from '../Button'
 import { Spinner, TYPE } from '../../theme'
 import { RowBetween, RowFixed, AutoRow } from '../Row'
 
@@ -79,7 +79,7 @@ const Input = styled.input<{ isDark?: boolean }>`
   border: none;
   outline: none;
   box-sizing: border-box;
-  border-radius: 20px;
+  border-radius: 8px;
   color: ${({ isDark }) => (isDark ? '#ffffff' : 'rgba(255, 255, 255, 0.57)')}
   -webkit-appearance: none;
 
@@ -96,7 +96,6 @@ const FilterWrapper = styled(RowFixed)`
   color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text2)};
   border-radius: 8px;
   user-select: none;
-  background-image: linear-gradient(137deg, rgba(231, 150, 49, 0.57) 0%, rgba(217, 41, 33, 0.4) 100%);
   border: none;
   color: #ffffff;
 
@@ -109,28 +108,9 @@ const FilterWrapper = styled(RowFixed)`
   :hover {
     cursor: pointer;
   }
-
-  &:before {
-    content: '';
-    position: absolute;
-    z-index: -1;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 1px;
-    border-radius: 8px;
-    background: linear-gradient(to right, #e79631, #d92921);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: destination-out;
-    mask-composite: exclude;
-  }
 `
 
-const PaddedColumn = styled(AutoColumn)`
-  padding: 20px;
-  padding-bottom: 12px;
-`
+const PaddedColumn = styled(AutoColumn)``
 
 const PaddedItem = styled(RowBetween)`
   padding: 4px 20px;
@@ -153,7 +133,7 @@ const FILTERS = {
   BALANCES: 'BALANCES'
 }
 
-interface SearchModalProps extends RouteComponentProps<{}> {
+interface SearchModalProps {
   isOpen?: boolean
   onDismiss?: () => void
   filterType?: 'tokens'
@@ -166,8 +146,7 @@ interface SearchModalProps extends RouteComponentProps<{}> {
   showCommonBases?: boolean
 }
 
-function SearchModal({
-  history,
+export const SearchModal = ({
   isOpen,
   onDismiss,
   onTokenSelect,
@@ -178,8 +157,9 @@ function SearchModal({
   otherSelectedTokenAddress,
   otherSelectedText,
   showCommonBases = false
-}: SearchModalProps) {
+}: SearchModalProps) => {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const { account, chainId } = useWeb3React()
   const theme = useContext(ThemeContext)
   const [isDark] = useDarkModeManager()
@@ -381,7 +361,7 @@ function SearchModal({
   function renderPairsList() {
     if (filteredPairList?.length === 0) {
       return (
-        <PaddedColumn justify="center">
+        <PaddedColumn>
           <Text>No Pools Found</Text>
         </PaddedColumn>
       )
@@ -401,23 +381,24 @@ function SearchModal({
         return (
           <MenuItem
             key={i}
-            isDark={isDark}
+            // isDark={isDark}
             onClick={() => {
-              history.push('/add/' + token0.address + '-' + token1.address)
+              navigate('/add/' + token0.address + '-' + token1.address)
               onDismiss()
             }}
           >
             <RowFixed>
               <DoubleTokenLogo a0={token0?.address || ''} a1={token1?.address || ''} size={24} margin={true} />
-              <Text fontWeight={500} fontSize={16}>{overrideWVET(token0?.symbol)}/{overrideWVET(token1?.symbol)}</Text>
+              <Text fontWeight={500} fontSize={16}>
+                {overrideWVET(token0?.symbol)}/{overrideWVET(token1?.symbol)}
+              </Text>
             </RowFixed>
 
             <ButtonPrimary
               padding={'6px 8px'}
               width={'fit-content'}
-              borderRadius={'12px'}
               onClick={() => {
-                history.push('/add/' + token0.address + '-' + token1.address)
+                navigate('/add/' + token0.address + '-' + token1.address)
                 onDismiss()
               }}
             >
@@ -504,11 +485,11 @@ function SearchModal({
                 </FadedSpan>
               </Column>
             </RowFixed>
-            <AutoColumn gap="4px" justify="end">
+            <AutoColumn>
               {balance ? (
                 <Text>
                   {zeroBalance && showSendWithSwap ? (
-                    <ButtonSecondary padding={'4px 8px'}>
+                    <ButtonSecondary>
                       <Text textAlign="center" fontWeight={500} fontSize={14} color={theme.primary1}>
                         Send With Swap
                       </Text>
@@ -561,7 +542,7 @@ function SearchModal({
     >
       <Column style={{ width: '100%' }}>
         {showTokenImport ? (
-          <PaddedColumn gap="lg">
+          <PaddedColumn>
             <RowBetween>
               <RowFixed>
                 <CursorPointer>
@@ -581,7 +562,7 @@ function SearchModal({
               To import a custom token, paste token address in the search bar.
             </TYPE.body>
             <Input
-              isDark={isDark}
+              // isDark={isDark}
               type={'text'}
               placeholder={'0x000000...'}
               value={searchQuery}
@@ -591,7 +572,7 @@ function SearchModal({
             {renderTokenList()}
           </PaddedColumn>
         ) : (
-          <PaddedColumn gap="20px">
+          <PaddedColumn>
             <RowBetween>
               <Text fontWeight={500} fontSize={16}>
                 {filterType === 'tokens' ? 'Select A Token' : 'Select A Pool'}
@@ -599,7 +580,7 @@ function SearchModal({
               <CloseIcon onClick={onDismiss} />
             </RowBetween>
             <Input
-              isDark={isDark}
+              // isDark={isDark}
               type={'text'}
               id="token-search-input"
               placeholder={t('tokenSearchPlaceholder')}
@@ -640,14 +621,14 @@ function SearchModal({
         )}
         {!showTokenImport && (
           <Card>
-            <AutoRow justify={'center'}>
+            <AutoRow>
               <div>
                 {filterType !== 'tokens' && (
                   <Text fontWeight={500}>
                     {!isMobile && "Don't see a pool? "}
                     <StyledLink
                       onClick={() => {
-                        history.push('/find')
+                        navigate('/find')
                       }}
                     >
                       {!isMobile ? 'Import it.' : 'Import pool.'}
@@ -675,5 +656,3 @@ function SearchModal({
     </Modal>
   )
 }
-
-export default withRouter(SearchModal)

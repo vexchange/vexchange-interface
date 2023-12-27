@@ -1,4 +1,4 @@
-import { Percent, TokenAmount, Trade } from 'vexchange-sdk'
+import { Percent, TokenAmount, Trade } from 'vexchange-sdk/dist'
 import { ALLOWED_SLIPPAGE_HIGH, ALLOWED_SLIPPAGE_LOW, ALLOWED_SLIPPAGE_MEDIUM } from '../constants'
 import { Field } from '../state/swap/actions'
 import { basisPointsToPercent } from './index'

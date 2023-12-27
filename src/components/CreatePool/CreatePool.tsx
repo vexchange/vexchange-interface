@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { withRouter, RouteComponentProps } from 'react-router-dom'
-import { Token, WVET } from 'vexchange-sdk'
+import { useNavigate } from 'react-router-dom'
+import { Token, WVET } from 'vexchange-sdk/dist'
 
 import Row, { AutoRow } from '../Row'
 import TokenLogo from '../TokenLogo'
-import SearchModal from '../SearchModal'
-import AddLiquidity from '../../pages/Pool/AddLiquidity'
+import { SearchModal } from '../SearchModal'
+import { AddLiquidity } from '../../pages/Pool'
 import { Text } from 'rebass'
 import { Plus } from 'react-feather'
 import { TYPE, Link } from '../../theme'
@@ -27,8 +27,9 @@ const STEP = {
   SHOW_CREATE_PAGE: 'SHOW_CREATE_PAGE' // show create page
 }
 
-function CreatePool({ history }: RouteComponentProps) {
+export const CreatePool = () => {
   const { chainId } = useWeb3React()
+  const navigate = useNavigate()
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [activeField, setActiveField] = useState<number>(Fields.TOKEN0)
 
@@ -55,8 +56,8 @@ function CreatePool({ history }: RouteComponentProps) {
   }
 
   return (
-    <AutoColumn gap="20px" style={{ padding: '1rem' }}>
-      <AutoColumn gap="24px">
+    <AutoColumn style={{ padding: '1rem' }}>
+      <AutoColumn>
         <ButtonDropwdown
           onClick={() => {
             setShowSearch(true)
@@ -94,10 +95,10 @@ function CreatePool({ history }: RouteComponentProps) {
           </ButtonDropwdownLight>
         )}
         {pair ? ( // pair already exists - prompt to add liquidity to existing pool
-          <AutoRow padding="10px" justify="center">
+          <AutoRow>
             <TYPE.body textAlign="center">
               Pool already exists!
-              <Link onClick={() => history.push('/add/' + token0Address + '-' + token1Address)}> Join the pool.</Link>
+              <Link onClick={() => navigate('/add/' + token0Address + '-' + token1Address)}> Join the pool.</Link>
             </TYPE.body>
           </AutoRow>
         ) : (
@@ -123,5 +124,3 @@ function CreatePool({ history }: RouteComponentProps) {
     </AutoColumn>
   )
 }
-
-export default withRouter(CreatePool)

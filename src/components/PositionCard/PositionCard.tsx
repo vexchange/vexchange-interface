@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import { darken } from 'polished'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { Percent, Pair, JSBI } from 'vexchange-sdk'
+import { useNavigate } from 'react-router-dom'
+import { Percent, Pair, JSBI } from 'vexchange-sdk/dist'
 
 import { useWeb3React } from '../../hooks'
 import { useTotalSupply } from '../../data/TotalSupply'
@@ -30,13 +30,14 @@ const HoverCard = styled(Card)`
   }
 `
 
-interface PositionCardProps extends RouteComponentProps<{}> {
+interface PositionCardProps {
   pair: Pair
   minimal?: boolean
   border?: string
 }
 
-function PositionCard({ pair, history, border, minimal = false }: PositionCardProps) {
+export const PositionCard = ({ pair, border, minimal = false }: PositionCardProps) => {
+  const navigate = useNavigate()
   const { account } = useWeb3React()
   const [isDark] = useDarkModeManager()
 
@@ -70,7 +71,7 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
       <>
         {userPoolBalance && (
           <GreyCard border={border}>
-            <AutoColumn gap="12px">
+            <AutoColumn>
               <FixedHeightRow>
                 <RowFixed>
                   <Text fontWeight={500} fontSize={16}>
@@ -91,7 +92,7 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
                   </Text>
                 </RowFixed>
               </FixedHeightRow>
-              <AutoColumn gap="4px">
+              <AutoColumn>
                 <FixedHeightRow>
                   <Text color="#888D9B" fontSize={16} fontWeight={500}>
                     {token0?.symbol}:
@@ -131,7 +132,7 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
   } else
     return (
       <HoverCard border={border}>
-        <AutoColumn gap="12px">
+        <AutoColumn>
           <FixedHeightRow onClick={() => setShowMore(!showMore)} style={{ cursor: 'pointer' }}>
             <RowFixed>
               <DoubleLogo a0={token0?.address || ''} a1={token1?.address || ''} margin={true} size={20} />
@@ -148,7 +149,7 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
             </RowFixed>
           </FixedHeightRow>
           {showMore && (
-            <AutoColumn gap="8px">
+            <AutoColumn>
               <FixedHeightRow>
                 <RowFixed>
                   <Text fontSize={16} fontWeight={500}>
@@ -206,19 +207,19 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
               )}
               <RowBetween marginTop="10px">
                 <ButtonSecondary
-                  isDark={isDark}
+                  // isDark={isDark}
                   width="48%"
                   onClick={() => {
-                    history.push('/add/' + token0?.address + '-' + token1?.address)
+                    navigate('/add/' + token0?.address + '-' + token1?.address)
                   }}
                 >
                   Add
                 </ButtonSecondary>
                 <ButtonSecondary
-                  isDark={isDark}
+                  // isDark={isDark}
                   width="48%"
                   onClick={() => {
-                    history.push('/remove/' + token0?.address + '-' + token1?.address)
+                    navigate('/remove/' + token0?.address + '-' + token1?.address)
                   }}
                 >
                   Remove
@@ -230,5 +231,3 @@ function PositionCard({ pair, history, border, minimal = false }: PositionCardPr
       </HoverCard>
     )
 }
-
-export default withRouter(PositionCard)

@@ -1,4 +1,4 @@
-import { Percent, TokenAmount, Trade, TradeType } from 'vexchange-sdk'
+import { Percent, TokenAmount, Trade, TradeType } from 'vexchange-sdk/dist'
 import React, { useContext } from 'react'
 import { Repeat } from 'react-feather'
 import { Text } from 'rebass'
@@ -41,8 +41,8 @@ export default function SwapModalFooter({
   const theme = useContext(ThemeContext)
   return (
     <>
-      <AutoColumn gap="0px">
-        <RowBetween align="center">
+      <AutoColumn>
+        <RowBetween>
           <Text fontWeight={400} fontSize={14} color={theme.text2}>
             Price
           </Text>

@@ -1,4 +1,4 @@
-import { ChainId, WVET, JSBI, Percent, Token } from 'vexchange-sdk'
+import { ChainId, WVET, JSBI, Percent, Token } from 'vexchange-sdk/dist'
 import { injected } from '../connectors'
 
 export const V1_FACTORY_ADDRESS = '0x6A662F91E14312a11a2E35b359427AEf798fD928'
@@ -34,7 +34,7 @@ export const VEX: { [chainId in ChainId]: Token } = {
 }
 
 export const SUPPORTED_WALLETS =
-  process.env.REACT_APP_CHAIN_ID !== '1'
+  import.meta.env.VITE_CHAIN_ID !== '1'
     ? MAINNET_WALLETS
     : {
         ...MAINNET_WALLETS

@@ -1,4 +1,4 @@
-import { Token, WVET } from 'vexchange-sdk'
+import { Token, WVET } from 'vexchange-sdk/dist'
 import { useEffect, useMemo } from 'react'
 import { findKey } from 'lodash'
 import { useAddUserToken, useFetchTokenByAddress, useUserAddedTokens } from '../state/user/hooks'

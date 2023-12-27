@@ -84,7 +84,7 @@ function PopupItem({ content, popKey }: { content: PopupContent; popKey: string 
       poolAdded: { token0, token1 }
     } = content
     return (
-      <AutoColumn gap={'10px'}>
+      <AutoColumn>
         <Text fontSize={20} fontWeight={500}>
           Pool Imported
         </Text>
@@ -111,7 +111,7 @@ export default function App() {
 
   if (!isMobile) {
     return (
-      <FixedPopupColumn gap="20px">
+      <FixedPopupColumn>
         {activePopups.map(item => {
           return (
             <Popup key={item.key}>

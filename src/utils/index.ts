@@ -11,7 +11,7 @@ import { abi as IVexchangeV2Router02ABI } from '../constants/abis/IVexchangeV2Ro
 import { ROUTER_ADDRESS } from '../constants'
 
 import ERC20_ABI from '../constants/abis/erc20.json'
-import { ChainId, JSBI, Percent, TokenAmount } from 'vexchange-sdk'
+import { ChainId, JSBI, Percent, TokenAmount } from 'vexchange-sdk/dist'
 import { normalizeAccount } from '../context/normalizers'
 
 // returns the checksummed address if the address is valid, otherwise returns false

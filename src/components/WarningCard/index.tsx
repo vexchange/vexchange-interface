@@ -1,6 +1,7 @@
-import { Token } from 'vexchange-sdk'
+import { Token } from 'vexchange-sdk/dist'
 import React, { useState } from 'react'
 import styled, { keyframes } from 'styled-components'
+import { X as Close } from 'react-feather'
 
 import { useWeb3React } from '../../hooks'
 import { useToken } from '../../hooks/Tokens'
@@ -8,13 +9,11 @@ import { getExploreLink } from '../../utils'
 
 import { Link } from '../../theme'
 import TokenLogo from '../TokenLogo'
-import { ReactComponent as Close } from '../../assets/images/x.svg'
 import question from '../../assets/images/question.svg'
 
 const Flex = styled.div`
   display: flex;
   justify-content: center;
-  padding: 2rem;
 
   button {
     max-width: 20rem;

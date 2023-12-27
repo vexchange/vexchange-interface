@@ -2,19 +2,21 @@ import React, { useState, useEffect } from 'react'
 import ReactGA from 'react-ga'
 import styled, { css } from 'styled-components'
 import { isMobile } from 'react-device-detect'
+import { X as Close } from 'react-feather'
+
 import { UnsupportedChainIdError } from '../../context'
 import { useWeb3React } from '../../hooks'
 import { useWalletModalOpen, useWalletModalToggle } from '../../state/application/hooks'
-
-import Modal from '../Modal'
-import AccountDetails from '../AccountDetails'
-import PendingView from './PendingView'
-import Option from './Option'
 import { SUPPORTED_WALLETS } from '../../constants'
 import { usePrevious } from '../../hooks'
 import { Link } from '../../theme'
-import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { useDarkModeManager } from '../../state/user/hooks'
+
+import Modal from '../Modal'
+import AccountDetails from '../AccountDetails'
+
+import PendingView from './PendingView'
+import Option from './Option'
 
 const CloseIcon = styled.div`
   position: absolute;
@@ -59,9 +61,8 @@ const ContentWrapper = styled.div<{ isDark?: boolean }>`
           background-image: none;
         `}
 
-  padding: 2rem;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 
   ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
 `
@@ -203,12 +204,13 @@ export default function WalletModal({
             }}
             id={`connect-${key}`}
             key={key}
-            active={option.connector && option.connector === connector}
+            // active={option.connector && option.connector === connector}
             color={option.color}
             link={option.href}
             header={option.name}
             subheader={null}
-            icon={require('../../assets/images/' + option.iconName)}
+            // icon={require('../../assets/images/' + option.iconName)}
+            icon={'../../assets/images/sync-logo.svg'}
           />
         )
       }
@@ -225,12 +227,13 @@ export default function WalletModal({
                 : !option.href && tryActivation(option.connector)
             }}
             key={key}
-            active={option.connector === connector}
+            // active={option.connector === connector}
             color={option.color}
             link={option.href}
             header={option.name}
             subheader={null} //use option.descriptio to bring back multi-line
-            icon={require('../../assets/images/' + option.iconName)}
+            // icon={require('../../assets/images/' + option.iconName)}
+            icon={'../../assets/images/sync-logo.svg'}
           />
         )
       )

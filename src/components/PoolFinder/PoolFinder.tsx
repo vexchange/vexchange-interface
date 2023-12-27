@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { RouteComponentProps, withRouter } from 'react-router-dom'
-import { TokenAmount, JSBI, Token, Pair } from 'vexchange-sdk'
+import { useNavigate } from 'react-router-dom'
+import { TokenAmount, JSBI, Token, Pair } from 'vexchange-sdk/dist'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
 
 import Row from '../Row'
 import TokenLogo from '../TokenLogo'
-import SearchModal from '../SearchModal'
-import PositionCard from '../PositionCard'
+import { SearchModal } from '../SearchModal'
+import { PositionCard } from '../PositionCard'
 import { Link } from '../../theme'
 import { Text } from 'rebass'
 import { Plus } from 'react-feather'
@@ -24,7 +24,8 @@ const Fields = {
   TOKEN1: 1
 }
 
-function PoolFinder({ history }: RouteComponentProps) {
+export const PoolFinder = () => {
+  const navigate = useNavigate()
   const { account } = useWeb3React()
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [activeField, setActiveField] = useState<number>(Fields.TOKEN0)
@@ -52,7 +53,7 @@ function PoolFinder({ history }: RouteComponentProps) {
 
   return (
     <>
-      <AutoColumn gap="md" style={{ padding: '1rem' }}>
+      <AutoColumn style={{ padding: '1rem' }}>
         {!token0Address ? (
           <ButtonDropwdown
             onClick={() => {
@@ -105,9 +106,7 @@ function PoolFinder({ history }: RouteComponentProps) {
           </ButtonDropwdownLight>
         )}
         {allowImport && (
-          <ColumnCenter
-            style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px', borderRadius: '12px' }}
-          >
+          <ColumnCenter style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px' }}>
             <Text textAlign="center" fontWeight={500} color="">
               Pool Imported!
             </Text>
@@ -117,12 +116,12 @@ function PoolFinder({ history }: RouteComponentProps) {
           !JSBI.equal(position.raw, JSBI.BigInt(0)) ? (
             <PositionCard pair={pair} minimal={true} border="1px solid #CED0D9" />
           ) : (
-            <LightCard padding="45px 10px">
-              <AutoColumn gap="sm" justify="center">
+            <LightCard>
+              <AutoColumn>
                 <Text textAlign="center">Pool found, you don’t have liquidity on this pair yet.</Text>
                 <Link
                   onClick={() => {
-                    history.push('/add/' + token0Address + '-' + token1Address)
+                    navigate('/add/' + token0Address + '-' + token1Address)
                   }}
                 >
                   <Text textAlign="center">Add liquidity to this pair instead.</Text>
@@ -131,12 +130,12 @@ function PoolFinder({ history }: RouteComponentProps) {
             </LightCard>
           )
         ) : newPair ? (
-          <LightCard padding="45px">
-            <AutoColumn gap="sm" justify="center">
+          <LightCard>
+            <AutoColumn>
               <Text color="">No pool found.</Text>
               <Link
                 onClick={() => {
-                  history.push('/add/' + token0Address + '-' + token1Address)
+                  navigate('/add/' + token0Address + '-' + token1Address)
                 }}
               >
                 Create pool?
@@ -144,14 +143,14 @@ function PoolFinder({ history }: RouteComponentProps) {
             </AutoColumn>
           </LightCard>
         ) : (
-          <LightCard padding={'45px'}>
+          <LightCard>
             <Text color="#C3C5CB" textAlign="center">
               Select a token pair to find your liquidity.
             </Text>
           </LightCard>
         )}
 
-        <ButtonPrimary disabled={!allowImport} onClick={() => history.goBack()}>
+        <ButtonPrimary disabled={!allowImport} onClick={() => navigate(-1)}>
           <Text fontWeight={500} fontSize={20}>
             Close
           </Text>
@@ -171,5 +170,3 @@ function PoolFinder({ history }: RouteComponentProps) {
     </>
   )
 }
-
-export default withRouter(PoolFinder)

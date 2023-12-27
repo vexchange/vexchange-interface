@@ -1,6 +1,7 @@
 import React, { useCallback, useContext } from 'react'
 import { useDispatch } from 'react-redux'
 import styled, { ThemeContext } from 'styled-components'
+import { X as Close } from 'react-feather'
 import { useWeb3React } from '../../hooks'
 import { AppDispatch } from '../../state'
 import { clearAllTransactions } from '../../state/transactions/actions'
@@ -9,11 +10,9 @@ import Copy from './Copy'
 import Transaction from './Transaction'
 
 import { SUPPORTED_WALLETS } from '../../constants'
-import { ReactComponent as Close } from '../../assets/images/x.svg'
 import { getExploreLink, userAccount } from '../../utils'
 import { injected } from '../../connectors'
 import Identicon from '../Identicon'
-
 
 import { Link, TYPE } from '../../theme'
 
@@ -25,8 +24,6 @@ const HeaderRow = styled.div`
   ${({ theme }) => theme.mediaWidth.upToMedium`
     padding: 1rem;
   `};
-
-  background-image: linear-gradient(270deg, rgba(255, 255, 255, 0.13) 0%, rgba(255, 255, 255, 0.03) 96%);
 
   border-radius: 0 0 3px 3px;
 `
@@ -236,8 +233,7 @@ export default function AccountDetails({
     const isMetaMask = !!(ethereum && ethereum.isMetaMask)
     const name = Object.keys(SUPPORTED_WALLETS)
       .filter(
-        k =>
-          SUPPORTED_WALLETS[k].connector === connector && (connector !== injected || isMetaMask === (k === 'SYNC'))
+        k => SUPPORTED_WALLETS[k].connector === connector && (connector !== injected || isMetaMask === (k === 'SYNC'))
       )
       .map(k => SUPPORTED_WALLETS[k].name)[0]
     return <WalletName>{name}</WalletName>
@@ -274,13 +270,7 @@ export default function AccountDetails({
               <AccountGroupingRow>
                 {getStatusIcon()}
                 <div>
-                  {account && (
-                    <WalletAction
-                      onClick={userAccount.remove}
-                    >
-                      Disconnect
-                    </WalletAction>
-                  )}
+                  {account && <WalletAction onClick={userAccount.remove}>Disconnect</WalletAction>}
                   <CircleWrapper>
                     <GreenCircle>
                       <div />
@@ -295,9 +285,7 @@ export default function AccountDetails({
               </AccountGroupingRow>
               <AccountGroupingRow>
                 <AccountControl>
-                  <StyledLink href={getExploreLink(chainId, account, 'address')}>
-                    View on VeChain Stats ↗
-                  </StyledLink>
+                  <StyledLink href={getExploreLink(chainId, account, 'address')}>View on VeChain Stats ↗</StyledLink>
                 </AccountControl>
               </AccountGroupingRow>
             </InfoCard>

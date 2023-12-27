@@ -1,4 +1,4 @@
-import { Trade, TradeType, Percent } from 'vexchange-sdk'
+import { Trade, TradeType, Percent } from 'vexchange-sdk/dist'
 import React, { useContext } from 'react'
 import { ChevronUp } from 'react-feather'
 import { Text } from 'rebass'
@@ -14,8 +14,8 @@ import SlippageTabs, { SlippageTabsProps } from '../SlippageTabs'
 import FormattedPriceImpact from './FormattedPriceImpact'
 
 export interface AdvancedSwapDetailsProps extends SlippageTabsProps {
-  trade: Trade,
-  swapFee: Percent,
+  trade: Trade
+  swapFee: Percent
   onDismiss: () => void
 }
 
@@ -26,7 +26,7 @@ export function AdvancedSwapDetails({ trade, swapFee, onDismiss, ...slippageTabP
   const slippageAdjustedAmounts = computeSlippageAdjustedAmounts(trade, slippageTabProps.rawSlippage)
 
   return (
-    <AutoColumn gap="md">
+    <AutoColumn>
       <CursorPointer>
         <RowBetween onClick={onDismiss} padding={'8px 20px'}>
           <Text fontSize={16} color={theme.text2} fontWeight={500} style={{ userSelect: 'none' }}>
@@ -84,7 +84,7 @@ export function AdvancedSwapDetails({ trade, swapFee, onDismiss, ...slippageTabP
         </RowBetween>
       </AutoColumn>
       <SectionBreak />
-      <RowFixed padding={'0 20px'}>
+      <RowFixed>
         <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
           Set slippage tolerance
         </TYPE.black>

@@ -124,7 +124,7 @@ export default function PendingView({
             <Option
               id={`connect-${key}`}
               key={key}
-              clickable={false}
+              // clickable={false}
               color={option.color}
               header={option.name}
               subheader={option.description}
