@@ -1,6 +1,6 @@
 import { Percent } from 'vexchange-sdk/dist'
 import React, { useContext } from 'react'
-import { Text } from 'rebass'
+import { Text } from '@chakra-ui/react'
 import { ThemeContext } from 'styled-components'
 import { YellowCard } from '../Card'
 import { AutoColumn } from '../Column'

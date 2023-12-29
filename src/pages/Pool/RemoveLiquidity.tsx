@@ -1,11 +1,13 @@
-import { parseUnits } from 'ethers'
 import { JSBI, Percent, Route, Token, TokenAmount, WVET } from 'vexchange-sdk/dist'
 import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { ArrowDown, Plus } from 'react-feather'
 import ReactGA from 'react-ga'
-import { Text } from 'rebass'
+import { Text } from '@chakra-ui/react'
 import { find } from 'lodash'
+import { parseEther, parseUnits, getAddress } from 'ethers'
+import { useNavigate, useParams } from 'react-router-dom'
 import { ThemeContext } from 'styled-components'
+
 import { ButtonConfirmed, ButtonPrimary } from '../../components/Button'
 import { LightCard } from '../../components/Card'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
@@ -13,7 +15,7 @@ import { ConfirmationModal } from '../../components/ConfirmationModal'
 import { CurrencyInputPanel } from '../../components/CurrencyInputPanel'
 import DoubleLogo from '../../components/DoubleLogo'
 import { PositionCard } from '../../components/PositionCard'
-import Row, { RowBetween, RowFixed } from '../../components/Row'
+import { Row, RowBetween, RowFixed } from '../../components/Row'
 
 import Slider from '../../components/Slider'
 import TokenLogo from '../../components/TokenLogo'
@@ -107,7 +109,19 @@ function reducer(
   }
 }
 
-export default function RemoveLiquidity({ token0, token1 }: { token0: string; token1: string }) {
+export const RemoveLiquidity = () => {
+  const params = useParams()
+  const navigate = useNavigate()
+  const [token0, token1] = params.tokens.split('-')
+
+  const t0 = token0 === 'VET' ? 'VET' : getAddress(token0) ? getAddress(token0) : undefined
+  const t1 = token1 === 'VET' ? 'VET' : getAddress(token1) ? getAddress(token1) : undefined
+
+  if (!(t0 && t1)) {
+    navigate('/pool')
+    return
+  }
+
   const { account, chainId, library } = useWeb3React()
   const theme = useContext(ThemeContext)
 
@@ -465,7 +479,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
           </RowFixed>
         </RowBetween>
         <RowFixed>
-          <Plus size="16" color={theme.text2} />
+          <Plus size="16" />
         </RowFixed>
         <RowBetween>
           <Text fontSize={24} fontWeight={600}>
@@ -479,7 +493,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
           </RowFixed>
         </RowBetween>
 
-        <TYPE.italic fontSize={12} color={theme.text2} textAlign="left">
+        <TYPE.italic fontSize={12} textAlign="left">
           {`Output is estimated. You will receive at least ${parsedAmounts[Field.TOKEN0]?.toSignificant(6)} ${
             tokensAdjusted[Field.TOKEN0]?.symbol
           } and at least ${parsedAmounts[Field.TOKEN1]?.toSignificant(6)} ${
@@ -494,22 +508,18 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
     return (
       <>
         <RowBetween>
-          <Text color={theme.text2} fontWeight={500} fontSize={16}>
+          <Text fontWeight={500} fontSize={16}>
             {'VEX ' + tokens[Field.TOKEN0]?.symbol + ':' + tokens[Field.TOKEN1]?.symbol} Burned
           </Text>
           <RowFixed>
-            <DoubleLogo
-              a0={tokens[Field.TOKEN0]?.address || ''}
-              a1={tokens[Field.TOKEN1]?.address || ''}
-              margin={true}
-            />
+            <DoubleLogo a0={tokens[Field.TOKEN0]?.address || ''} a1={tokens[Field.TOKEN1]?.address || ''} />
             <Text fontWeight={500} fontSize={16}>
               {parsedAmounts[Field.LIQUIDITY]?.toSignificant(6)}
             </Text>
           </RowFixed>
         </RowBetween>
         <RowBetween>
-          <Text color={theme.text2} fontWeight={500} fontSize={16}>
+          <Text fontWeight={500} fontSize={16}>
             Price
           </Text>
           <Text fontWeight={500} fontSize={16} color={theme.text1}>
@@ -612,7 +622,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
         {!showAdvanced && (
           <>
             <ColumnCenter>
-              <ArrowDown size="16" color={theme.text2} />
+              <ArrowDown size="16" />
             </ColumnCenter>{' '}
             <LightCard>
               <AutoColumn>
@@ -658,7 +668,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
               id="liquidity-amount"
             />
             <ColumnCenter>
-              <ArrowDown size="16" color={theme.text2} />
+              <ArrowDown size="16" />
             </ColumnCenter>
             <CurrencyInputPanel
               field={Field.TOKEN0}
@@ -672,7 +682,7 @@ export default function RemoveLiquidity({ token0, token1 }: { token0: string; to
               id="remove-liquidity-token0"
             />
             <ColumnCenter>
-              <Plus size="16" color={theme.text2} />
+              <Plus size="16" />
             </ColumnCenter>
             <CurrencyInputPanel
               field={Field.TOKEN1}

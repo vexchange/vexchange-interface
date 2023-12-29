@@ -14,24 +14,7 @@ export const Button = styled.button.attrs<{ warning: boolean }, { backgroundColo
   font-size: 1rem;
   border: none;
   outline: none;
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  color: ${({ theme }) => theme.white};
   width: 100%;
-
-  :hover,
-  :focus {
-    background-color: ${({ backgroundColor }) => darken(0.05, backgroundColor)};
-  }
-
-  :active {
-    background-color: ${({ backgroundColor }) => darken(0.1, backgroundColor)};
-  }
-
-  :disabled {
-    background-color: ${({ theme }) => theme.bg1};
-    color: ${({ theme }) => theme.text4};
-    cursor: auto;
-  }
 `
 
 export const CloseIcon = styled(X)<{ onClick: () => void }>`

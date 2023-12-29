@@ -2,13 +2,13 @@ import React, { useState, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { JSBI, Pair } from 'vexchange-sdk/dist'
 import { useNavigate } from 'react-router-dom'
+import { Text, Button, Center, useDisclosure, Flex } from '@chakra-ui/react'
 
-import Question from '../../components/QuestionHelper'
+import { QuestionHelper } from '../../components/QuestionHelper'
 import { SearchModal } from '../../components/SearchModal'
 import { PositionCard } from '../../components/PositionCard'
 import { useTokenBalances } from '../../state/wallet/hooks'
 import { Link, TYPE } from '../../theme'
-import { Text } from 'rebass'
 import { LightCard } from '../../components/Card'
 import { RowBetween } from '../../components/Row'
 import { ButtonPrimary, ButtonSecondary } from '../../components/Button'
@@ -38,6 +38,8 @@ export const Supply = () => {
   const navigate = useNavigate()
   const theme = useContext(ThemeContext)
   const { account } = useWeb3React()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   const [showPoolSearch, setShowPoolSearch] = useState(false)
   const [isDark] = useDarkModeManager()
 
@@ -60,30 +62,19 @@ export const Supply = () => {
     })
 
   return (
-    <AutoColumn style={{ padding: '1rem' }}>
-      <ButtonPrimary
-        id="join-pool-button"
-        onClick={() => {
-          setShowPoolSearch(true)
-        }}
-      >
-        <Text fontWeight={500} fontSize={20}>
-          Join {filteredExchangeList?.length > 0 ? 'another' : 'a'} pool
-        </Text>
-      </ButtonPrimary>
+    <Flex p={4} direction="column">
+      <Button variant="primary" id="join-pool-button" onClick={onOpen}>
+        <Text>Join {filteredExchangeList?.length > 0 ? 'another' : 'a'} pool</Text>
+      </Button>
       <Positions>
         <AutoColumn>
           <RowBetween>
-            <Text color={theme.text1} fontWeight={500}>
-              Your Pooled Liquidity
-            </Text>
-            <Question text="When you add liquidity, you are given pool tokens that represent your share. If you don’t see a pool you joined in this list, try importing a pool below." />
+            <Text fontWeight={500}>Your Pooled Liquidity</Text>
+            <QuestionHelper text="When you add liquidity, you are given pool tokens that represent your share. If you don’t see a pool you joined in this list, try importing a pool below." />
           </RowBetween>
           {filteredExchangeList?.length === 0 && (
             <LightCard>
-              <TYPE.body color={theme.text3} textAlign="center">
-                No liquidity found.
-              </TYPE.body>
+              <TYPE.body textAlign="center">No liquidity found.</TYPE.body>
             </LightCard>
           )}
           {filteredExchangeList}
@@ -100,18 +91,19 @@ export const Supply = () => {
           </Text>
         </AutoColumn>
         <FixedBottom>
-          <ColumnCenter>
-            <ButtonSecondary
+          <Center>
+            <Button
               // isDark={isDark}
+              variant="primary"
               width="136px"
               onClick={() => navigate('/create')}
             >
               + Create Pool
-            </ButtonSecondary>
-          </ColumnCenter>
+            </Button>
+          </Center>
         </FixedBottom>
       </Positions>
-      <SearchModal isOpen={showPoolSearch} onDismiss={() => setShowPoolSearch(false)} />
-    </AutoColumn>
+      <SearchModal isOpen={isOpen} onClose={onClose} />
+    </Flex>
   )
 }

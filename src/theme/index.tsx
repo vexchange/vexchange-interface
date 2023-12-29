@@ -6,6 +6,7 @@ import styled, {
   css,
   DefaultTheme
 } from 'styled-components'
+
 import { AppDispatch, AppState } from '../state'
 import { updateUserDarkMode } from '../state/user/actions'
 import { getQueryParam } from '../utils'
@@ -189,40 +190,3 @@ export const TYPE = {
     return <TextWrapper fontWeight={500} color={error ? 'red1' : 'text2'} {...props} />
   }
 }
-
-export const FixedGlobalStyle = createGlobalStyle`
-html { font-family: 'Inter', sans-serif; letter-spacing: -0.018em;}
-@supports (font-variation-settings: normal) {
-  html { font-family: 'Inter var', sans-serif; }
-}
-
-html,
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;    
-}
-
-body > div {
-  height: 100%;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-html {
-  font-size: 16px;
-  font-variant: none;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-}
-`
-
-export const ThemedGlobalStyle = createGlobalStyle`
-  html {
-    color: ${({ theme }) => theme.text1};
-    background-color: #282828;
-  }
-`

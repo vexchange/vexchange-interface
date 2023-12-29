@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Token, WVET } from 'vexchange-sdk/dist'
+import { Text, Button, Box, Flex } from '@chakra-ui/react'
+import { Plus } from 'react-feather'
 
-import Row, { AutoRow } from '../Row'
+import { Row, AutoRow } from '../Row'
 import TokenLogo from '../TokenLogo'
 import { SearchModal } from '../SearchModal'
 import { AddLiquidity } from '../../pages/Pool'
-import { Text } from 'rebass'
-import { Plus } from 'react-feather'
 import { TYPE, Link } from '../../theme'
 import { AutoColumn, ColumnCenter } from '../Column'
 import { ButtonPrimary, ButtonDropwdown, ButtonDropwdownLight } from '../Button'
@@ -56,31 +56,35 @@ export const CreatePool = () => {
   }
 
   return (
-    <AutoColumn style={{ padding: '1rem' }}>
-      <AutoColumn>
-        <ButtonDropwdown
+    <Box p={4}>
+      <Flex direction="column" gap={4}>
+        <Button
+          variant="primary"
           onClick={() => {
             setShowSearch(true)
             setActiveField(Fields.TOKEN0)
           }}
         >
-          <Text fontSize={20}>Select first token</Text>
-        </ButtonDropwdown>
+          Select first token
+        </Button>
+
         <ColumnCenter>
           <Plus size="16" color="#888D9B" />
         </ColumnCenter>
+
         {!token1Address ? (
-          <ButtonDropwdown
+          <Button
+            variant="primary"
             onClick={() => {
               setShowSearch(true)
               setActiveField(Fields.TOKEN1)
             }}
             disabled={step !== STEP.SELECT_TOKENS}
           >
-            <Text fontSize={20}>Select second token</Text>
-          </ButtonDropwdown>
+            Select second token
+          </Button>
         ) : (
-          <ButtonDropwdownLight
+          <Button
             onClick={() => {
               setShowSearch(true)
               setActiveField(Fields.TOKEN1)
@@ -88,27 +92,30 @@ export const CreatePool = () => {
           >
             <Row>
               <TokenLogo address={token1Address} />
-              <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
-                {token1?.symbol}
-              </Text>
+              <Text marginLeft={'12px'}>{token1?.symbol}</Text>
             </Row>
-          </ButtonDropwdownLight>
+          </Button>
         )}
-        {pair ? ( // pair already exists - prompt to add liquidity to existing pool
-          <AutoRow>
-            <TYPE.body textAlign="center">
-              Pool already exists!
-              <Link onClick={() => navigate('/add/' + token0Address + '-' + token1Address)}> Join the pool.</Link>
-            </TYPE.body>
-          </AutoRow>
-        ) : (
-          <ButtonPrimary disabled={step !== STEP.READY_TO_CREATE} onClick={() => setStep(STEP.SHOW_CREATE_PAGE)}>
-            <Text fontWeight={500} fontSize={20}>
+        <Box mt={4}>
+          {pair ? ( // pair already exists - prompt to add liquidity to existing pool
+            <AutoRow>
+              <TYPE.body textAlign="center">
+                Pool already exists!
+                <Link onClick={() => navigate('/add/' + token0Address + '-' + token1Address)}> Join the pool.</Link>
+              </TYPE.body>
+            </AutoRow>
+          ) : (
+            <Button
+              variant="primary"
+              width="100%"
+              disabled={step !== STEP.READY_TO_CREATE}
+              onClick={() => setStep(STEP.SHOW_CREATE_PAGE)}
+            >
               Create Pool
-            </Text>
-          </ButtonPrimary>
-        )}
-      </AutoColumn>
+            </Button>
+          )}
+        </Box>
+      </Flex>
       <SearchModal
         isOpen={showSearch}
         filterType="tokens"
@@ -121,6 +128,6 @@ export const CreatePool = () => {
         hiddenToken={activeField === Fields.TOKEN0 ? token1Address : token0Address}
         showCommonBases={activeField === Fields.TOKEN0}
       />
-    </AutoColumn>
+    </Box>
   )
 }

@@ -143,7 +143,7 @@ export default function AddressInputPanel({
         <InputContainer>
           <AutoColumn>
             <RowBetween>
-              <TYPE.black color={theme.text2} fontWeight={500} fontSize={14}>
+              <TYPE.black fontWeight={500} fontSize={14}>
                 Recipient
               </TYPE.black>
               {data.address && (

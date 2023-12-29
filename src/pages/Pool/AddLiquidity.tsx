@@ -1,12 +1,14 @@
 import { BigNumber } from '@ethersproject/bignumber'
 import { find } from 'lodash'
-import { parseEther, parseUnits } from 'ethers'
+import { parseEther, parseUnits, getAddress } from 'ethers'
 import { JSBI, Percent, Price, Route, Token, TokenAmount, WVET } from 'vexchange-sdk/dist'
-import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
-import { Text } from 'rebass'
+import { Button, Text } from '@chakra-ui/react'
 import styled, { ThemeContext } from 'styled-components'
+
 import { abi as IVexchangeV2Router02ABI } from '../../constants/abis/IVexchangeV2Router02.json'
 import { ButtonLight, ButtonPrimary } from '../../components/Button'
 import { BlueCard, GreyCard, LightCard } from '../../components/Card'
@@ -15,7 +17,7 @@ import { ConfirmationModal } from '../../components/ConfirmationModal'
 import { CurrencyInputPanel } from '../../components/CurrencyInputPanel'
 import DoubleLogo from '../../components/DoubleLogo'
 import { PositionCard } from '../../components/PositionCard'
-import Row, { AutoRow, RowBetween, RowFixed, RowFlat } from '../../components/Row'
+import { Row, AutoRow, RowBetween, RowFixed, RowFlat } from '../../components/Row'
 import { SearchModal } from '../../components/SearchModal'
 
 import TokenLogo from '../../components/TokenLogo'
@@ -135,14 +137,20 @@ function reducer(
   }
 }
 
-interface AddLiquidityProps {
-  token0: string
-  token1: string
-}
+export const AddLiquidity = () => {
+  const params = useParams()
+  const navigate = useNavigate()
+  const [token0, token1] = params.tokens.split('-')
 
-export const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
+  const t0 = token0 === 'VET' ? 'VET' : getAddress(token0) ? getAddress(token0) : undefined
+  const t1 = token1 === 'VET' ? 'VET' : getAddress(token1) ? getAddress(token1) : undefined
+
+  if (!(t0 && t1)) {
+    navigate('/pool')
+    return
+  }
+
   const { account, chainId, library } = useWeb3React()
-  const theme = useContext(ThemeContext)
   const toggleWalletModal = useWalletModalToggle()
   const [isDark] = useDarkModeManager()
 
@@ -303,7 +311,7 @@ export const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
     })
   }, [])
 
-  const MIN_ETHER: TokenAmount = new TokenAmount(WVET[chainId], JSBI.BigInt(parseEther('.01')))
+  const MIN_ETHER: TokenAmount = new TokenAmount(WVET[chainId], parseEther('.01'))
 
   // get the max amounts user can add
   const [maxAmountInput, maxAmountOutput]: TokenAmount[] = [Field.INPUT, Field.OUTPUT].map(index => {
@@ -473,7 +481,7 @@ export const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
   const modalHeader = () => {
     return noLiquidity ? (
       <AutoColumn>
-        <LightCard margin={'30px 0'}>
+        <LightCard>
           <ColumnCenter>
             <RowFixed>
               <Text fontSize={36} fontWeight={500} marginRight={20}>
@@ -601,13 +609,13 @@ export const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
         <AutoRow>
           <AutoColumn>
             <TYPE.black>{displayPriceInput}</TYPE.black>
-            <Text fontWeight={500} fontSize={14} color={theme.text2} pt={1}>
+            <Text fontWeight={500} fontSize={14} pt={1}>
               {tokens[Field.OUTPUT]?.symbol} per {tokens[Field.INPUT]?.symbol}
             </Text>
           </AutoColumn>
           <AutoColumn>
             <TYPE.black>{displayPriceOutput}</TYPE.black>
-            <Text fontWeight={500} fontSize={14} color={theme.text2} pt={1}>
+            <Text fontWeight={500} fontSize={14} pt={1}>
               {tokens[Field.INPUT]?.symbol} per {tokens[Field.OUTPUT]?.symbol}
             </Text>
           </AutoColumn>
@@ -616,7 +624,7 @@ export const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
               {noLiquidity && derivedPrice ? '100' : poolTokenPercentage?.toSignificant(4) ?? '0'}
               {'%'}
             </TYPE.black>
-            <Text fontWeight={500} fontSize={14} color={theme.text2} pt={1}>
+            <Text fontWeight={500} fontSize={14} pt={1}>
               Pool Share
             </Text>
           </AutoColumn>
@@ -687,7 +695,7 @@ export const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
             backgroundColor: isDark ? `none` : `rgba(99, 113, 142, 0.10)`
           }}
         >
-          <Plus size="16" color={theme.text2} />
+          <Plus size="16" />
         </ColumnCenter>
         <CurrencyInputPanel
           field={Field.OUTPUT}
@@ -705,7 +713,7 @@ export const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
         {tokens[Field.OUTPUT] && tokens[Field.INPUT] && (
           <>
             <GreyCard>
-              <RowBetween marginBottom="1rem">
+              <RowBetween>
                 <TYPE.subHeader fontWeight={500} fontSize={14}>
                   {noLiquidity ? 'Initial prices' : 'Prices'} and pool share
                 </TYPE.subHeader>
@@ -717,27 +725,29 @@ export const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
           </>
         )}
 
-        <div style={{ padding: '2.4rem 4rem' }}>
+        <div>
           {!account ? (
-            <ButtonLight onClick={toggleWalletModal}>Connect Wallet</ButtonLight>
+            <Button width="100%" variant="primary" onClick={toggleWalletModal}>
+              Connect Wallet
+            </Button>
           ) : approvalA === Approval.NOT_APPROVED || approvalA === Approval.PENDING ? (
-            <ButtonLight onClick={approveACallback} disabled={approvalA === Approval.PENDING}>
+            <Button onClick={approveACallback} disabled={approvalA === Approval.PENDING}>
               {approvalA === Approval.PENDING ? (
                 <Dots>Unlocking {tokens[Field.INPUT]?.symbol}</Dots>
               ) : (
                 'Unlock ' + tokens[Field.INPUT]?.symbol
               )}
-            </ButtonLight>
+            </Button>
           ) : approvalB === Approval.NOT_APPROVED || approvalB === Approval.PENDING ? (
-            <ButtonLight onClick={approveBCallback} disabled={approvalB === Approval.PENDING}>
+            <Button onClick={approveBCallback} disabled={approvalB === Approval.PENDING}>
               {approvalB === Approval.PENDING ? (
                 <Dots>Unlocking {tokens[Field.OUTPUT]?.symbol}</Dots>
               ) : (
                 'Unlock ' + tokens[Field.OUTPUT]?.symbol
               )}
-            </ButtonLight>
+            </Button>
           ) : (
-            <ButtonPrimary
+            <Button
               onClick={() => {
                 setShowConfirm(true)
               }}
@@ -746,7 +756,7 @@ export const AddLiquidity = ({ token0, token1 }: AddLiquidityProps) => {
               <Text fontSize={20} fontWeight={500}>
                 {generalError ? generalError : inputError ? inputError : outputError ? outputError : 'Supply'}
               </Text>
-            </ButtonPrimary>
+            </Button>
           )}
         </div>
       </AutoColumn>

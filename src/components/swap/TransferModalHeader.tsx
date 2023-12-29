@@ -1,6 +1,6 @@
 import { TokenAmount } from 'vexchange-sdk/dist'
 import React from 'react'
-import { Text } from 'rebass'
+import { Text } from '@chakra-ui/react'
 import { useWeb3React } from '../../hooks'
 import { Link, TYPE } from '../../theme'
 import { getExploreLink } from '../../utils'

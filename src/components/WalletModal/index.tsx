@@ -3,6 +3,20 @@ import ReactGA from 'react-ga'
 import styled, { css } from 'styled-components'
 import { isMobile } from 'react-device-detect'
 import { X as Close } from 'react-feather'
+import {
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Text,
+  Button,
+  Flex
+} from '@chakra-ui/react'
+import { useDarkMode } from 'usehooks-ts'
 
 import { UnsupportedChainIdError } from '../../context'
 import { useWeb3React } from '../../hooks'
@@ -10,82 +24,11 @@ import { useWalletModalOpen, useWalletModalToggle } from '../../state/applicatio
 import { SUPPORTED_WALLETS } from '../../constants'
 import { usePrevious } from '../../hooks'
 import { Link } from '../../theme'
-import { useDarkModeManager } from '../../state/user/hooks'
 
-import Modal from '../Modal'
 import AccountDetails from '../AccountDetails'
 
 import PendingView from './PendingView'
 import Option from './Option'
-
-const CloseIcon = styled.div`
-  position: absolute;
-  right: 1rem;
-  top: 14px;
-  &:hover {
-    cursor: pointer;
-    opacity: 0.6;
-  }
-`
-
-const CloseColor = styled(Close)`
-  path {
-    stroke: ${({ theme }) => theme.text4};
-  }
-`
-
-const Wrapper = styled.div`
-  ${({ theme }) => theme.flexColumnNoWrap}
-  margin: 0;
-  padding: 0;
-  width: 100%;
-`
-
-const HeaderRow = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap};
-  padding: 1rem 1rem;
-  font-weight: 500;
-  color: ${props => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
-`
-
-const ContentWrapper = styled.div<{ isDark?: boolean }>`
-  ${({ isDark }) =>
-    isDark
-      ? css`
-          background-image: linear-gradient(210deg, #3f6a80 0%, #244150 100%);
-        `
-      : css`
-          background-image: none;
-        `}
-
-  border-bottom-left-radius: 8px;
-  border-bottom-right-radius: 8px;
-
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem`};
-`
-
-const UpperSection = styled.div`
-  position: relative;
-
-  h5 {
-    margin: 0;
-    margin-bottom: 0.5rem;
-    font-size: 1rem;
-    font-weight: 400;
-  }
-
-  h5:last-child {
-    margin-bottom: 0px;
-  }
-
-  h4 {
-    margin-top: 0;
-    font-weight: 500;
-  }
-`
 
 const Blurb = styled.div`
   ${({ theme }) => theme.flexRowNoWrap}
@@ -93,25 +36,11 @@ const Blurb = styled.div`
   justify-content: center;
   flex-wrap: wrap;
   margin-top: 2rem;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    margin: 1rem;
-    font-size: 12px;
-  `};
 `
 
 const OptionGrid = styled.div`
   display: grid;
   grid-gap: 10px;
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    grid-template-columns: 1fr;
-    grid-gap: 10px;
-  `};
-`
-
-const HoverText = styled.div`
-  :hover {
-    cursor: pointer;
-  }
 `
 
 const WALLET_VIEWS = {
@@ -129,7 +58,9 @@ export default function WalletModal({
   confirmedTransactions: string[] // hashes of confirmed
 }) {
   const { active, account, connector, activate, error } = useWeb3React()
-  const [isDark] = useDarkModeManager()
+
+  const { isDarkMode, toggle } = useDarkMode()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   const [walletView, setWalletView] = useState(WALLET_VIEWS.ACCOUNT)
 
@@ -145,9 +76,9 @@ export default function WalletModal({
   // close on connection, when logged out before
   useEffect(() => {
     if (account && !previousAccount && walletModalOpen) {
-      toggleWalletModal()
+      onClose()
     }
-  }, [account, previousAccount, toggleWalletModal, walletModalOpen])
+  }, [account, previousAccount, onClose, walletModalOpen])
 
   // always reset to account view
   useEffect(() => {
@@ -198,7 +129,8 @@ export default function WalletModal({
       // check for mobile options
       if (isMobile) {
         return (
-          <Option
+          <Button
+            variant="primary"
             onClick={() => {
               option.connector !== connector && !option.href && tryActivation(option.connector)
             }}
@@ -208,10 +140,9 @@ export default function WalletModal({
             color={option.color}
             link={option.href}
             header={option.name}
-            subheader={null}
-            // icon={require('../../assets/images/' + option.iconName)}
-            icon={'../../assets/images/sync-logo.svg'}
-          />
+          >
+            {option.name}
+          </Button>
         )
       }
 
@@ -219,8 +150,8 @@ export default function WalletModal({
       return (
         !isMobile &&
         !option.mobileOnly && (
-          <Option
-            id={`connect-${key}`}
+          <Button
+            variant="primary"
             onClick={() => {
               option.connector === connector
                 ? setWalletView(WALLET_VIEWS.ACCOUNT)
@@ -228,13 +159,12 @@ export default function WalletModal({
             }}
             key={key}
             // active={option.connector === connector}
-            color={option.color}
             link={option.href}
             header={option.name}
             subheader={null} //use option.descriptio to bring back multi-line
-            // icon={require('../../assets/images/' + option.iconName)}
-            icon={'../../assets/images/sync-logo.svg'}
-          />
+          >
+            {option.name}
+          </Button>
         )
       )
     })
@@ -243,25 +173,23 @@ export default function WalletModal({
   function getModalContent() {
     if (error) {
       return (
-        <UpperSection>
-          <CloseIcon onClick={toggleWalletModal}>
-            <CloseColor />
-          </CloseIcon>
-          <HeaderRow>{error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error connecting'}</HeaderRow>
-          <ContentWrapper isDark={isDark}>
+        <ModalContent>
+          <ModalCloseButton />
+          <ModalHeader>{error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error connecting'}</ModalHeader>
+          <ModalBody>
             {error instanceof UnsupportedChainIdError ? (
-              <h5>Please connect to the appropriate VeChain network.</h5>
+              <Text>Please connect to the appropriate VeChain network.</Text>
             ) : (
               'Error connecting. Try refreshing the page.'
             )}
-          </ContentWrapper>
-        </UpperSection>
+          </ModalBody>
+        </ModalContent>
       )
     }
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
       return (
         <AccountDetails
-          toggleWalletModal={toggleWalletModal}
+          onClose={onClose}
           pendingTransactions={pendingTransactions}
           confirmedTransactions={confirmedTransactions}
           openOptions={() => setWalletView(WALLET_VIEWS.OPTIONS)}
@@ -269,27 +197,22 @@ export default function WalletModal({
       )
     }
     return (
-      <UpperSection>
-        <CloseIcon onClick={toggleWalletModal}>
-          <CloseColor />
-        </CloseIcon>
+      <ModalContent>
         {walletView !== WALLET_VIEWS.ACCOUNT ? (
-          <HeaderRow color="blue">
-            <HoverText
+          <ModalHeader>
+            <Text
               onClick={() => {
                 setPendingError(false)
                 setWalletView(WALLET_VIEWS.ACCOUNT)
               }}
             >
               Back
-            </HoverText>
-          </HeaderRow>
+            </Text>
+          </ModalHeader>
         ) : (
-          <HeaderRow>
-            <HoverText>Connect To a wallet</HoverText>
-          </HeaderRow>
+          <ModalHeader>Connect Wallet</ModalHeader>
         )}
-        <ContentWrapper>
+        <ModalBody>
           {walletView === WALLET_VIEWS.PENDING ? (
             <PendingView
               // uri={uri}
@@ -303,21 +226,22 @@ export default function WalletModal({
             <OptionGrid>{getOptions()}</OptionGrid>
           )}
           {walletView !== WALLET_VIEWS.PENDING && (
-            <Blurb>
+            <Flex align="center" justify="center">
               <span>New to VeChain? &nbsp;</span>{' '}
               <Link href="https://medium.com/vechain-foundation/announcing-vechain-sync-2-unlocking-revolution-for-the-entire-blockchain-dapp-industry-enabling-5b1b21cd7b9b">
                 Learn more about Sync
               </Link>
-            </Blurb>
+            </Flex>
           )}
-        </ContentWrapper>
-      </UpperSection>
+        </ModalBody>
+      </ModalContent>
     )
   }
 
   return (
-    <Modal isOpen={walletModalOpen} onDismiss={toggleWalletModal} minHeight={null} maxHeight={90}>
-      <Wrapper>{getModalContent()}</Wrapper>
+    <Modal isOpen={walletModalOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>{getModalContent()}</ModalContent>
     </Modal>
   )
 }

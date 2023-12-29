@@ -1,14 +1,14 @@
 import { Percent, TokenAmount, Trade, TradeType } from 'vexchange-sdk/dist'
 import React, { useContext } from 'react'
 import { Repeat } from 'react-feather'
-import { Text } from 'rebass'
+import { Text } from '@chakra-ui/react'
 import { ThemeContext } from 'styled-components'
 import { Field } from '../../state/swap/actions'
 import { TYPE } from '../../theme'
 import { formatExecutionPrice } from '../../utils/prices'
 import { ButtonError } from '../Button'
 import { AutoColumn } from '../Column'
-import QuestionHelper from '../QuestionHelper'
+import { QuestionHelper } from '../QuestionHelper'
 import { AutoRow, RowBetween, RowFixed } from '../Row'
 import FormattedPriceImpact from './FormattedPriceImpact'
 import { StyledBalanceMaxMini } from './styleds'
@@ -43,7 +43,7 @@ export default function SwapModalFooter({
     <>
       <AutoColumn>
         <RowBetween>
-          <Text fontWeight={400} fontSize={14} color={theme.text2}>
+          <Text fontWeight={400} fontSize={14}>
             Price
           </Text>
           <Text
@@ -67,7 +67,7 @@ export default function SwapModalFooter({
 
         <RowBetween>
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            <TYPE.black fontSize={14} fontWeight={400}>
               {trade?.tradeType === TradeType.EXACT_INPUT ? 'Min sent' : 'Maximum sold'}
             </TYPE.black>
             <QuestionHelper text="A boundary is set so you are protected from large price movements after you submit your trade." />
@@ -89,7 +89,7 @@ export default function SwapModalFooter({
         </RowBetween>
         <RowBetween>
           <RowFixed>
-            <TYPE.black color={theme.text2} fontSize={14} fontWeight={400}>
+            <TYPE.black fontSize={14} fontWeight={400}>
               Price Impact
             </TYPE.black>
             <QuestionHelper text="The difference between the market price and your price due to trade size." />
@@ -98,7 +98,7 @@ export default function SwapModalFooter({
         </RowBetween>
         <RowBetween>
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            <TYPE.black fontSize={14} fontWeight={400}>
               Liquidity Provider Fee
             </TYPE.black>
             <QuestionHelper

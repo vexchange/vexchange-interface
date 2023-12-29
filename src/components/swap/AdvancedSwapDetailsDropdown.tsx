@@ -1,7 +1,7 @@
 import { Percent } from 'vexchange-sdk/dist'
 import React, { useContext } from 'react'
 import { ChevronDown } from 'react-feather'
-import { Text } from 'rebass'
+import { Text } from '@chakra-ui/react'
 import { ThemeContext } from 'styled-components'
 import { CursorPointer } from '../../theme'
 import { warningServerity } from '../../utils/prices'
@@ -33,7 +33,7 @@ export default function AdvancedSwapDetailsDropdown({
             <Text fontSize={16} fontWeight={500} style={{ userSelect: 'none' }}>
               Show Advanced
             </Text>
-            <ChevronDown color={theme.text2} />
+            <ChevronDown />
           </RowBetween>
         </CursorPointer>
       )}

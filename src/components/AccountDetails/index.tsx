@@ -20,10 +20,6 @@ const HeaderRow = styled.div`
   ${({ theme }) => theme.flexRowNoWrap};
   padding: 1rem 1rem;
   font-weight: 500;
-  color: ${props => (props.color === 'blue' ? ({ theme }) => theme.primary1 : 'inherit')};
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    padding: 1rem;
-  `};
 
   border-radius: 0 0 3px 3px;
 `
@@ -73,8 +69,6 @@ const AccountGroupingRow = styled.div`
 
 const AccountSection = styled.div`
   background-color: ${({ theme }) => theme.bg1};
-  padding: 1rem;
-  ${({ theme }) => theme.mediaWidth.upToMedium`padding: 1rem;`};
 `
 
 const YourAccount = styled.div`
@@ -182,9 +176,6 @@ const IconWrapper = styled.div<{ size?: number }>`
     height: ${({ size }) => (size ? size + 'px' : '32px')};
     width: ${({ size }) => (size ? size + 'px' : '32px')};
   }
-  ${({ theme }) => theme.mediaWidth.upToMedium`
-    align-items: flex-end;
-  `};
 `
 
 const TransactionListWrapper = styled.div`
@@ -212,14 +203,14 @@ function renderTransactions(transactions) {
 }
 
 interface AccountDetailsProps {
-  toggleWalletModal: () => void
+  onClose: () => void
   pendingTransactions: any[]
   confirmedTransactions: any[]
   openOptions: () => void
 }
 
 export default function AccountDetails({
-  toggleWalletModal,
+  onClose,
   pendingTransactions,
   confirmedTransactions,
   openOptions
@@ -260,7 +251,7 @@ export default function AccountDetails({
   return (
     <>
       <UpperSection>
-        <CloseIcon onClick={toggleWalletModal}>
+        <CloseIcon onClick={onclose}>
           <CloseColor />
         </CloseIcon>
         <HeaderRow>Account</HeaderRow>

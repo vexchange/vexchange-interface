@@ -4,7 +4,7 @@ import { Web3ReactProvider, createWeb3ReactRoot } from './context'
 import Connex from '@vechain/connex'
 import { Provider } from 'react-redux'
 import WebFont from 'webfontloader'
-import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider, CSSReset } from '@chakra-ui/react'
 
 import { NetworkContextName } from './constants'
 import WalletUpdater from './state/wallet/updater'
@@ -13,14 +13,16 @@ import store from './state'
 import ApplicationUpdater from './state/application/updater'
 import TransactionUpdater from './state/transactions/updater'
 import UserUpdater from './state/user/updater'
-import ThemeProvider, { FixedGlobalStyle, ThemedGlobalStyle } from './theme'
+
 import './i18n'
+
+import { theme } from './styles/theme'
 
 const Web3ProviderNetwork = createWeb3ReactRoot(NetworkContextName)
 
 WebFont.load({
   google: {
-    families: ['Pacifico']
+    families: ['Pixelify Sans']
   }
 })
 
@@ -56,20 +58,15 @@ function Updaters() {
 
 const root = createRoot(document.getElementById('root'))
 root.render(
-  <>
-    <FixedGlobalStyle />
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <Web3ProviderNetwork getLibrary={getLibrary}>
-        <Provider store={store}>
-          <Updaters />
-          <ThemeProvider>
-            <ChakraProvider>
-              <ThemedGlobalStyle />
-              <App />
-            </ChakraProvider>
-          </ThemeProvider>
-        </Provider>
-      </Web3ProviderNetwork>
-    </Web3ReactProvider>
-  </>
+  <Web3ReactProvider getLibrary={getLibrary}>
+    <Web3ProviderNetwork getLibrary={getLibrary}>
+      <Provider store={store}>
+        <Updaters />
+        <ChakraProvider theme={theme}>
+          <CSSReset />
+          <App />
+        </ChakraProvider>
+      </Provider>
+    </Web3ProviderNetwork>
+  </Web3ReactProvider>
 )

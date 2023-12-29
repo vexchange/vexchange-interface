@@ -1,7 +1,7 @@
 import { Token, TokenAmount } from 'vexchange-sdk/dist'
 import React, { useContext } from 'react'
 import { ArrowDown } from 'react-feather'
-import { Text } from 'rebass'
+import { Text } from '@chakra-ui/react'
 import { ThemeContext } from 'styled-components'
 import { Field } from '../../state/swap/actions'
 import { TYPE } from '../../theme'
@@ -38,7 +38,7 @@ export default function SwapModalHeader({
         </RowFixed>
       </RowBetween>
       <RowFixed>
-        <ArrowDown size="16" color={theme.text2} />
+        <ArrowDown size="16" />
       </RowFixed>
       <RowBetween>
         <TruncatedText fontSize={24} fontWeight={500} color={priceImpactSeverity > 2 ? theme.red1 : ''}>

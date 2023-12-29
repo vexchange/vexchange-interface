@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TokenAmount, JSBI, Token, Pair } from 'vexchange-sdk/dist'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
+import { Text, Button, Flex, Box } from '@chakra-ui/react'
+import { Plus } from 'react-feather'
 
-import Row from '../Row'
+import { Row } from '../Row'
 import TokenLogo from '../TokenLogo'
 import { SearchModal } from '../SearchModal'
 import { PositionCard } from '../PositionCard'
 import { Link } from '../../theme'
-import { Text } from 'rebass'
-import { Plus } from 'react-feather'
+
 import { LightCard } from '../Card'
 import { AutoColumn, ColumnCenter } from '../Column'
 import { ButtonPrimary, ButtonDropwdown, ButtonDropwdownLight } from '../Button'
@@ -52,19 +53,21 @@ export const PoolFinder = () => {
   const allowImport: boolean = position && JSBI.greaterThan(position.raw, JSBI.BigInt(0))
 
   return (
-    <>
-      <AutoColumn style={{ padding: '1rem' }}>
+    <Box p={4}>
+      <Flex direction="column" gap={4}>
         {!token0Address ? (
-          <ButtonDropwdown
+          <Button
+            variant="primary"
             onClick={() => {
               setShowSearch(true)
               setActiveField(Fields.TOKEN0)
             }}
           >
-            <Text fontSize={20}>Select first token</Text>
-          </ButtonDropwdown>
+            <Text>Select first token</Text>
+          </Button>
         ) : (
-          <ButtonDropwdownLight
+          <Button
+            variant="primary"
             onClick={() => {
               setShowSearch(true)
               setActiveField(Fields.TOKEN0)
@@ -72,26 +75,26 @@ export const PoolFinder = () => {
           >
             <Row>
               <TokenLogo address={token0Address} />
-              <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
-                {token0?.symbol}
-              </Text>
+              <Text marginLeft={'12px'}>{token0?.symbol}</Text>
             </Row>
-          </ButtonDropwdownLight>
+          </Button>
         )}
         <ColumnCenter>
           <Plus size="16" color="#888D9B" />
         </ColumnCenter>
         {!token1Address ? (
-          <ButtonDropwdown
+          <Button
+            variant="primary"
             onClick={() => {
               setShowSearch(true)
               setActiveField(Fields.TOKEN1)
             }}
           >
-            <Text fontSize={20}>Select second token</Text>
-          </ButtonDropwdown>
+            <Text>Select second token</Text>
+          </Button>
         ) : (
-          <ButtonDropwdownLight
+          <Button
+            variant="primary"
             onClick={() => {
               setShowSearch(true)
               setActiveField(Fields.TOKEN1)
@@ -99,11 +102,9 @@ export const PoolFinder = () => {
           >
             <Row>
               <TokenLogo address={token1Address} />
-              <Text fontWeight={500} fontSize={20} marginLeft={'12px'}>
-                {token1?.symbol}
-              </Text>
+              <Text marginLeft={'12px'}>{token1?.symbol}</Text>
             </Row>
-          </ButtonDropwdownLight>
+          </Button>
         )}
         {allowImport && (
           <ColumnCenter style={{ justifyItems: 'center', backgroundColor: '', padding: '12px 0px' }}>
@@ -132,7 +133,7 @@ export const PoolFinder = () => {
         ) : newPair ? (
           <LightCard>
             <AutoColumn>
-              <Text color="">No pool found.</Text>
+              <Text>No pool found.</Text>
               <Link
                 onClick={() => {
                   navigate('/add/' + token0Address + '-' + token1Address)
@@ -144,18 +145,15 @@ export const PoolFinder = () => {
           </LightCard>
         ) : (
           <LightCard>
-            <Text color="#C3C5CB" textAlign="center">
-              Select a token pair to find your liquidity.
-            </Text>
+            <Text textAlign="center">Select a token pair to find your liquidity.</Text>
           </LightCard>
         )}
 
-        <ButtonPrimary disabled={!allowImport} onClick={() => navigate(-1)}>
-          <Text fontWeight={500} fontSize={20}>
-            Close
-          </Text>
-        </ButtonPrimary>
-      </AutoColumn>
+        <Button variant="primary" disabled={!allowImport} onClick={() => navigate(-1)}>
+          <Text>Close</Text>
+        </Button>
+      </Flex>
+
       <SearchModal
         isOpen={showSearch}
         filterType="tokens"
@@ -167,6 +165,6 @@ export const PoolFinder = () => {
         }}
         hiddenToken={activeField === Fields.TOKEN0 ? token1Address : token0Address}
       />
-    </>
+    </Box>
   )
 }

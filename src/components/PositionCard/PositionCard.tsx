@@ -11,7 +11,7 @@ import { useTokenBalance } from '../../state/wallet/hooks'
 import Card, { GreyCard } from '../Card'
 import TokenLogo from '../TokenLogo'
 import DoubleLogo from '../DoubleLogo'
-import { Text } from 'rebass'
+import { Text } from '@chakra-ui/react'
 import { AutoColumn } from '../Column'
 import { ChevronDown, ChevronUp } from 'react-feather'
 import { ButtonSecondary } from '../Button'
@@ -23,12 +23,7 @@ const FixedHeightRow = styled(RowBetween)`
   height: 24px;
 `
 
-const HoverCard = styled(Card)`
-  border: 1px solid ${({ theme }) => theme.bg2};
-  :hover {
-    border: 1px solid ${({ theme }) => darken(0.06, theme.bg2)};
-  }
-`
+const HoverCard = styled(Card)``
 
 interface PositionCardProps {
   pair: Pair
@@ -81,7 +76,7 @@ export const PositionCard = ({ pair, border, minimal = false }: PositionCardProp
               </FixedHeightRow>
               <FixedHeightRow onClick={() => setShowMore(!showMore)}>
                 <RowFixed>
-                  <DoubleLogo a0={token0?.address || ''} a1={token1?.address || ''} margin={true} size={20} />
+                  <DoubleLogo a0={token0?.address || ''} a1={token1?.address || ''} size={20} />
                   <Text fontWeight={500} fontSize={20}>
                     {token0?.symbol}/{token1?.symbol}
                   </Text>
@@ -135,7 +130,7 @@ export const PositionCard = ({ pair, border, minimal = false }: PositionCardProp
         <AutoColumn>
           <FixedHeightRow onClick={() => setShowMore(!showMore)} style={{ cursor: 'pointer' }}>
             <RowFixed>
-              <DoubleLogo a0={token0?.address || ''} a1={token1?.address || ''} margin={true} size={20} />
+              <DoubleLogo a0={token0?.address || ''} a1={token1?.address || ''} size={20} />
               <Text fontWeight={500} fontSize={20}>
                 {overrideWVET(token0?.symbol)}/{overrideWVET(token1?.symbol)}
               </Text>

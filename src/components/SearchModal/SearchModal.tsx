@@ -3,20 +3,20 @@ import React, { useState, useRef, useMemo, useEffect, useContext } from 'react'
 import styled, { ThemeContext } from 'styled-components'
 import { JSBI, Token, WVET } from 'vexchange-sdk/dist'
 import { isMobile } from 'react-device-detect'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
+import { ArrowLeft } from 'react-feather'
+import { Text, Modal, ModalOverlay, ModalContent, Flex, Input, Button } from '@chakra-ui/react'
+
 import { DUMMY_VET } from '../../constants'
 import { useAllTokenBalancesTreatingWETHasETH } from '../../state/wallet/hooks'
 import { Link as StyledLink } from '../../theme/components'
 
 import Card from '../Card'
-import Modal from '../Modal'
 import Circle from '../../assets/images/circle.svg'
 import TokenLogo from '../TokenLogo'
 import DoubleTokenLogo from '../DoubleLogo'
 import Column, { AutoColumn } from '../Column'
-import { Text } from 'rebass'
 import { CursorPointer } from '../../theme'
-import { ArrowLeft } from 'react-feather'
 import { CloseIcon } from '../../theme/components'
 import { ButtonPrimary, ButtonSecondary } from '../Button'
 import { Spinner, TYPE } from '../../theme'
@@ -68,32 +68,8 @@ const SpinnerWrapper = styled(Spinner)`
   opacity: 0.6;
 `
 
-const Input = styled.input<{ isDark?: boolean }>`
-  position: relative;
-  display: flex;
-  padding: 16px;
-  align-items: center;
-  width: 100%;
-  white-space: nowrap;
-  background-color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(99, 113, 142, 0.1)')};
-  border: none;
-  outline: none;
-  box-sizing: border-box;
-  border-radius: 8px;
-  color: ${({ isDark }) => (isDark ? '#ffffff' : 'rgba(255, 255, 255, 0.57)')}
-  -webkit-appearance: none;
-
-  font-size: 18px;
-
-  ::placeholder {
-    color: ${({ isDark }) => (isDark ? 'rgba(255, 255, 255, 0.57)' : 'rgba(0, 0, 0, 0.57)')};
-  }
-`
-
 const FilterWrapper = styled(RowFixed)`
   padding: 8px;
-  background-color: ${({ selected, theme }) => selected && theme.bg2};
-  color: ${({ selected, theme }) => (selected ? theme.text1 : theme.text2)};
   border-radius: 8px;
   user-select: none;
   border: none;
@@ -135,6 +111,7 @@ const FILTERS = {
 
 interface SearchModalProps {
   isOpen?: boolean
+  onClose?: () => void
   onDismiss?: () => void
   filterType?: 'tokens'
   hiddenToken?: string
@@ -148,6 +125,7 @@ interface SearchModalProps {
 
 export const SearchModal = ({
   isOpen,
+  onClose,
   onDismiss,
   onTokenSelect,
   urlAddedTokens,
@@ -204,13 +182,6 @@ export const SearchModal = ({
       }
     }
   }, [searchQuery, token, fetchTokenByAddress])
-
-  // reset view on close
-  useEffect(() => {
-    if (!isOpen) {
-      setShowTokenImport(false)
-    }
-  }, [isOpen])
 
   const tokenList = useMemo(() => {
     return Object.keys(allTokens)
@@ -388,22 +359,21 @@ export const SearchModal = ({
             }}
           >
             <RowFixed>
-              <DoubleTokenLogo a0={token0?.address || ''} a1={token1?.address || ''} size={24} margin={true} />
-              <Text fontWeight={500} fontSize={16}>
+              <DoubleTokenLogo a0={token0?.address || ''} a1={token1?.address || ''} size={24} />
+              <Text>
                 {overrideWVET(token0?.symbol)}/{overrideWVET(token1?.symbol)}
               </Text>
             </RowFixed>
 
-            <ButtonPrimary
-              padding={'6px 8px'}
-              width={'fit-content'}
+            <Button
+              variant="primary"
               onClick={() => {
                 navigate('/add/' + token0.address + '-' + token1.address)
                 onDismiss()
               }}
             >
               {balance ? (zeroBalance ? 'Join' : 'Add Liquidity') : 'Join'}
-            </ButtonPrimary>
+            </Button>
           </MenuItem>
         )
       })
@@ -430,10 +400,10 @@ export const SearchModal = ({
             >
               <RowFixed>
                 <TokenLogo address={temporaryToken.address} size={'24px'} style={{ marginRight: '14px' }} />
-                <Column>
-                  <Text fontWeight={500}>{temporaryToken.symbol}</Text>
+                <Flex direction="column">
+                  <Text>{temporaryToken.symbol}</Text>
                   <FadedSpan>(Found by search)</FadedSpan>
-                </Column>
+                </Flex>
               </RowFixed>
             </MenuItem>
           )
@@ -460,7 +430,7 @@ export const SearchModal = ({
             <RowFixed>
               <TokenLogo address={address} size={'24px'} style={{ marginRight: '14px' }} />
               <Column>
-                <Text fontWeight={500}>
+                <Text>
                   {symbol}
                   {otherSelectedTokenAddress === address && <GreySpan> ({otherSelectedText})</GreySpan>}
                 </Text>
@@ -479,7 +449,7 @@ export const SearchModal = ({
                         removeTokenByAddress(chainId, address)
                       }}
                     >
-                      <StyledLink style={{ marginLeft: '4px', fontWeight: 400 }}>(Remove)</StyledLink>
+                      <Link style={{ marginLeft: '4px', fontWeight: 400 }}>(Remove)</Link>
                     </div>
                   )}
                 </FadedSpan>
@@ -489,11 +459,11 @@ export const SearchModal = ({
               {balance ? (
                 <Text>
                   {zeroBalance && showSendWithSwap ? (
-                    <ButtonSecondary>
+                    <Button>
                       <Text textAlign="center" fontWeight={500} fontSize={14} color={theme.primary1}>
                         Send With Swap
                       </Text>
-                    </ButtonSecondary>
+                    </Button>
                   ) : balance ? (
                     balance.toSignificant(6)
                   ) : (
@@ -534,125 +504,111 @@ export const SearchModal = ({
   }
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onDismiss={clearInputAndDismiss}
-      maxHeight={70}
-      initialFocusRef={isMobile ? undefined : inputRef}
-    >
-      <Column style={{ width: '100%' }}>
-        {showTokenImport ? (
-          <PaddedColumn>
-            <RowBetween>
-              <RowFixed>
-                <CursorPointer>
-                  <ArrowLeft
-                    onClick={() => {
-                      setShowTokenImport(false)
-                    }}
-                  />
-                </CursorPointer>
-                <Text fontWeight={500} fontSize={16} marginLeft={'10px'}>
-                  Import A Token
-                </Text>
-              </RowFixed>
-              <CloseIcon onClick={onDismiss} />
-            </RowBetween>
-            <TYPE.body style={{ marginTop: '10px' }}>
-              To import a custom token, paste token address in the search bar.
-            </TYPE.body>
-            <Input
-              // isDark={isDark}
-              type={'text'}
-              placeholder={'0x000000...'}
-              value={searchQuery}
-              ref={inputRef}
-              onChange={onInput}
-            />
-            {renderTokenList()}
-          </PaddedColumn>
-        ) : (
-          <PaddedColumn>
-            <RowBetween>
-              <Text fontWeight={500} fontSize={16}>
-                {filterType === 'tokens' ? 'Select A Token' : 'Select A Pool'}
-              </Text>
-              <CloseIcon onClick={onDismiss} />
-            </RowBetween>
-            <Input
-              // isDark={isDark}
-              type={'text'}
-              id="token-search-input"
-              placeholder={t('tokenSearchPlaceholder')}
-              value={searchQuery}
-              ref={inputRef}
-              onChange={onInput}
-            />
-            <RowBetween>
-              <Text fontSize={14} fontWeight={500}>
-                {filterType === 'tokens' ? 'Token Name' : 'Pool Name'}
-              </Text>
-              <Filter
-                title={filterType === 'tokens' ? 'Your Balances' : ' '}
-                filter={FILTERS.BALANCES}
-                filterType={filterType}
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <Flex direction="column" justify="flex-start" width="100%">
+          {showTokenImport ? (
+            <PaddedColumn>
+              <RowBetween>
+                <RowFixed>
+                  <CursorPointer>
+                    <ArrowLeft
+                      onClick={() => {
+                        setShowTokenImport(false)
+                      }}
+                    />
+                  </CursorPointer>
+                  <Text>Import A Token</Text>
+                </RowFixed>
+                <CloseIcon onClick={onClose} />
+              </RowBetween>
+              <TYPE.body style={{ marginTop: '10px' }}>
+                To import a custom token, paste token address in the search bar.
+              </TYPE.body>
+              <Input
+                // isDark={isDark}
+                type={'text'}
+                placeholder={'0x000000...'}
+                value={searchQuery}
+                ref={inputRef}
+                onChange={onInput}
               />
-            </RowBetween>
-          </PaddedColumn>
-        )}
-        {!showTokenImport && (
-          <div
-            style={{
-              width: '100%',
-              height: '1px',
-              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(99, 113, 142, 0.16)'
-            }}
-          />
-        )}
-        {!showTokenImport && <ItemList>{filterType === 'tokens' ? renderTokenList() : renderPairsList()}</ItemList>}
-        {!showTokenImport && (
-          <div
-            style={{
-              width: '100%',
-              height: '1px',
-              backgroundColor: isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(99, 113, 142, 0.16)'
-            }}
-          />
-        )}
-        {!showTokenImport && (
-          <Card>
-            <AutoRow>
-              <div>
-                {filterType !== 'tokens' && (
-                  <Text fontWeight={500}>
-                    {!isMobile && "Don't see a pool? "}
-                    <StyledLink
-                      onClick={() => {
-                        navigate('/find')
-                      }}
-                    >
-                      {!isMobile ? 'Import it.' : 'Import pool.'}
-                    </StyledLink>
-                  </Text>
-                )}
-                {filterType === 'tokens' && (
-                  <Text fontWeight={500} color={theme.text2} fontSize={14}>
-                    {!isMobile && "Don't see a token? "}
+              {renderTokenList()}
+            </PaddedColumn>
+          ) : (
+            <PaddedColumn>
+              <RowBetween>
+                <Text>{filterType === 'tokens' ? 'Select A Token' : 'Select A Pool'}</Text>
+                <CloseIcon onClick={onClose} />
+              </RowBetween>
+              <Input
+                // isDark={isDark}
+                type={'text'}
+                id="token-search-input"
+                placeholder={t('tokenSearchPlaceholder')}
+                value={searchQuery}
+                ref={inputRef}
+                onChange={onInput}
+              />
+              <RowBetween>
+                <Text>{filterType === 'tokens' ? 'Token Name' : 'Pool Name'}</Text>
+                <Filter
+                  title={filterType === 'tokens' ? 'Your Balances' : ' '}
+                  filter={FILTERS.BALANCES}
+                  filterType={filterType}
+                />
+              </RowBetween>
+            </PaddedColumn>
+          )}
+          {!showTokenImport && (
+            <div
+              style={{
+                width: '100%',
+                height: '1px',
+                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(99, 113, 142, 0.16)'
+              }}
+            />
+          )}
+          {!showTokenImport && <ItemList>{filterType === 'tokens' ? renderTokenList() : renderPairsList()}</ItemList>}
+          {!showTokenImport && (
+            <div
+              style={{
+                width: '100%',
+                height: '1px',
+                backgroundColor: isDark ? 'rgba(255, 255, 255, 0.16)' : 'rgba(99, 113, 142, 0.16)'
+              }}
+            />
+          )}
+          {!showTokenImport && (
+            <Card>
+              <AutoRow>
+                <div>
+                  {filterType !== 'tokens' && (
+                    <Text>
+                      {!isMobile && "Don't see a pool? "}
+                      <Link to="/find">{!isMobile ? 'Import it.' : 'Import pool.'}</Link>
+                    </Text>
+                  )}
+                  {filterType === 'tokens' && (
+                    <Text>
+                      {!isMobile && "Don't see a token? "}
 
-                    <StyledLink
-                      onClick={() => {
-                        setShowTokenImport(true)
-                      }}
-                    >
-                      {!isMobile ? 'Import it.' : 'Import custom token.'}
-                    </StyledLink>
-                  </Text>
-                )}
-              </div>
-            </AutoRow>
-          </Card>
-        )}
-      </Column>
+                      <StyledLink
+                        onClick={() => {
+                          setShowTokenImport(true)
+                        }}
+                      >
+                        {!isMobile ? 'Import it.' : 'Import custom token.'}
+                      </StyledLink>
+                    </Text>
+                  )}
+                </div>
+              </AutoRow>
+            </Card>
+          )}
+        </Flex>
+      </ModalContent>
     </Modal>
   )
 }

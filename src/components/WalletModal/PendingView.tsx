@@ -1,12 +1,14 @@
 import { AbstractConnector } from '../../connectors/AbstractConnector'
 import React from 'react'
 import styled from 'styled-components'
+import { HStack, Button, Text, Box } from '@chakra-ui/react'
+import { darken } from 'polished'
+
 import Option from './Option'
 import { SUPPORTED_WALLETS } from '../../constants'
 import { injected } from '../../connectors'
 import { Spinner } from '../../theme'
 import Circle from '../../assets/images/circle.svg'
-import { darken } from 'polished'
 
 const PendingSection = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap};
@@ -95,14 +97,14 @@ export default function PendingView({
           {error ? (
             <ErrorGroup>
               <div>Error connecting.</div>
-              <ErrorButton
+              <Button
                 onClick={() => {
                   setPendingError(false)
                   tryActivation(connector)
                 }}
               >
                 Try Again
-              </ErrorButton>
+              </Button>
             </ErrorGroup>
           ) : (
             'Initializing...'
@@ -128,7 +130,6 @@ export default function PendingView({
               color={option.color}
               header={option.name}
               subheader={option.description}
-              icon={require('../../assets/images/' + option.iconName)}
             />
           )
         }

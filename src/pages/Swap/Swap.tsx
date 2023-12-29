@@ -2,18 +2,19 @@ import { Fraction, JSBI, Percent, TokenAmount, Trade, WVET } from 'vexchange-sdk
 import React, { useContext, useEffect, useState } from 'react'
 import { ArrowDown, Repeat } from 'react-feather'
 import ReactGA from 'react-ga'
-import { Text } from 'rebass'
+import { Text, Button, Box, Flex } from '@chakra-ui/react'
 import { ThemeContext } from 'styled-components'
-import { ButtonError, ButtonLight } from '../../components/Button'
+import { useLocation } from 'react-router-dom'
+
 import Card, { GreyCard } from '../../components/Card'
 import { AutoColumn } from '../../components/Column'
 import { ConfirmationModal } from '../../components/ConfirmationModal'
 import { CurrencyInputPanel } from '../../components/CurrencyInputPanel'
-import QuestionHelper from '../../components/QuestionHelper'
+import { QuestionHelper } from '../../components/QuestionHelper'
 import { RowBetween, RowFixed } from '../../components/Row'
 import AdvancedSwapDetailsDropdown from '../../components/swap/AdvancedSwapDetailsDropdown'
 import FormattedPriceImpact from '../../components/swap/FormattedPriceImpact'
-import { ArrowWrapper, BottomGrouping, Dots, StyledBalanceMaxMini, Wrapper } from '../../components/swap/styleds'
+import { ArrowWrapper, Dots, StyledBalanceMaxMini, Wrapper } from '../../components/swap/styleds'
 import SwapModalFooter from '../../components/swap/SwapModalFooter'
 import { DEFAULT_DEADLINE_FROM_NOW, DUMMY_VET, INITIAL_ALLOWED_SLIPPAGE, MIN_ETH } from '../../constants'
 import { useWeb3React } from '../../hooks'
@@ -32,7 +33,6 @@ import {
 } from '../../utils/prices'
 import SwapModalHeader from '../../components/swap/SwapModalHeader'
 import { basisPointsToPercent } from '../../utils'
-import { useLocation } from 'react-router-dom'
 
 let lockSwapFeeFetch = false
 
@@ -233,7 +233,7 @@ export const Swap = () => {
   } for ${parsedAmounts[Field.OUTPUT]?.toSignificant(6)} ${tokens[Field.OUTPUT]?.symbol}`
 
   return (
-    <Wrapper id="swap-page">
+    <Box p={4}>
       <ConfirmationModal
         isOpen={showConfirm}
         title="Confirm Swap"
@@ -267,22 +267,15 @@ export const Swap = () => {
           />
 
           <CursorPointer>
-            <AutoColumn
-              style={{
-                backgroundImage: isDark
-                  ? `linear-gradient(270deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.03) 97%)`
-                  : `none`,
-                backgroundColor: isDark ? `none` : `rgba(99, 113, 142, 0.10)`
-              }}
-            >
+            <Flex align="center" justify="center">
               <ArrowWrapper>
                 <ArrowDown
                   size="16"
                   onClick={onSwitchTokens}
-                  color={tokens[Field.INPUT] && tokens[Field.OUTPUT] ? theme.primary1 : theme.text2}
+                  // color={tokens[Field.INPUT] && tokens[Field.OUTPUT] ? theme.primary1 : theme.text2}
                 />
               </ArrowWrapper>
-            </AutoColumn>
+            </Flex>
           </CursorPointer>
 
           <CurrencyInputPanel
@@ -303,13 +296,12 @@ export const Swap = () => {
           <Card>
             <AutoColumn>
               <RowBetween align="center">
-                <Text fontWeight={500} fontSize={14} color={theme.text2}>
+                <Text fontWeight={500} fontSize={14}>
                   Price
                 </Text>
                 <Text
                   fontWeight={500}
                   fontSize={14}
-                  color={theme.text2}
                   style={{ justifyContent: 'center', alignItems: 'center', display: 'flex' }}
                 >
                   {bestTrade && showInverted
@@ -344,36 +336,38 @@ export const Swap = () => {
           </Card>
         )}
       </AutoColumn>
-      <BottomGrouping>
+      <Box mt={4}>
         {!account ? (
-          <ButtonLight
+          <Button
+            width="100%"
+            variant="primary"
             onClick={() => {
               toggleWalletModal()
             }}
           >
             Connect Wallet
-          </ButtonLight>
+          </Button>
         ) : noRoute && userHasSpecifiedInputOutput ? (
           <GreyCard style={{ textAlign: 'center' }}>
             <TYPE.main mb="4px">Insufficient liquidity for this trade.</TYPE.main>
           </GreyCard>
         ) : (approval === Approval.NOT_APPROVED || approval === Approval.PENDING) && !isUnwrap ? (
-          <ButtonLight onClick={approveCallback} disabled={approval === Approval.PENDING}>
+          <Button onClick={approveCallback} disabled={approval === Approval.PENDING}>
             {approval === Approval.PENDING ? (
               <Dots>Unlocking {tokens[Field.INPUT]?.symbol}</Dots>
             ) : (
               'Unlock ' + tokens[Field.INPUT]?.symbol
             )}
-          </ButtonLight>
+          </Button>
         ) : isWrap || isUnwrap ? (
-          <ButtonError onClick={onSwap} id="swap-button">
+          <Button onClick={onSwap} id="swap-button">
             <Text fontSize={20} fontWeight={500}>
               {isWrap ? 'Wrap' : 'Unwrap'}
             </Text>
-          </ButtonError>
+          </Button>
         ) : (
           <>
-            <ButtonError
+            <Button
               onClick={() => {
                 setShowConfirm(true)
               }}
@@ -384,10 +378,10 @@ export const Swap = () => {
               <Text fontSize={20} fontWeight={500}>
                 {error ?? `Swap${priceImpactSeverity > 2 ? ' Anyway' : ''}`}
               </Text>
-            </ButtonError>
+            </Button>
           </>
         )}
-      </BottomGrouping>
+      </Box>
       {bestTrade && !isWrap && !isUnwrap && (
         <AdvancedSwapDetailsDropdown
           trade={bestTrade}
@@ -401,6 +395,6 @@ export const Swap = () => {
           setRawSlippage={setAllowedSlippage}
         />
       )}
-    </Wrapper>
+    </Box>
   )
 }

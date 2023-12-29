@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { AutoColumn } from '../Column'
-import { Text } from 'rebass'
+import { Text } from '@chakra-ui/react'
 
 import NumericalInput from '../NumericalInput'
 
@@ -37,16 +37,12 @@ export const AdvancedDropwdown = styled.div`
   padding-top: 24px;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  color: ${({ theme }) => theme.text2};
-  // background-color: ${({ theme }) => theme.advancedBG};
-  color: ${({ theme }) => theme.text2};
   z-index: -1;
 `
 
 export const SectionBreak = styled.div`
   height: 1px;
   width: 100%;
-  background-color: ${({ theme }) => theme.bg3};
 `
 
 export const BottomGrouping = styled.div<{ isDark?: boolean }>`
@@ -85,18 +81,15 @@ export const StyledBalanceMaxMini = styled.button<{ active?: boolean }>`
   font-weight: 400;
   margin-left: 0.4rem;
   cursor: pointer;
-  color: ${({ theme }) => theme.text2};
   display: flex;
   justify-content: center;
   align-items: center;
   float: right;
 
   :hover {
-    // background-color: ${({ theme }) => theme.bg3};
     border: 1px solid #e79631;
   }
   :focus {
-    background-color: ${({ theme }) => theme.bg3};
     outline: none;
   }
 `

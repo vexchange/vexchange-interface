@@ -1,59 +1,19 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { Input as ChakraInput } from '@chakra-ui/react'
+import {
+  Input as ChakraInput,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper
+} from '@chakra-ui/react'
 import { useDarkMode } from 'usehooks-ts'
 
 import { escapeRegExp } from '../../utils'
 
 const StyledInput = styled(ChakraInput)<{ error?: boolean; fontSize?: string; align?: string; isDark?: boolean }>`
-  color: ${({ error, theme }) => error && theme.red1};
-  color: ${({ theme }) => theme.text1};
-  width: 0;
-  position: relative;
-  font-size: 24px;
-  font-weight: 500;
-  font-family: 'Inter', sans-serif;
-  outline: none;
-  border: none;
-  flex: 1 1 auto;
-  background-color: ${({ theme }) => theme.bg1};
-  background-color: transparent;
-  font-size: ${({ fontSize }) => fontSize && fontSize};
-  text-align: ${({ align }) => align && align};
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0px;
-  -webkit-appearance: textfield;
-
-  ::-webkit-search-decoration {
-    -webkit-appearance: none;
-  }
-
-  [type='number'] {
-    -moz-appearance: textfield;
-  }
-
-  ::-webkit-outer-spin-button,
-  ::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
-
-  ::placeholder {
-    color: ${({ theme }) => theme.text4};
-    color: #ffffff;
-  }
-
-  ::placeholder {
-    ${({ isDark }) =>
-      isDark
-        ? css`
-            color: ${({ theme }) => theme.text4};
-          `
-        : css`
-            color: #000000;
-          `}
-
+  border: 1px solid black;
 `
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
@@ -78,25 +38,26 @@ export const Input = React.memo(function InnerInput({
   }
 
   return (
-    <StyledInput
+    <NumberInput
+      w="100%"
+      precision={2}
       {...rest}
       // isDark={isDark}
       value={value}
-      onChange={event => {
-        enforcer(event.target.value)
-      }}
+      onChange={enforcer}
       // universal input options
       inputMode="decimal"
       title="Token Amount"
-      autoComplete="off"
       autoCorrect="off"
       // text-specific options
-      type="text"
-      placeholder={placeholder || '0.0'}
-      minLength={1}
-      maxLength={79}
       spellCheck="false"
-    />
+    >
+      <NumberInputField placeholder={placeholder || '0.0'} border="1px solid black" />
+      <NumberInputStepper>
+        <NumberIncrementStepper />
+        <NumberDecrementStepper />
+      </NumberInputStepper>
+    </NumberInput>
   )
 })
 

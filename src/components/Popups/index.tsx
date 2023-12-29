@@ -8,9 +8,9 @@ import { useActivePopups, useRemovePopup } from '../../state/application/hooks'
 import { Link } from '../../theme'
 import { AutoColumn } from '../Column'
 import DoubleTokenLogo from '../DoubleLogo'
-import Row from '../Row'
+import { Row } from '../Row'
 import TxnPopup from '../TxnPopup'
-import { Text } from 'rebass'
+import { Text } from '@chakra-ui/react'
 
 const StyledClose = styled(X)`
   position: absolute;
@@ -49,10 +49,6 @@ const FixedPopupColumn = styled(AutoColumn)`
   right: 1rem;
   max-width: 355px !important;
   width: 100%;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    display: none;
-  `};
 `
 
 const Popup = styled.div`
@@ -67,10 +63,6 @@ const Popup = styled.div`
   padding-right: 35px;
   z-index: 2;
   overflow: hidden;
-
-  ${({ theme }) => theme.mediaWidth.upToSmall`
-    min-width: 290px;
-  `}
 `
 
 function PopupItem({ content, popKey }: { content: PopupContent; popKey: string }) {
@@ -89,7 +81,7 @@ function PopupItem({ content, popKey }: { content: PopupContent; popKey: string 
           Pool Imported
         </Text>
         <Row>
-          <DoubleTokenLogo a0={token0?.address ?? ''} a1={token1?.address ?? ''} margin={true} />
+          <DoubleTokenLogo a0={token0?.address ?? ''} a1={token1?.address ?? ''} />
           <Text fontSize={16} fontWeight={500}>
             VEX {token0?.symbol} / {token1?.symbol}
           </Text>
@@ -115,7 +107,7 @@ export default function App() {
         {activePopups.map(item => {
           return (
             <Popup key={item.key}>
-              <StyledClose color={theme.text2} onClick={() => removePopup(item.key)} />
+              <StyledClose onClick={() => removePopup(item.key)} />
               <PopupItem content={item.content} popKey={item.key} />
             </Popup>
           )
@@ -134,7 +126,7 @@ export default function App() {
             .map(item => {
               return (
                 <Popup key={item.key}>
-                  <StyledClose color={theme.text2} onClick={() => removePopup(item.key)} />
+                  <StyledClose onClick={() => removePopup(item.key)} />
                   <PopupItem content={item.content} popKey={item.key} />
                 </Popup>
               )

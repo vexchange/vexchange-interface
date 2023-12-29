@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 
-import QuestionHelper from '../QuestionHelper'
-import { Text } from 'rebass'
+import { QuestionHelper } from '../QuestionHelper'
+import { Text } from '@chakra-ui/react'
 import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
 import { RowBetween, RowFixed } from '../Row'
@@ -25,16 +25,7 @@ const FancyButton = styled.button`
   height: 2rem;
   border-radius: 3px;
   font-size: 12px;
-  border: 1px solid ${({ theme }) => theme.bg3};
   outline: none;
-  background: ${({ theme }) => theme.bg1};
-  :hover {
-    cursor: inherit;
-    border: 1px solid ${({ theme }) => theme.bg4};
-  }
-  :focus {
-    border: 1px solid ${({ theme }) => theme.primary1};
-  }
 `
 
 const Option = styled(FancyButton)<{ active: boolean }>`
@@ -42,8 +33,6 @@ const Option = styled(FancyButton)<{ active: boolean }>`
   :hover {
     cursor: pointer;
   }
-  background-color: ${({ active, theme }) => active && theme.primary1};
-  color: ${({ active, theme }) => (active ? theme.white : theme.text1)};
 `
 
 const Input = styled.input<{ active?: boolean }>`
@@ -91,10 +80,6 @@ const OptionCustom = styled(FancyButton)<{ active?: boolean; warning?: boolean }
   position: relative;
   padding: 0 0.75rem;
   border: ${({ theme, active, warning }) => active && `1px solid ${warning ? theme.red1 : theme.primary1}`};
-  :hover {
-    border: ${({ theme, active, warning }) =>
-      active && `1px solid ${warning ? darken(0.1, theme.red1) : darken(0.1, theme.primary1)}`};
-  }
 
   input {
     width: 100%;

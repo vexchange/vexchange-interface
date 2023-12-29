@@ -1,14 +1,14 @@
 import { Trade, TradeType, Percent } from 'vexchange-sdk/dist'
 import React, { useContext } from 'react'
 import { ChevronUp } from 'react-feather'
-import { Text } from 'rebass'
+import { Text } from '@chakra-ui/react'
 import { ThemeContext } from 'styled-components'
 import { Field } from '../../state/swap/actions'
 import { CursorPointer, TYPE } from '../../theme'
 import { computeSlippageAdjustedAmounts, computeTradePriceBreakdown } from '../../utils/prices'
 import { AutoColumn } from '../Column'
 import { SectionBreak } from './styleds'
-import QuestionHelper from '../QuestionHelper'
+import { QuestionHelper } from '../QuestionHelper'
 import { RowBetween, RowFixed } from '../Row'
 import SlippageTabs, { SlippageTabsProps } from '../SlippageTabs'
 import FormattedPriceImpact from './FormattedPriceImpact'
@@ -29,17 +29,17 @@ export function AdvancedSwapDetails({ trade, swapFee, onDismiss, ...slippageTabP
     <AutoColumn>
       <CursorPointer>
         <RowBetween onClick={onDismiss} padding={'8px 20px'}>
-          <Text fontSize={16} color={theme.text2} fontWeight={500} style={{ userSelect: 'none' }}>
+          <Text fontSize={16} fontWeight={500} style={{ userSelect: 'none' }}>
             Hide Advanced
           </Text>
-          <ChevronUp color={theme.text2} />
+          <ChevronUp />
         </RowBetween>
       </CursorPointer>
       <SectionBreak />
       <AutoColumn style={{ padding: '0 20px' }}>
         <RowBetween>
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            <TYPE.black fontSize={14} fontWeight={400}>
               {isExactIn ? 'Minimum received' : 'Maximum sold'}
             </TYPE.black>
             <QuestionHelper
@@ -60,7 +60,7 @@ export function AdvancedSwapDetails({ trade, swapFee, onDismiss, ...slippageTabP
         </RowBetween>
         <RowBetween>
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            <TYPE.black fontSize={14} fontWeight={400}>
               Price Impact
             </TYPE.black>
             <QuestionHelper text="The difference between the market price and estimated price due to trade size." />
@@ -69,7 +69,7 @@ export function AdvancedSwapDetails({ trade, swapFee, onDismiss, ...slippageTabP
         </RowBetween>
         <RowBetween>
           <RowFixed>
-            <TYPE.black fontSize={14} fontWeight={400} color={theme.text2}>
+            <TYPE.black fontSize={14} fontWeight={400}>
               Liquidity Provider Fee
             </TYPE.black>
             <QuestionHelper
@@ -85,7 +85,7 @@ export function AdvancedSwapDetails({ trade, swapFee, onDismiss, ...slippageTabP
       </AutoColumn>
       <SectionBreak />
       <RowFixed>
-        <TYPE.black fontWeight={400} fontSize={14} color={theme.text2}>
+        <TYPE.black fontWeight={400} fontSize={14}>
           Set slippage tolerance
         </TYPE.black>
         <QuestionHelper text="Your transaction will revert if the execution price changes by more than this amount after you submit your trade." />

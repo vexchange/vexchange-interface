@@ -6,16 +6,14 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Header } from '../components/Header'
 import { Footer } from '../components/Footer'
 import { NavigationTabs } from '../components/NavigationTabs'
-import Web3ReactManager from '../components/Web3ReactManager'
+import { Web3ReactManager } from '../components/Web3ReactManager'
 import { useDarkModeManager } from '../state/user/hooks'
 
 import Popups from '../components/Popups'
 import { isAddress } from '../utils'
 
 import { Swap } from './Swap'
-import { Send } from './Send'
-import { Supply, AddLiquidity } from './Pool'
-import Remove from './Pool/RemoveLiquidity'
+import { Supply, AddLiquidity, RemoveLiquidity } from './Pool'
 import { PoolFinder } from '../components/PoolFinder'
 import { CreatePool } from '../components/CreatePool'
 import Disclaimer from '../components/Disclaimer'
@@ -50,11 +48,6 @@ const BodyWrapper = styled.div`
     max-width: calc(420px + 4rem);
     width: 90%;
   }
-
-  ${({ theme }) => theme.mediaWidth.upToExtraSmall`
-      padding: 16px;
-  `};
-
   z-index: 1;
 `
 
@@ -63,7 +56,6 @@ const Body = styled.div<{ isDark?: boolean }>`
   box-sizing: border-box;
   margin-bottom: 10rem;
   max-width: 534px;
-  padding: 4px;
   position: relative;
   width: 100%;
   z-index: 0;
@@ -117,40 +109,11 @@ export default function App() {
                     <Route path="/">
                       <Route index element={<Swap />} />
                       <Route path="/swap" element={<Swap />} />
-                      <Route path="/send" element={<Send />} />
                       <Route path="/find" element={<PoolFinder />} />
                       <Route path="/create" element={<CreatePool />} />
                       <Route path="/pool" element={<Supply />} />
-                      <Route
-                        path={'/add/:tokens'}
-                        element={({ match }) => {
-                          const tokens = match.params.tokens.split('-')
-                          const t0 =
-                            tokens?.[0] === 'VET' ? 'VET' : isAddress(tokens?.[0]) ? isAddress(tokens[0]) : undefined
-                          const t1 =
-                            tokens?.[1] === 'VET' ? 'VET' : isAddress(tokens?.[1]) ? isAddress(tokens[1]) : undefined
-                          if (t0 && t1) {
-                            return <AddLiquidity token0={t0} token1={t1} />
-                          } else {
-                            return <Redirect to="/pool" />
-                          }
-                        }}
-                      />
-                      <Route
-                        path={'/remove/:tokens'}
-                        element={({ match }) => {
-                          const tokens = match.params.tokens.split('-')
-                          const t0 =
-                            tokens?.[0] === 'VET' ? 'VET' : isAddress(tokens?.[0]) ? isAddress(tokens[0]) : undefined
-                          const t1 =
-                            tokens?.[1] === 'VET' ? 'VET' : isAddress(tokens?.[1]) ? isAddress(tokens[1]) : undefined
-                          if (t0 && t1) {
-                            return <Remove token0={t0} token1={t1} />
-                          } else {
-                            return <Redirect to="/pool" />
-                          }
-                        }}
-                      />
+                      <Route path={'/add/:tokens'} element={<AddLiquidity />} />
+                      <Route path={'/remove/:tokens'} element={<RemoveLiquidity />} />
                       {/* <Redirect to="/swap" /> */}
                     </Route>
                   </Routes>
