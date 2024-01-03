@@ -233,7 +233,7 @@ export const Swap = () => {
   } for ${parsedAmounts[Field.OUTPUT]?.toSignificant(6)} ${tokens[Field.OUTPUT]?.symbol}`
 
   return (
-    <Box p={4}>
+    <Box>
       <ConfirmationModal
         isOpen={showConfirm}
         title="Confirm Swap"
@@ -266,17 +266,14 @@ export const Swap = () => {
             id="swap-currency-input"
           />
 
-          <CursorPointer>
+          <Box onClick={onSwitchTokens} cursor="pointer" mb={4}>
             <Flex align="center" justify="center">
-              <ArrowWrapper>
-                <ArrowDown
-                  size="16"
-                  onClick={onSwitchTokens}
-                  // color={tokens[Field.INPUT] && tokens[Field.OUTPUT] ? theme.primary1 : theme.text2}
-                />
-              </ArrowWrapper>
+              <ArrowDown
+                size="16"
+                // color={tokens[Field.INPUT] && tokens[Field.OUTPUT] ? theme.primary1 : theme.text2}
+              />
             </Flex>
-          </CursorPointer>
+          </Box>
 
           <CurrencyInputPanel
             field={Field.OUTPUT}

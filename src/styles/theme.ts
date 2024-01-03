@@ -11,9 +11,11 @@ export const theme = extendTheme({
           bg: 'white',
           color: 'black',
           border: '1px solid black',
+          borderRadius: '4px',
           _hover: {
             bg: '#2261FF',
-            color: 'white'
+            color: 'white',
+            border: '1px solid #2261FF'
           }
         }
       }

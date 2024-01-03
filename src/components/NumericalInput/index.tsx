@@ -1,7 +1,5 @@
 import React from 'react'
-import styled, { css } from 'styled-components'
 import {
-  Input as ChakraInput,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -11,10 +9,6 @@ import {
 import { useDarkMode } from 'usehooks-ts'
 
 import { escapeRegExp } from '../../utils'
-
-const StyledInput = styled(ChakraInput)<{ error?: boolean; fontSize?: string; align?: string; isDark?: boolean }>`
-  border: 1px solid black;
-`
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`) // match escaped "." characters via in a non-capturing group
 
@@ -52,11 +46,7 @@ export const Input = React.memo(function InnerInput({
       // text-specific options
       spellCheck="false"
     >
-      <NumberInputField placeholder={placeholder || '0.0'} border="1px solid black" />
-      <NumberInputStepper>
-        <NumberIncrementStepper />
-        <NumberDecrementStepper />
-      </NumberInputStepper>
+      <NumberInputField placeholder={placeholder || '0.0'} borderRadius="0" />
     </NumberInput>
   )
 })

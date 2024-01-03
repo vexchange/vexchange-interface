@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import TokenLogo from '../TokenLogo'
+import { TokenLogo } from '../TokenLogo'
 
 const TokenWrapper = styled.div<{ margin: boolean; sizeraw: number }>`
   position: relative;

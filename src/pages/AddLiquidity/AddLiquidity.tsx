@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import React, { useCallback, useEffect, useReducer, useState } from 'react'
 import { Plus } from 'react-feather'
 import ReactGA from 'react-ga'
-import { Button, Text } from '@chakra-ui/react'
+import { Button, Text, useDisclosure } from '@chakra-ui/react'
 import styled, { ThemeContext } from 'styled-components'
 
 import { abi as IVexchangeV2Router02ABI } from '../../constants/abis/IVexchangeV2Router02.json'
@@ -20,7 +20,7 @@ import { PositionCard } from '../../components/PositionCard'
 import { Row, AutoRow, RowBetween, RowFixed, RowFlat } from '../../components/Row'
 import { SearchModal } from '../../components/SearchModal'
 
-import TokenLogo from '../../components/TokenLogo'
+import { TokenLogo } from '../../components/TokenLogo'
 
 import { DUMMY_VET, ROUTER_ADDRESS } from '../../constants'
 import { usePair } from '../../data/Reserves'
@@ -35,7 +35,8 @@ import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
 import { useDarkModeManager } from '../../state/user/hooks'
 import { TYPE } from '../../theme'
 import { calculateSlippageAmount } from '../../utils'
-import { Dots, Wrapper } from './styleds'
+
+import styles from './add-liquidity.module.scss'
 
 // denominated in bips
 const ALLOWED_SLIPPAGE = 50
@@ -154,8 +155,9 @@ export const AddLiquidity = () => {
   const toggleWalletModal = useWalletModalToggle()
   const [isDark] = useDarkModeManager()
 
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   // modal states
-  const [showSearch, setShowSearch] = useState<boolean>(false)
   const [showConfirm, setShowConfirm] = useState<boolean>(false)
   const [attemptingTxn, setAttemptingTxn] = useState<boolean>(false) // clicke confirm
   const [pendingConfirmation, setPendingConfirmation] = useState<boolean>(true)
@@ -638,7 +640,7 @@ export const AddLiquidity = () => {
   } ${'and'} ${parsedAmounts[Field.OUTPUT]?.toSignificant(6)} ${tokens[Field.OUTPUT]?.symbol}`
 
   return (
-    <Wrapper>
+    <div className={styles.wrapper}>
       <ConfirmationModal
         isOpen={showConfirm}
         onDismiss={() => {
@@ -654,12 +656,7 @@ export const AddLiquidity = () => {
         pendingText={pendingText}
         title={noLiquidity ? 'You are creating a pool' : 'You will receive'}
       />
-      <SearchModal
-        isOpen={showSearch}
-        onDismiss={() => {
-          setShowSearch(false)
-        }}
-      />
+      <SearchModal isOpen={isOpen} onClose={onClose} />
       <AutoColumn>
         {noLiquidity && (
           <ColumnCenter style={{ marginTop: '1.5rem' }}>
@@ -733,7 +730,7 @@ export const AddLiquidity = () => {
           ) : approvalA === Approval.NOT_APPROVED || approvalA === Approval.PENDING ? (
             <Button onClick={approveACallback} disabled={approvalA === Approval.PENDING}>
               {approvalA === Approval.PENDING ? (
-                <Dots>Unlocking {tokens[Field.INPUT]?.symbol}</Dots>
+                <span className={styles.dots}>Unlocking {tokens[Field.INPUT]?.symbol}</span>
               ) : (
                 'Unlock ' + tokens[Field.INPUT]?.symbol
               )}
@@ -741,7 +738,7 @@ export const AddLiquidity = () => {
           ) : approvalB === Approval.NOT_APPROVED || approvalB === Approval.PENDING ? (
             <Button onClick={approveBCallback} disabled={approvalB === Approval.PENDING}>
               {approvalB === Approval.PENDING ? (
-                <Dots>Unlocking {tokens[Field.OUTPUT]?.symbol}</Dots>
+                <span className={styles.dots}>Unlocking {tokens[Field.OUTPUT]?.symbol}</span>
               ) : (
                 'Unlock ' + tokens[Field.OUTPUT]?.symbol
               )}
@@ -768,6 +765,6 @@ export const AddLiquidity = () => {
           </AutoColumn>
         </FixedBottom>
       )}
-    </Wrapper>
+    </div>
   )
 }

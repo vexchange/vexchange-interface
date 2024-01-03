@@ -9,7 +9,7 @@ import { useTotalSupply } from '../../data/TotalSupply'
 import { useTokenBalance } from '../../state/wallet/hooks'
 
 import Card, { GreyCard } from '../Card'
-import TokenLogo from '../TokenLogo'
+import { TokenLogo } from '../TokenLogo'
 import DoubleLogo from '../DoubleLogo'
 import { Text } from '@chakra-ui/react'
 import { AutoColumn } from '../Column'

@@ -8,7 +8,7 @@ import { ChakraProvider, CSSReset } from '@chakra-ui/react'
 
 import { NetworkContextName } from './constants'
 import WalletUpdater from './state/wallet/updater'
-import App from './pages/App'
+import { App } from './pages/App'
 import store from './state'
 import ApplicationUpdater from './state/application/updater'
 import TransactionUpdater from './state/transactions/updater'

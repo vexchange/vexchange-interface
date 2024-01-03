@@ -8,11 +8,19 @@ export const styles = {
       overflow: 'hidden'
     },
     body: {
-      bg: '#E4E4E4'
+      bg: '#ffffff'
     },
     h1: {
       fontFamily: 'Pixelify Sans',
       fontSize: '1.5rem'
+    },
+    'input[type="text"]': {
+      borderRadius: '4px',
+      border: '1px solid black',
+      _placeholder: { color: 'black' },
+      _hover: {
+        border: '1px dashed black'
+      }
     }
   }
 }

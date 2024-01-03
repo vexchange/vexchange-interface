@@ -8,7 +8,7 @@ import { useToken } from '../../hooks/Tokens'
 import { getExploreLink } from '../../utils'
 
 import { Link } from '../../theme'
-import TokenLogo from '../TokenLogo'
+import { TokenLogo } from '../TokenLogo'
 import question from '../../assets/images/question.svg'
 
 const Flex = styled.div`

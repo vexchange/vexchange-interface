@@ -1,18 +1,16 @@
 import { Pair, Token } from 'vexchange-sdk/dist'
 import React, { useState, useContext } from 'react'
-import styled, { ThemeContext } from 'styled-components'
-import { darken } from 'polished'
 import { useTranslation } from 'react-i18next'
 import { useDarkMode } from 'usehooks-ts'
 import { ArrowDown } from 'react-feather'
-import { HStack, Button, Text, Box } from '@chakra-ui/react'
+import { HStack, Button, Text, Box, useDisclosure } from '@chakra-ui/react'
 
 import { ButtonPrimary } from '../Button'
 
 import { Field } from '../../state/swap/actions'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
 
-import TokenLogo from '../TokenLogo'
+import { TokenLogo } from '../TokenLogo'
 import DoubleLogo from '../DoubleLogo'
 import { SearchModal } from '../SearchModal'
 import { RowBetween } from '../Row'
@@ -21,10 +19,7 @@ import { Input as NumericalInput } from '../NumericalInput'
 
 import { useWeb3React } from '../../hooks'
 
-const StyledTokenName = styled.span<{ active?: boolean }>`
-  ${({ active }) => (active ? '  margin: 0 0.25rem 0 0.75rem;' : '  margin: 0 0.25rem 0 0.25rem;')}
-  font-size:  ${({ active }) => (active ? '20px' : '16px')};
-`
+import styles from './currency-input-panel.module.scss'
 
 interface CurrencyInputPanelProps {
   value: string
@@ -67,7 +62,8 @@ export const CurrencyInputPanel = ({
 }: CurrencyInputPanelProps) => {
   const { t } = useTranslation()
 
-  const [modalOpen, setModalOpen] = useState(false)
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   const { account } = useWeb3React()
   const userTokenBalance = useTokenBalanceTreatingWETHasETH(account, token)
 
@@ -106,12 +102,14 @@ export const CurrencyInputPanel = ({
             </>
           )}
           <Button
+            className={styles['token-name']}
             selected={!!token}
             variant="primary"
+            flexShrink={0}
             rightIcon={!disableTokenSelect && <ArrowDown selected={!!token?.address} size={16} />}
             onClick={() => {
               if (!disableTokenSelect) {
-                setModalOpen(true)
+                onOpen()
               }
             }}
           >
@@ -133,12 +131,10 @@ export const CurrencyInputPanel = ({
           </Button>
         </HStack>
       </div>
-      {!disableTokenSelect && modalOpen && (
+      {!disableTokenSelect && isOpen && (
         <SearchModal
-          isOpen={modalOpen}
-          onDismiss={() => {
-            setModalOpen(false)
-          }}
+          isOpen={isOpen}
+          onClose={onClose}
           filterType="tokens"
           urlAddedTokens={urlAddedTokens}
           onTokenSelect={onTokenSelection}

@@ -2,7 +2,7 @@ import { JSBI, Percent, Route, Token, TokenAmount, WVET } from 'vexchange-sdk/di
 import React, { useCallback, useContext, useEffect, useReducer, useState } from 'react'
 import { ArrowDown, Plus } from 'react-feather'
 import ReactGA from 'react-ga'
-import { Text } from '@chakra-ui/react'
+import { Text, Button } from '@chakra-ui/react'
 import { find } from 'lodash'
 import { parseEther, parseUnits, getAddress } from 'ethers'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -18,7 +18,7 @@ import { PositionCard } from '../../components/PositionCard'
 import { Row, RowBetween, RowFixed } from '../../components/Row'
 
 import Slider from '../../components/Slider'
-import TokenLogo from '../../components/TokenLogo'
+import { TokenLogo } from '../../components/TokenLogo'
 import { DUMMY_VET, ROUTER_ADDRESS } from '../../constants'
 import { usePair } from '../../data/Reserves'
 import { useTotalSupply } from '../../data/TotalSupply'
@@ -30,9 +30,9 @@ import { useTransactionAdder } from '../../state/transactions/hooks'
 import { useTokenBalance } from '../../state/wallet/hooks'
 import { TYPE } from '../../theme'
 import { calculateSlippageAmount } from '../../utils'
-import { ClickableText, FixedBottom, MaxButton, Wrapper } from './styleds'
 import { useApproveCallback, Approval } from '../../hooks/useApproveCallback'
-import { Dots } from '../../components/swap/styleds'
+
+import styles from './remove-liquidity.module.scss'
 
 // denominated in bips
 const ALLOWED_SLIPPAGE = 200
@@ -528,22 +528,22 @@ export const RemoveLiquidity = () => {
           </Text>
         </RowBetween>
         <RowBetween mt="1rem">
-          <ButtonConfirmed
+          <Button
             onClick={approveAmount}
-            confirmed={approval === Approval.APPROVED}
+            // confirmed={approval === Approval.APPROVED}
             disabled={approval !== Approval.NOT_APPROVED}
             mr="0.5rem"
             fontWeight={500}
             fontSize={20}
           >
             {approval === Approval.PENDING ? (
-              <Dots>Unlocking</Dots>
+              <span className={styles.dots}>Unlocking</span>
             ) : approval === Approval.APPROVED ? (
               'Unlocked'
             ) : (
               'Unlock'
             )}
-          </ButtonConfirmed>
+          </Button>
 
           <ButtonPrimary disabled={!(approval === Approval.APPROVED)} onClick={onRemove} ml="0.5rem">
             <Text fontWeight={500} fontSize={20}>
@@ -560,7 +560,7 @@ export const RemoveLiquidity = () => {
   } and ${parsedAmounts[Field.TOKEN1]?.toSignificant(6)} ${tokens[Field.TOKEN1]?.symbol}`
 
   return (
-    <Wrapper>
+    <div className={styles.wrapper}>
       <ConfirmationModal
         isOpen={showConfirm}
         onDismiss={() => {
@@ -580,14 +580,15 @@ export const RemoveLiquidity = () => {
           <AutoColumn>
             <RowBetween>
               <Text fontWeight={500}>Amount</Text>
-              <ClickableText
+              <Text
+                className={styles['clickable-text']}
                 fontWeight={500}
                 onClick={() => {
                   setShowAdvanced(!showAdvanced)
                 }}
               >
                 {showAdvanced ? 'Hide Advanced' : 'Show Advanced'}
-              </ClickableText>
+              </Text>
             </RowBetween>
             <Row style={{ alignItems: 'flex-end' }}>
               <Text fontSize={72} fontWeight={500}>
@@ -603,18 +604,18 @@ export const RemoveLiquidity = () => {
             )}
             {!showAdvanced && (
               <RowBetween>
-                <MaxButton onClick={() => handlePresetPercentage(25)} width="20%">
+                <Button className={styles['max-button']} onClick={() => handlePresetPercentage(25)} width="20%">
                   25%
-                </MaxButton>
-                <MaxButton onClick={() => handlePresetPercentage(50)} width="20%">
+                </Button>
+                <Button className={styles['max-button']} onClick={() => handlePresetPercentage(50)} width="20%">
                   50%
-                </MaxButton>
-                <MaxButton onClick={() => handlePresetPercentage(75)} width="20%">
+                </Button>
+                <Button className={styles['max-button']} onClick={() => handlePresetPercentage(75)} width="20%">
                   75%
-                </MaxButton>
-                <MaxButton onClick={() => handlePresetPercentage(100)} width="20%">
+                </Button>
+                <Button className={styles['max-button']} onClick={() => handlePresetPercentage(100)} width="20%">
                   Max
-                </MaxButton>
+                </Button>
               </RowBetween>
             )}
           </AutoColumn>
@@ -720,11 +721,11 @@ export const RemoveLiquidity = () => {
               {inputError || outputError || poolTokenError || generalError || 'Remove'}
             </Text>
           </ButtonPrimary>
-          <FixedBottom>
+          <div className={styles['fixed-bottom']}>
             <PositionCard pair={pair} minimal={true} />
-          </FixedBottom>
+          </div>
         </div>
       </AutoColumn>
-    </Wrapper>
+    </div>
   )
 }

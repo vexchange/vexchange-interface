@@ -30,14 +30,6 @@ import AccountDetails from '../AccountDetails'
 import PendingView from './PendingView'
 import Option from './Option'
 
-const Blurb = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 2rem;
-`
-
 const OptionGrid = styled.div`
   display: grid;
   grid-gap: 10px;
@@ -173,7 +165,7 @@ export default function WalletModal({
   function getModalContent() {
     if (error) {
       return (
-        <ModalContent>
+        <>
           <ModalCloseButton />
           <ModalHeader>{error instanceof UnsupportedChainIdError ? 'Wrong Network' : 'Error connecting'}</ModalHeader>
           <ModalBody>
@@ -183,7 +175,7 @@ export default function WalletModal({
               'Error connecting. Try refreshing the page.'
             )}
           </ModalBody>
-        </ModalContent>
+        </>
       )
     }
     if (account && walletView === WALLET_VIEWS.ACCOUNT) {
@@ -197,7 +189,7 @@ export default function WalletModal({
       )
     }
     return (
-      <ModalContent>
+      <>
         {walletView !== WALLET_VIEWS.ACCOUNT ? (
           <ModalHeader>
             <Text
@@ -226,22 +218,24 @@ export default function WalletModal({
             <OptionGrid>{getOptions()}</OptionGrid>
           )}
           {walletView !== WALLET_VIEWS.PENDING && (
-            <Flex align="center" justify="center">
-              <span>New to VeChain? &nbsp;</span>{' '}
+            <Flex align="center" justify="center" mt="4">
+              <Text>New to VeChain? &nbsp;</Text>{' '}
               <Link href="https://medium.com/vechain-foundation/announcing-vechain-sync-2-unlocking-revolution-for-the-entire-blockchain-dapp-industry-enabling-5b1b21cd7b9b">
                 Learn more about Sync
               </Link>
             </Flex>
           )}
         </ModalBody>
-      </ModalContent>
+      </>
     )
   }
 
   return (
     <Modal isOpen={walletModalOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>{getModalContent()}</ModalContent>
+      <ModalContent borderRadius="4px" border="1px solid black">
+        {getModalContent()}
+      </ModalContent>
     </Modal>
   )
 }

@@ -1,11 +1,10 @@
 import React, { useState, useRef, useMemo, useEffect, useContext } from 'react'
-// import '@reach/tooltip/styles.css'
 import styled, { ThemeContext } from 'styled-components'
 import { JSBI, Token, WVET } from 'vexchange-sdk/dist'
 import { isMobile } from 'react-device-detect'
 import { useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft } from 'react-feather'
-import { Text, Modal, ModalOverlay, ModalContent, Flex, Input, Button } from '@chakra-ui/react'
+import { Text, Modal, ModalOverlay, ModalContent, Flex, Input, Button, HStack, Box, Center } from '@chakra-ui/react'
 
 import { DUMMY_VET } from '../../constants'
 import { useAllTokenBalancesTreatingWETHasETH } from '../../state/wallet/hooks'
@@ -13,14 +12,13 @@ import { Link as StyledLink } from '../../theme/components'
 
 import Card from '../Card'
 import Circle from '../../assets/images/circle.svg'
-import TokenLogo from '../TokenLogo'
+import { TokenLogo } from '../TokenLogo'
 import DoubleTokenLogo from '../DoubleLogo'
-import Column, { AutoColumn } from '../Column'
+import { AutoColumn } from '../Column'
 import { CursorPointer } from '../../theme'
 import { CloseIcon } from '../../theme/components'
-import { ButtonPrimary, ButtonSecondary } from '../Button'
 import { Spinner, TYPE } from '../../theme'
-import { RowBetween, RowFixed, AutoRow } from '../Row'
+import { RowFixed, AutoRow } from '../Row'
 
 import { useDarkModeManager } from '../../state/user/hooks'
 import { isAddress, escapeRegExp, overrideWVET } from '../../utils'
@@ -35,31 +33,9 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useToken, useAllTokens } from '../../hooks/Tokens'
 
-const TokenModalInfo = styled.div`
-  ${({ theme }) => theme.flexRowNoWrap}
-  align-items: center;
-  padding: 1rem 1rem;
-  margin: 0.25rem 0.5rem;
-  justify-content: center;
-  user-select: none;
-  min-height: 200px;
-`
-
-const ItemList = styled.div`
-  flex-grow: 1;
-  height: 240px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-`
-
 const FadedSpan = styled(RowFixed)`
   color: ${({ theme }) => theme.primary1};
   font-size: 14px;
-`
-
-const GreySpan = styled.span`
-  color: ${({ theme }) => theme.text3};
-  font-weight: 400;
 `
 
 const SpinnerWrapper = styled(Spinner)`
@@ -88,20 +64,6 @@ const FilterWrapper = styled(RowFixed)`
 
 const PaddedColumn = styled(AutoColumn)``
 
-const PaddedItem = styled(RowBetween)`
-  padding: 4px 20px;
-  height: 56px;
-`
-
-const MenuItem = styled(PaddedItem)<{ isDark?: boolean }>`
-  cursor: ${({ disabled }) => !disabled && 'pointer'};
-  pointer-events: ${({ disabled }) => disabled && 'none'};
-  :hover {
-    background-color: rgba(0, 0, 0, 0.1);
-  }
-  opacity: ${({ disabled, selected }) => (disabled || selected ? 0.5 : 1)};
-`
-
 // filters on results
 const FILTERS = {
   VOLUME: 'VOLUME',
@@ -126,7 +88,6 @@ interface SearchModalProps {
 export const SearchModal = ({
   isOpen,
   onClose,
-  onDismiss,
   onTokenSelect,
   urlAddedTokens,
   filterType,
@@ -249,7 +210,7 @@ export const SearchModal = ({
   function _onTokenSelect(address) {
     setSearchQuery('')
     onTokenSelect(address)
-    onDismiss()
+    onClose()
   }
 
   // manage focus on modal show
@@ -262,7 +223,7 @@ export const SearchModal = ({
 
   function clearInputAndDismiss() {
     setSearchQuery('')
-    onDismiss()
+    onClose()
   }
 
   // make an effort to identify the specific token a user is searching for
@@ -350,31 +311,31 @@ export const SearchModal = ({
           allBalances?.[account]?.[pairAddress]?.raw &&
           JSBI.equal(allBalances?.[account]?.[pairAddress].raw, JSBI.BigInt(0))
         return (
-          <MenuItem
+          <Box
             key={i}
             // isDark={isDark}
             onClick={() => {
               navigate('/add/' + token0.address + '-' + token1.address)
-              onDismiss()
+              onClose()
             }}
           >
-            <RowFixed>
+            <div>
               <DoubleTokenLogo a0={token0?.address || ''} a1={token1?.address || ''} size={24} />
               <Text>
                 {overrideWVET(token0?.symbol)}/{overrideWVET(token1?.symbol)}
               </Text>
-            </RowFixed>
+            </div>
 
             <Button
               variant="primary"
               onClick={() => {
                 navigate('/add/' + token0.address + '-' + token1.address)
-                onDismiss()
+                onClose()
               }}
             >
               {balance ? (zeroBalance ? 'Join' : 'Add Liquidity') : 'Join'}
             </Button>
-          </MenuItem>
+          </Box>
         )
       })
     )
@@ -384,13 +345,13 @@ export const SearchModal = ({
     if (filteredTokenList.length === 0) {
       if (isAddress(searchQuery)) {
         if (temporaryToken === undefined) {
-          return <TokenModalInfo>Searching for Token...</TokenModalInfo>
+          return <Center>Searching for Token...</Center>
         } else if (temporaryToken === null) {
-          return <TokenModalInfo>Address is not a valid VIP-180 token.</TokenModalInfo>
+          return <Center>Address is not a valid VIP-180 token.</Center>
         } else {
           // a user found a token by search that isn't yet added to localstorage
           return (
-            <MenuItem
+            <Box
               key={temporaryToken.address}
               className={`temporary-token-${temporaryToken}`}
               onClick={() => {
@@ -405,11 +366,11 @@ export const SearchModal = ({
                   <FadedSpan>(Found by search)</FadedSpan>
                 </Flex>
               </RowFixed>
-            </MenuItem>
+            </Box>
           )
         }
       } else {
-        return <TokenModalInfo>{t('noToken')}</TokenModalInfo>
+        return <Center height="100%">{t('noToken')}</Center>
       }
     } else {
       return filteredTokenList.map(({ address, symbol, balance }) => {
@@ -420,19 +381,24 @@ export const SearchModal = ({
 
         // if token import page dont show preset list, else show all
         return (
-          <MenuItem
+          <Flex
+            p="4"
+            justify="space-between"
+            cursor="pointer"
             key={address}
             className={`token-item-${address}`}
             onClick={() => (hiddenToken && hiddenToken === address ? null : _onTokenSelect(address))}
             disabled={hiddenToken && hiddenToken === address}
             selected={otherSelectedTokenAddress === address}
           >
-            <RowFixed>
-              <TokenLogo address={address} size={'24px'} style={{ marginRight: '14px' }} />
-              <Column>
+            <Flex>
+              <Box mr="2">
+                <TokenLogo address={address} size="36px" />
+              </Box>
+              <Flex direction="column" justify="flex-start">
                 <Text>
                   {symbol}
-                  {otherSelectedTokenAddress === address && <GreySpan> ({otherSelectedText})</GreySpan>}
+                  {otherSelectedTokenAddress === address && <Text> ({otherSelectedText})</Text>}
                 </Text>
                 <FadedSpan>
                   <TYPE.main fontWeight={500}>
@@ -453,16 +419,14 @@ export const SearchModal = ({
                     </div>
                   )}
                 </FadedSpan>
-              </Column>
-            </RowFixed>
-            <AutoColumn>
+              </Flex>
+            </Flex>
+            <Flex>
               {balance ? (
                 <Text>
                   {zeroBalance && showSendWithSwap ? (
                     <Button>
-                      <Text textAlign="center" fontWeight={500} fontSize={14} color={theme.primary1}>
-                        Send With Swap
-                      </Text>
+                      <Text align="center">Send With Swap</Text>
                     </Button>
                   ) : balance ? (
                     balance.toSignificant(6)
@@ -475,8 +439,8 @@ export const SearchModal = ({
               ) : (
                 '-'
               )}
-            </AutoColumn>
-          </MenuItem>
+            </Flex>
+          </Flex>
         )
       })
     }
@@ -491,14 +455,8 @@ export const SearchModal = ({
         }}
         selected={filter === activeFilter}
       >
-        <Text fontSize={14} fontWeight={500}>
-          {title}
-        </Text>
-        {filter === activeFilter && filterType === 'tokens' && (
-          <Text fontSize={14} fontWeight={500}>
-            {!invertSearchOrder ? '↓' : '↑'}
-          </Text>
-        )}
+        <Text>{title}</Text>
+        {filter === activeFilter && filterType === 'tokens' && <Text>{!invertSearchOrder ? '↓' : '↑'}</Text>}
       </FilterWrapper>
     )
   }
@@ -506,12 +464,12 @@ export const SearchModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent borderRadius="4px" p={4} border="1px solid black">
         <Flex direction="column" justify="flex-start" width="100%">
           {showTokenImport ? (
-            <PaddedColumn>
-              <RowBetween>
-                <RowFixed>
+            <div>
+              <div>
+                <div>
                   <CursorPointer>
                     <ArrowLeft
                       onClick={() => {
@@ -520,12 +478,10 @@ export const SearchModal = ({
                     />
                   </CursorPointer>
                   <Text>Import A Token</Text>
-                </RowFixed>
+                </div>
                 <CloseIcon onClick={onClose} />
-              </RowBetween>
-              <TYPE.body style={{ marginTop: '10px' }}>
-                To import a custom token, paste token address in the search bar.
-              </TYPE.body>
+              </div>
+              <Text>To import a custom token, paste token address in the search bar.</Text>
               <Input
                 // isDark={isDark}
                 type={'text'}
@@ -535,15 +491,16 @@ export const SearchModal = ({
                 onChange={onInput}
               />
               {renderTokenList()}
-            </PaddedColumn>
+            </div>
           ) : (
-            <PaddedColumn>
-              <RowBetween>
+            <Box>
+              <HStack justify="space-between" mb="4">
                 <Text>{filterType === 'tokens' ? 'Select A Token' : 'Select A Pool'}</Text>
-                <CloseIcon onClick={onClose} />
-              </RowBetween>
+                <CloseIcon onClick={onClose} size="16px" />
+              </HStack>
               <Input
                 // isDark={isDark}
+                mb="4"
                 type={'text'}
                 id="token-search-input"
                 placeholder={t('tokenSearchPlaceholder')}
@@ -551,15 +508,14 @@ export const SearchModal = ({
                 ref={inputRef}
                 onChange={onInput}
               />
-              <RowBetween>
-                <Text>{filterType === 'tokens' ? 'Token Name' : 'Pool Name'}</Text>
+              <Flex>
                 <Filter
                   title={filterType === 'tokens' ? 'Your Balances' : ' '}
                   filter={FILTERS.BALANCES}
                   filterType={filterType}
                 />
-              </RowBetween>
-            </PaddedColumn>
+              </Flex>
+            </Box>
           )}
           {!showTokenImport && (
             <div
@@ -570,7 +526,11 @@ export const SearchModal = ({
               }}
             />
           )}
-          {!showTokenImport && <ItemList>{filterType === 'tokens' ? renderTokenList() : renderPairsList()}</ItemList>}
+          {!showTokenImport && (
+            <Box overflowY="auto" height="50vh" border="1px solid black" borderRadius="4px">
+              {filterType === 'tokens' ? renderTokenList() : renderPairsList()}
+            </Box>
+          )}
           {!showTokenImport && (
             <div
               style={{
@@ -581,31 +541,29 @@ export const SearchModal = ({
             />
           )}
           {!showTokenImport && (
-            <Card>
-              <AutoRow>
-                <div>
-                  {filterType !== 'tokens' && (
-                    <Text>
-                      {!isMobile && "Don't see a pool? "}
-                      <Link to="/find">{!isMobile ? 'Import it.' : 'Import pool.'}</Link>
-                    </Text>
-                  )}
-                  {filterType === 'tokens' && (
-                    <Text>
-                      {!isMobile && "Don't see a token? "}
+            <Box mt="4">
+              <div>
+                {filterType !== 'tokens' && (
+                  <Text>
+                    {!isMobile && "Don't see a pool? "}
+                    <Link to="/find">{!isMobile ? 'Import it.' : 'Import pool.'}</Link>
+                  </Text>
+                )}
+                {filterType === 'tokens' && (
+                  <Text>
+                    {!isMobile && "Don't see a token? "}
 
-                      <StyledLink
-                        onClick={() => {
-                          setShowTokenImport(true)
-                        }}
-                      >
-                        {!isMobile ? 'Import it.' : 'Import custom token.'}
-                      </StyledLink>
-                    </Text>
-                  )}
-                </div>
-              </AutoRow>
-            </Card>
+                    <StyledLink
+                      onClick={() => {
+                        setShowTokenImport(true)
+                      }}
+                    >
+                      {!isMobile ? 'Import it.' : 'Import custom token.'}
+                    </StyledLink>
+                  </Text>
+                )}
+              </div>
+            </Box>
           )}
         </Flex>
       </ModalContent>

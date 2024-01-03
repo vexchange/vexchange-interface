@@ -7,7 +7,7 @@ import { getExploreLink } from '../../utils'
 import Copy from '../AccountDetails/Copy'
 import { AutoColumn } from '../Column'
 import { AutoRow, RowBetween } from '../Row'
-import TokenLogo from '../TokenLogo'
+import { TokenLogo } from '../TokenLogo'
 
 export function TransferModalHeader({ recipient, amount }: { recipient: string; amount: TokenAmount }) {
   const { chainId } = useWeb3React()

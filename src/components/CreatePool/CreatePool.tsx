@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Token, WVET } from 'vexchange-sdk/dist'
-import { Text, Button, Box, Flex } from '@chakra-ui/react'
+import { Text, Button, Box, Flex, useDisclosure } from '@chakra-ui/react'
 import { Plus } from 'react-feather'
 
 import { Row, AutoRow } from '../Row'
-import TokenLogo from '../TokenLogo'
+import { TokenLogo } from '../TokenLogo'
 import { SearchModal } from '../SearchModal'
-import { AddLiquidity } from '../../pages/Pool'
+import { AddLiquidity } from '../../pages/AddLiquidity'
 import { TYPE, Link } from '../../theme'
 import { AutoColumn, ColumnCenter } from '../Column'
 import { ButtonPrimary, ButtonDropwdown, ButtonDropwdownLight } from '../Button'
@@ -30,6 +30,8 @@ const STEP = {
 export const CreatePool = () => {
   const { chainId } = useWeb3React()
   const navigate = useNavigate()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [activeField, setActiveField] = useState<number>(Fields.TOKEN0)
 
@@ -56,12 +58,12 @@ export const CreatePool = () => {
   }
 
   return (
-    <Box p={4}>
+    <Box>
       <Flex direction="column" gap={4}>
         <Button
           variant="primary"
           onClick={() => {
-            setShowSearch(true)
+            onOpen()
             setActiveField(Fields.TOKEN0)
           }}
         >
@@ -96,7 +98,7 @@ export const CreatePool = () => {
             </Row>
           </Button>
         )}
-        <Box mt={4}>
+        <Box>
           {pair ? ( // pair already exists - prompt to add liquidity to existing pool
             <AutoRow>
               <TYPE.body textAlign="center">
@@ -122,7 +124,7 @@ export const CreatePool = () => {
         onTokenSelect={address => {
           activeField === Fields.TOKEN0 ? setToken0Address(address) : setToken1Address(address)
         }}
-        onDismiss={() => {
+        onClose={() => {
           setShowSearch(false)
         }}
         hiddenToken={activeField === Fields.TOKEN0 ? token1Address : token0Address}

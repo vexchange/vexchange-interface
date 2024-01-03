@@ -11,7 +11,6 @@ import { useTokenBalances } from '../../state/wallet/hooks'
 import { Link, TYPE } from '../../theme'
 import { LightCard } from '../../components/Card'
 import { RowBetween } from '../../components/Row'
-import { ButtonPrimary, ButtonSecondary } from '../../components/Button'
 import { AutoColumn, ColumnCenter } from '../../components/Column'
 
 import { useWeb3React } from '../../hooks'
@@ -62,7 +61,7 @@ export const Supply = () => {
     })
 
   return (
-    <Flex p={4} direction="column">
+    <Flex direction="column">
       <Button variant="primary" id="join-pool-button" onClick={onOpen}>
         <Text>Join {filteredExchangeList?.length > 0 ? 'another' : 'a'} pool</Text>
       </Button>

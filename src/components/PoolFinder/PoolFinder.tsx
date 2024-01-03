@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TokenAmount, JSBI, Token, Pair } from 'vexchange-sdk/dist'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
-import { Text, Button, Flex, Box } from '@chakra-ui/react'
+import { Text, Button, Flex, Box, useDisclosure } from '@chakra-ui/react'
 import { Plus } from 'react-feather'
 
 import { Row } from '../Row'
-import TokenLogo from '../TokenLogo'
+import { TokenLogo } from '../TokenLogo'
 import { SearchModal } from '../SearchModal'
 import { PositionCard } from '../PositionCard'
 import { Link } from '../../theme'
@@ -28,6 +28,7 @@ const Fields = {
 export const PoolFinder = () => {
   const navigate = useNavigate()
   const { account } = useWeb3React()
+  const { isOpen, onOpen, onClose } = useDisclosure()
   const [showSearch, setShowSearch] = useState<boolean>(false)
   const [activeField, setActiveField] = useState<number>(Fields.TOKEN0)
 
@@ -53,13 +54,13 @@ export const PoolFinder = () => {
   const allowImport: boolean = position && JSBI.greaterThan(position.raw, JSBI.BigInt(0))
 
   return (
-    <Box p={4}>
-      <Flex direction="column" gap={4}>
+    <Box>
+      <Flex direction="column">
         {!token0Address ? (
           <Button
             variant="primary"
             onClick={() => {
-              setShowSearch(true)
+              onOpen()
               setActiveField(Fields.TOKEN0)
             }}
           >
@@ -69,7 +70,7 @@ export const PoolFinder = () => {
           <Button
             variant="primary"
             onClick={() => {
-              setShowSearch(true)
+              onOpen()
               setActiveField(Fields.TOKEN0)
             }}
           >
@@ -86,7 +87,7 @@ export const PoolFinder = () => {
           <Button
             variant="primary"
             onClick={() => {
-              setShowSearch(true)
+              onOpen()
               setActiveField(Fields.TOKEN1)
             }}
           >
@@ -96,7 +97,7 @@ export const PoolFinder = () => {
           <Button
             variant="primary"
             onClick={() => {
-              setShowSearch(true)
+              onOpen()
               setActiveField(Fields.TOKEN1)
             }}
           >
@@ -155,14 +156,12 @@ export const PoolFinder = () => {
       </Flex>
 
       <SearchModal
-        isOpen={showSearch}
+        isOpen={isOpen}
         filterType="tokens"
         onTokenSelect={address => {
           activeField === Fields.TOKEN0 ? setToken0Address(address) : setToken1Address(address)
         }}
-        onDismiss={() => {
-          setShowSearch(false)
-        }}
+        onClose={onClose}
         hiddenToken={activeField === Fields.TOKEN0 ? token1Address : token0Address}
       />
     </Box>

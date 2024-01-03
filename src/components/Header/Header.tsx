@@ -5,7 +5,7 @@ import { find } from 'lodash'
 import { formatEther } from 'ethers'
 import { isMobile } from 'react-device-detect'
 import { useDarkMode } from 'usehooks-ts'
-import { Text, HStack, Flex, Button } from '@chakra-ui/react'
+import { Text, HStack, Flex, Button, Box } from '@chakra-ui/react'
 import { ChainId } from 'vexchange-sdk/dist'
 
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
@@ -56,11 +56,11 @@ export const Header = () => {
   }, [account, userVexBalance, chainId, library])
 
   return (
-    <HStack p={4}>
+    <HStack p={4} width="100%">
       <Flex justify="space-between" width="100%">
-        <div>
+        <Box>
           <h1>vexchange</h1>
-        </div>
+        </Box>
 
         <HStack>
           {/* <AccountElement active={!!account} style={{ pointerEvents: 'auto' }}> */}

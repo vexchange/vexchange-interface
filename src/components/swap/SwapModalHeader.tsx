@@ -7,7 +7,7 @@ import { Field } from '../../state/swap/actions'
 import { TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
 import { RowBetween, RowFixed } from '../Row'
-import TokenLogo from '../TokenLogo'
+import { TokenLogo } from '../TokenLogo'
 import { TruncatedText } from './styleds'
 
 export default function SwapModalHeader({

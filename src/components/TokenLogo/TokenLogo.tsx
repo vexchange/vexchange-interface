@@ -5,39 +5,15 @@ import { useWeb3React } from '../../hooks'
 import { WVET } from 'vexchange-sdk/dist'
 import { DUMMY_VET } from '../../constants'
 
-import VeChainLogo from '../../assets/images/vet-logo.svg'
 import WvetIcon from '../../assets/images/wvet-logo.png'
+
+import styles from './token-logo.module.scss'
 
 const TOKEN_ICON_API = address =>
   `https://raw.githubusercontent.com/vechain/token-registry/master/tokens/main/${address}/token.png`
 const BAD_IMAGES = {}
 
-const Image = styled.img<{ size: string }>`
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  background-color: white;
-  border-radius: 1rem;
-  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
-`
-
-const Emoji = styled.span<{ size?: string }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: ${({ size }) => size};
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  margin-bottom: -4px;
-`
-
-const StyledEthereumLogo = styled.svg<{ size: string }>`
-  width: ${({ size }) => size};
-  height: ${({ size }) => size};
-  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.075);
-  border-radius: 24px;
-`
-
-export default function TokenLogo({
+export const TokenLogo = ({
   address,
   size = '24px',
   ...rest
@@ -45,7 +21,7 @@ export default function TokenLogo({
   address?: string
   size?: string
   style?: React.CSSProperties
-}) {
+}) => {
   const [error, setError] = useState(false)
   const { chainId } = useWeb3React()
 
@@ -56,27 +32,28 @@ export default function TokenLogo({
 
   let path = ''
   if (address === DUMMY_VET[chainId].address) {
-    return <StyledEthereumLogo size={size} {...rest} />
+    return <svg className={styles['token-logo']} style={{ width: size, height: size }} {...rest} />
   } else if (address === WVET[chainId].address) {
     path = WvetIcon
   } else if (!error && !BAD_IMAGES[address] && isAddress(address)) {
     path = TOKEN_ICON_API(address.toLowerCase())
   } else {
     return (
-      <Emoji {...rest} size={size}>
+      <span className={styles.emoji} {...rest} style={{ width: size, height: size }}>
         <span role="img" aria-label="Thinking">
           🤔
         </span>
-      </Emoji>
+      </span>
     )
   }
 
   return (
-    <Image
+    <img
+      className={styles['token-logo']}
       {...rest}
       // alt={address}
       src={path}
-      size={size}
+      style={{ width: size, height: size }}
       onError={() => {
         BAD_IMAGES[address] = true
         setError(true)
