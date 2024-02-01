@@ -8,6 +8,7 @@ import { Link, TYPE } from '../../theme'
 import { AutoColumn } from '../Column'
 import { RowBetween } from '../Row'
 import { getExploreLink } from '../../utils'
+import { getAddress, getName } from '../../utils/nameutils'
 
 const InputPanel = styled.div`
   ${({ theme }) => theme.flexColumnNoWrap}
@@ -98,13 +99,23 @@ export default function AddressInputPanel({
     let stale = false
     // if the input is an address, try to look up its name
     if (isAddress(debouncedInput)) {
-      library.thor
-        .account(debouncedInput)
-        .get()
-        .then(() => {
+      getName(debouncedInput, library)
+        .then(name => {
           if (stale) return
           // if an ENS name exists, set it as the destination
+          setData({ address: debouncedInput, name })
+          setError(null)
+        })
+        .catch(() => {
+          if (stale) return
           setData({ address: debouncedInput, name: '' })
+          setError(null)
+        })
+    } else {
+      getAddress(debouncedInput, library)
+        .then(address => {
+          if (stale) return
+          setData({ address, name: '' })
           setError(null)
         })
         .catch(() => {
@@ -122,10 +133,16 @@ export default function AddressInputPanel({
   // run parser on debounced input
   useEffect(() => {
     // if the input is an address, try to look up its name
-    if (isAddress(debouncedInput)) {
-      setData({ address: debouncedInput, name: '' })
-      setError(null)
-    }
+    getAddress(debouncedInput, library)
+      .then(address => {
+        if (isAddress(address)) {
+          setData({ address, name: '' })
+          setError(null)
+        }
+      })
+      .catch(() => {
+        /* ignore */
+      })
   }, [debouncedInput, library])
 
   function onInput(event) {
@@ -146,7 +163,7 @@ export default function AddressInputPanel({
                 Recipient
               </TYPE.black>
               {data.address && (
-                <Link href={getExploreLink(chainId, data.name || data.address, 'address')} style={{ fontSize: '14px' }}>
+                <Link href={getExploreLink(chainId, data.address, 'address')} style={{ fontSize: '14px' }}>
                   (View on VeChain Stats)
                 </Link>
               )}

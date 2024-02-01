@@ -160,7 +160,7 @@ function recentTransactionsOnly(a: TransactionDetails) {
   return new Date().getTime() - a.addedTime < 86_400_000
 }
 
-export default function Web3Status({ account, active }) {
+export default function Web3Status({ account, name, active }) {
   const { t } = useTranslation()
   const { error } = useWeb3React()
   const contextNetwork = useWeb3React(NetworkContextName)
@@ -188,7 +188,7 @@ export default function Web3Status({ account, active }) {
               <Text>{pending?.length} Pending</Text> <SpinnerWrapper src={LightCircle} alt="loader" />
             </RowBetween>
           ) : (
-            <Text>{shortenAddress(account)}</Text>
+            <Text>{name || shortenAddress(account)}</Text>
           )}
           {!hasPendingTransactions && <Identicon />}
         </Web3StatusConnected>

@@ -7,6 +7,7 @@ import { isMobile } from 'react-device-detect'
 
 import styled, { css } from 'styled-components'
 import { useTokenBalanceTreatingWETHasETH } from '../../state/wallet/hooks'
+import { getName } from '../../utils/nameutils'
 
 import Row from '../Row'
 import Menu from '../Menu'
@@ -52,7 +53,7 @@ const HeaderElement = styled.div`
   align-items: center;
 `
 
-const VexIcon = styled(HistoryLink)<{ to: string }>`
+const VexIcon = styled(HistoryLink) <{ to: string }>`
   transition: transform 0.3s ease;
   :hover {
     transform: scale(1.1);
@@ -129,7 +130,7 @@ const NetworkCard = styled(YellowCard)`
   padding: 8px 12px;
 `
 
-const MigrateBanner = styled(AutoColumn)<{ isDark?: boolean }>`
+const MigrateBanner = styled(AutoColumn) <{ isDark?: boolean }>`
   width: 100%;
   padding: 12px 0;
   display: flex;
@@ -196,6 +197,7 @@ export default function Header() {
   const { account, chainId, active, library } = useWeb3React()
   const [darkMode, toggleDarkMode] = useDarkModeManager()
   const [userVexBalance, setUserVexBalance] = useState(0)
+  const [username, setUsername] = useState('')
 
   const userEthBalance = useTokenBalanceTreatingWETHasETH(account, DUMMY_VET[chainId])
   const [isDark] = useDarkModeManager()
@@ -211,6 +213,17 @@ export default function Header() {
       getUserVexBalance()
     }
   }, [account, userVexBalance, chainId, library])
+
+  useEffect(() => {
+    const getUsername = async () => {
+      const username = await getName(account, library)
+      setUsername(username)
+    }
+
+    if (account) {
+      getUsername()
+    }
+  }, [account, chainId, library])
 
   return (
     <HeaderFrame>
@@ -255,7 +268,7 @@ export default function Header() {
                 </Text>
               </>
             ) : null}
-            <Web3Status account={account} active={active} />
+            <Web3Status account={account} name={username} active={active} />
           </AccountElement>
           <ButtonSecondary
             isDark={isDark}
